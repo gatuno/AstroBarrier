@@ -51,20 +51,31 @@
 #define TRUE !FALSE
 #endif
 
+#define GAME_AREA_X 250
+#define GAME_AREA_Y 79
+
 /* Enumerar las imágenes */
 enum {
-	/* TODO: Listar las imágenes */
-	IMG_DUMMY,
+	IMG_ARCADE,
+	
+	IMG_ASTRO,
+	
+	IMG_FRAME,
+	IMG_GAMEAREA,
+	IMG_GAMEINTRO,
 	
 	NUM_IMAGES
 };
 
 const char *images_names[NUM_IMAGES] = {
-	/* TODO: Listar las rutas */
-	GAMEDATA_DIR "images/dummy.png",
+	GAMEDATA_DIR "images/arcade.png",
+	
+	GAMEDATA_DIR "images/astro.png",
+	
+	GAMEDATA_DIR "images/frame.png",
+	GAMEDATA_DIR "images/gamearea.png",
+	GAMEDATA_DIR "images/gameintro.png",
 };
-
-/* TODO: Listar aquí los automátas */
 
 /* Codigos de salida */
 enum {
@@ -103,6 +114,23 @@ int game_loop (void) {
 	Uint32 last_time, now_time;
 	SDL_Rect rect;
 	
+	int astro_dir = 0;
+	SDL_Rect astro_rect;
+	SDL_Surface *game_buffer;
+	
+	astro_rect.w = images[IMG_ASTRO]->w;
+	astro_rect.h = images[IMG_ASTRO]->h;
+	astro_rect.x = 160;
+	astro_rect.y = 396;
+	
+	SDL_BlitSurface (images[IMG_ARCADE], NULL, screen, NULL);
+	
+	/* En esta situación tan especial, necesito varios buffers intermedios */
+	game_buffer = SDL_AllocSurface (SDL_SWSURFACE, images[IMG_GAMEAREA]->w, images[IMG_GAMEAREA]->h, 32, 0x00FF0000, 0x0000FF00, 0x000000FF, 0xFF000000);
+	
+	/* Quitarle el alpha, para que cuando se copie a la superficie no tenga problemas */
+	SDL_SetAlpha (images[IMG_GAMEAREA], 0, 0);
+	
 	SDL_EventState (SDL_MOUSEMOTION, SDL_IGNORE);
 	
 	do {
@@ -114,9 +142,50 @@ int game_loop (void) {
 					/* Vamos a cerrar la aplicación */
 					done = GAME_QUIT;
 					break;
+				case SDL_KEYDOWN:
+					key = event.key.keysym.sym;
+					
+					if (key == SDLK_LEFT) {
+						astro_dir--;
+					}
+					
+					if (key == SDLK_RIGHT) {
+						astro_dir++;
+					}
+					break;
+				case SDL_KEYUP:
+					key = event.key.keysym.sym;
+					
+					if (key == SDLK_LEFT) {
+						astro_dir++;
+					}
+					
+					if (key == SDLK_RIGHT) {
+						astro_dir--;
+					}
+					break;
 			}
 		}
 		
+		SDL_BlitSurface (images[IMG_GAMEAREA], NULL, game_buffer, NULL);
+		
+		/* Mover la nave a su nueva posición */
+		if (astro_dir < 0 && astro_rect.x > 5) {
+			astro_rect.x -= 5;
+		} else if (astro_dir > 0 && astro_rect.x < 315) {
+			astro_rect.x += 5;
+		}
+		
+		SDL_BlitSurface (images[IMG_ASTRO], NULL, game_buffer, &astro_rect);
+		
+		/* TODO: Escalar el area de juego antes de copiarla a la pantalla */
+		rect.x = GAME_AREA_X;
+		//rect.y = GAME_AREA_Y; original
+		rect.y = 20;
+		rect.w = game_buffer->w;
+		rect.h = game_buffer->h;
+		
+		SDL_BlitSurface (game_buffer, NULL, screen, &rect);
 		
 		SDL_Flip (screen);
 		
