@@ -64,6 +64,8 @@ enum {
 	IMG_GAMEAREA,
 	IMG_GAMEINTRO,
 	
+	IMG_SHOOT,
+	
 	NUM_IMAGES
 };
 
@@ -75,6 +77,8 @@ const char *images_names[NUM_IMAGES] = {
 	GAMEDATA_DIR "images/frame.png",
 	GAMEDATA_DIR "images/gamearea.png",
 	GAMEDATA_DIR "images/gameintro.png",
+	
+	GAMEDATA_DIR "images/shoot.png"
 };
 
 /* Codigos de salida */
@@ -117,6 +121,11 @@ int game_loop (void) {
 	int astro_dir = 0;
 	SDL_Rect astro_rect;
 	SDL_Surface *game_buffer;
+	int shooting = FALSE;
+	SDL_Rect shoot_rect;
+	
+	shoot_rect.w = images[IMG_SHOOT]->w;
+	shoot_rect.h = images[IMG_SHOOT]->h;
 	
 	astro_rect.w = images[IMG_ASTRO]->w;
 	astro_rect.h = images[IMG_ASTRO]->h;
@@ -152,6 +161,12 @@ int game_loop (void) {
 					if (key == SDLK_RIGHT) {
 						astro_dir++;
 					}
+					
+					if (key == SDLK_SPACE && !shooting) {
+						shooting = TRUE;
+						shoot_rect.x = astro_rect.x + 22;
+						shoot_rect.y = astro_rect.y + 4;
+					}
 					break;
 				case SDL_KEYUP:
 					key = event.key.keysym.sym;
@@ -167,6 +182,13 @@ int game_loop (void) {
 			}
 		}
 		
+		if (shooting) {
+			shoot_rect.y -= 24;
+			if (shoot_rect.y < 0) {
+				shooting = FALSE;
+			}
+		}
+		
 		SDL_BlitSurface (images[IMG_GAMEAREA], NULL, game_buffer, NULL);
 		
 		/* Mover la nave a su nueva posición */
@@ -176,6 +198,9 @@ int game_loop (void) {
 			astro_rect.x += 5;
 		}
 		
+		if (shooting) {
+			SDL_BlitSurface (images[IMG_SHOOT], NULL, game_buffer, &shoot_rect);
+		}
 		SDL_BlitSurface (images[IMG_ASTRO], NULL, game_buffer, &astro_rect);
 		
 		/* TODO: Escalar el area de juego antes de copiarla a la pantalla */
