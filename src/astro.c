@@ -36,7 +36,16 @@
 #include <SDL.h>
 #include <SDL_image.h>
 
-#include "config.h"
+#include <stdint.h>
+#include <string.h>
+
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+
+#ifdef HAVE_CONFIG_H
+#	include "config.h"
+#endif
 
 #define FPS (1000/24)
 
@@ -66,6 +75,23 @@ enum {
 	
 	IMG_SHOOT,
 	
+	IMG_TARGET_NORMAL_BLUE,
+	IMG_TARGET_NORMAL_GREEN,
+	IMG_TARGET_NORMAL_YELLOW,
+	IMG_TARGET_NORMAL_RED,
+	
+	IMG_TARGET_MINI_BLUE,
+	IMG_TARGET_MINI_GREEN,
+	IMG_TARGET_MINI_YELLOW,
+	IMG_TARGET_MINI_RED,
+	
+	IMG_TARGET_BIG_BLUE,
+	IMG_TARGET_BIG_GREEN,
+	IMG_TARGET_BIG_YELLOW,
+	IMG_TARGET_BIG_RED,
+	
+	IMG_LINE1,
+	
 	NUM_IMAGES
 };
 
@@ -78,7 +104,24 @@ const char *images_names[NUM_IMAGES] = {
 	GAMEDATA_DIR "images/gamearea.png",
 	GAMEDATA_DIR "images/gameintro.png",
 	
-	GAMEDATA_DIR "images/shoot.png"
+	GAMEDATA_DIR "images/shoot.png",
+	
+	GAMEDATA_DIR "images/target_normal_blue.png",
+	GAMEDATA_DIR "images/target_normal_green.png",
+	GAMEDATA_DIR "images/target_normal_yellow.png",
+	GAMEDATA_DIR "images/target_normal_red.png",
+	
+	GAMEDATA_DIR "images/target_mini_blue.png",
+	GAMEDATA_DIR "images/target_mini_green.png",
+	GAMEDATA_DIR "images/target_mini_yellow.png",
+	GAMEDATA_DIR "images/target_mini_red.png",
+	
+	GAMEDATA_DIR "images/target_big_blue.png",
+	GAMEDATA_DIR "images/target_big_green.png",
+	GAMEDATA_DIR "images/target_big_yellow.png",
+	GAMEDATA_DIR "images/target_big_red.png",
+	
+	GAMEDATA_DIR "images/line1.png"
 };
 
 /* Codigos de salida */
@@ -89,19 +132,40 @@ enum {
 };
 
 /* Estructuras */
+typedef struct {
+	int version;
+	int total;
+	
+	int *levels;
+	off_t *positions;
+} InfoSet;
+
+typedef struct {
+	struct SDL_Rect rect;
+	int image;
+} Linea;
 
 /* Prototipos de función */
 int game_loop (void);
 void setup (void);
 SDL_Surface * set_video_mode(unsigned);
+void leer_archivo (void);
+void leer_nivel (int level, int *next_level, Linea *lineas, int *n_lineas);
 
 /* Variables globales */
 SDL_Surface * screen;
 SDL_Surface * images [NUM_IMAGES];
 
+int fd_levels;
+InfoSet levels;
+
+int nivel_actual;
+
 int main (int argc, char *argv[]) {
 	
 	setup ();
+	
+	leer_archivo ();
 	
 	do {
 		if (game_loop () == GAME_QUIT) break;
@@ -117,12 +181,18 @@ int game_loop (void) {
 	SDLKey key;
 	Uint32 last_time, now_time;
 	SDL_Rect rect;
+	int g;
 	
 	int astro_dir = 0;
 	SDL_Rect astro_rect;
 	SDL_Surface *game_buffer;
 	int shooting = FALSE;
 	SDL_Rect shoot_rect;
+	Linea lineas[10];
+	int n_lineas;
+	int sig_nivel;
+	
+	leer_nivel (nivel_actual, &sig_nivel, lineas, &n_lineas);
 	
 	shoot_rect.w = images[IMG_SHOOT]->w;
 	shoot_rect.h = images[IMG_SHOOT]->h;
@@ -184,12 +254,7 @@ int game_loop (void) {
 		
 		if (shooting) {
 			shoot_rect.y -= 24;
-			if (shoot_rect.y < 0) {
-				shooting = FALSE;
-			}
 		}
-		
-		SDL_BlitSurface (images[IMG_GAMEAREA], NULL, game_buffer, NULL);
 		
 		/* Mover la nave a su nueva posición */
 		if (astro_dir < 0 && astro_rect.x > 5) {
@@ -198,10 +263,25 @@ int game_loop (void) {
 			astro_rect.x += 5;
 		}
 		
+		/* Redibujar todo */
+		SDL_BlitSurface (images[IMG_GAMEAREA], NULL, game_buffer, NULL);
+		
+		/* Dibujar las lineas de fondo */
+		for (g = 0; g < n_lineas; g++) {
+			SDL_BlitSurface (images[lineas[g].image], NULL, game_buffer, (SDL_Rect *)&lineas[g]);
+		}
+		
 		if (shooting) {
+			if (shoot_rect.y < 0) {
+				shooting = FALSE;
+			}
 			SDL_BlitSurface (images[IMG_SHOOT], NULL, game_buffer, &shoot_rect);
 		}
+		
 		SDL_BlitSurface (images[IMG_ASTRO], NULL, game_buffer, &astro_rect);
+		
+		/* Redibujar el marco blanco por los objetos que se salen */
+		SDL_BlitSurface (images[IMG_FRAME], NULL, game_buffer, NULL);
 		
 		/* TODO: Escalar el area de juego antes de copiarla a la pantalla */
 		rect.x = GAME_AREA_X;
@@ -275,5 +355,92 @@ void setup (void) {
 	}
 	
 	srand (SDL_GetTicks ());
+}
+
+void leer_archivo (void) {
+	/* Intentar abrir el archivo */
+	uint32_t temp;
+	int g;
+	char buffer [6];
+	
+	fd_levels = open ("levels.bin", O_RDONLY);
+	
+	if (fd_levels < 0) {
+		fprintf (stderr, "Error al abrir el archivo de niveles.\n");
+		exit (EXIT_FAILURE);
+	}
+	
+	/* Leer la cabecera, y las posiciones de los niveles */
+	read (fd_levels, buffer, 5);
+	buffer[5] = '\0';
+	
+	if (strcmp (buffer, "ASTRO") != 0) {
+		fprintf (stderr, "Archivo inválido, cabecera inválida.\n");
+		close (fd_levels);
+		exit (EXIT_FAILURE);
+	}
+	
+	read (fd_levels, &temp, sizeof (uint32_t));
+	levels.version = temp;
+	
+	read (fd_levels, &temp, sizeof (uint32_t));
+	levels.total = temp;
+	
+	read (fd_levels, &temp, sizeof (uint32_t));
+	nivel_actual = temp;
+	
+	levels.levels = (int *) malloc (sizeof (int) * levels.total);
+	levels.positions = (off_t *) malloc (sizeof (off_t) * levels.total);
+	
+	for (g = 0; g < levels.total; g++) {
+		read (fd_levels, &temp, sizeof (uint32_t));
+		levels.levels[g] = temp;
+		
+		read (fd_levels, &levels.positions[g], sizeof (off_t));
+	}
+}
+
+void leer_nivel (int level, int *next_level, Linea *lineas, int *n_lineas) {
+	/* Brincar directo al nivel y leer la información */
+	int g;
+	off_t pos;
+	uint32_t temp;
+	
+	for (g = 0; g < levels.total; g++) {
+		if (levels.levels[g] == level) {
+			pos = levels.positions[g];
+			break;
+		}
+	}
+	
+	lseek (fd_levels, pos, SEEK_SET);
+	
+	read (fd_levels, &temp, sizeof (uint32_t));
+	
+	if (level != temp) {
+		/* No es el nivel correcto */
+		exit (EXIT_FAILURE);
+	}
+	
+	read (fd_levels, &temp, sizeof (uint32_t));
+	*next_level = temp;
+	
+	read (fd_levels, &temp, sizeof (uint32_t));
+	*n_lineas = (temp & 0xFF);
+	
+	for (g = 0; g < *n_lineas; g++) {
+		read (fd_levels, &temp, sizeof (uint32_t));
+		lineas[g].image = temp;
+		
+		read (fd_levels, &temp, sizeof (uint32_t));
+		lineas[g].rect.x = temp;
+		
+		read (fd_levels, &temp, sizeof (uint32_t));
+		lineas[g].rect.y = temp;
+		
+		/* Cargar su w y h */
+		lineas[g].rect.w = images[lineas[g].image]->w;
+		lineas[g].rect.h = images[lineas[g].image]->h;
+	}
 }
 

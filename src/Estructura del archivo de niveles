@@ -1,0 +1,45 @@
+[ASTRO] 5 bytes, la palabra ASTRO
+[uint32_t] 4 bytes con el número de versión del archivo
+[uint32_t] 4 bytes con la cantidad de niveles en el archivo
+
+[uint32_t] 4 bytes con el primer nivel
+
+Seguido por N niveles cada uno con:
+[uint32_t] Número de nivel
+
+El número de nivel se compone de:
+Bits	15-0 		Número de nivel
+Bit 	16   		Si el nivel es de explicación
+Bits	19-17		El número de nivel secreto
+Bits	31-20		Sin uso
+
+[off_t] Posición dentro del archivo donde se encuentra los datos del nivel
+
+Cada nivel contiene:
+	[uint32_t] Número de nivel
+	[uint32_t] El siguiente nivel
+	[uint32_t] Numero de objetos:
+
+	Bits	7-0  		Cantidad M de lineas u objetos de fondo
+	Bits	15-8 		Cantidad N de bloques
+	Bits	23-16		Cantidad O de objetos en movimiento
+	Bits	31-24		Sin uso
+
+Seguido de M de:
+	[uint32_t] id de objeto
+	[uint32_t] X
+	[uint32_t] Y
+
+Seguido de N de:
+	[uint32_t] id del bloque
+	[uint32_t] X
+	[uint32_t] Y
+
+Seguido de O de:
+	[uint32_t] id del target
+	[uint32_t] K puntos de movimiento
+	Seguido de K pares de:
+		[uint32_t] X
+		[uint32_t] Y
+		[uint32_t] Velocidad
+
