@@ -2,39 +2,57 @@
 1 /* Niveles*/
 1 /* El primer nivel */
 1 /* Número de nivel que describo */
--1 /* Siguiente nivel */
-4 /* Número de objetos de lineas */
-0 /* Número de bloques */
-4 /* Número de targets */
-18 /* Line 1*/
-4 /* X */
-56 /* Y */
-18 /* Line 2 */
-4 /* X */
-116 /* Y */
-18 /* Line 3 */
-4 /* X */
-176 /* Y */
-18 /* Line 4 */
-4 /* X */
-236 /* Y */
-7 /* Green Normal */
-1
-104 /* X */
-40 /* Y */
-0 /* Vel */
-7 /* Green Normal */
-1
-31 /* X */
-100 /* Y */
-0 /* Vel */
-7 /* Green Normal */
-1
-104 /* X */
-160 /* Y */
-0 /* Vel */
-7 /* Green Normal */
-1
-31 /* X */
-220 /* Y */
-0 /* Vel */
+	-1 /* Siguiente nivel */
+	4 /* Número de objetos de lineas */
+	0 /* Número de bloques */
+	4 /* Número de targets */
+	18 /* Line 1*/
+		4 /* X */
+		60 /* Y */
+	18 /* Line 2 */
+		4 /* X */
+		120 /* Y */
+	18 /* Line 3 */
+		4 /* X */
+		180 /* Y */
+	18 /* Line 4 */
+		4 /* X */
+		240 /* Y */
+	7 /* Green Normal */
+		3 /* Puntos */
+			105 /* X */
+			44 /* Y */
+			28 /* Vel */
+			312 /* X */
+			44 /* Y */
+			40 /* Vel */
+			16
+			44
+			12
+	7 /* Green Normal */
+		2
+			16 /* X */
+			104 /* Y */
+			40 /* Vel */
+			312
+			104
+			40
+	7 /* Green Normal */
+		3
+			105 /* X */
+			164 /* Y */
+			28 /* Vel */
+			312 /* X */
+			164 /* Y */
+			40 /* Vel */
+			16
+			164
+			12
+	7 /* Green Normal */
+		2
+			16 /* X */
+			224 /* Y */
+			40 /* Vel */
+			312
+			224
+			40

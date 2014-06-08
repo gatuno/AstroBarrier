@@ -47,9 +47,10 @@
 #	include "config.h"
 #endif
 
+#include "util-bresenham.h"
+
 #define FPS (1000/24)
 
-#define SWAP(a, b, t) ((t) = (a), (a) = (b), (b) = (t))
 #define RANDOM(x) ((int) (x ## .0 * rand () / (RAND_MAX + 1.0)))
 
 #ifndef FALSE
@@ -145,12 +146,20 @@ typedef struct {
 	int image;
 } Linea;
 
+typedef struct {
+	struct SDL_Rect rect;
+	int image;
+	int total_vel;
+	Punto puntos[200];
+	int pos;
+} Target;
+
 /* Prototipos de función */
 int game_loop (void);
 void setup (void);
 SDL_Surface * set_video_mode(unsigned);
 void leer_archivo (void);
-void leer_nivel (int level, int *next_level, Linea *lineas, int *n_lineas);
+void leer_nivel (int level, int *next_level, Linea *lineas, int *n_lineas, Target *targets, int *n_targets);
 
 /* Variables globales */
 SDL_Surface * screen;
@@ -181,7 +190,7 @@ int game_loop (void) {
 	SDLKey key;
 	Uint32 last_time, now_time;
 	SDL_Rect rect;
-	int g;
+	int g, *h;
 	
 	int astro_dir = 0;
 	SDL_Rect astro_rect;
@@ -190,9 +199,13 @@ int game_loop (void) {
 	SDL_Rect shoot_rect;
 	Linea lineas[10];
 	int n_lineas;
+	
+	Target targets[10];
+	int n_targets;
+	
 	int sig_nivel;
 	
-	leer_nivel (nivel_actual, &sig_nivel, lineas, &n_lineas);
+	leer_nivel (nivel_actual, &sig_nivel, lineas, &n_lineas, targets, &n_targets);
 	
 	shoot_rect.w = images[IMG_SHOOT]->w;
 	shoot_rect.h = images[IMG_SHOOT]->h;
@@ -269,6 +282,20 @@ int game_loop (void) {
 		/* Dibujar las lineas de fondo */
 		for (g = 0; g < n_lineas; g++) {
 			SDL_BlitSurface (images[lineas[g].image], NULL, game_buffer, (SDL_Rect *)&lineas[g]);
+		}
+		
+		/* Dibujar los bloques */
+		
+		/* Dibujar los targets */
+		for (g = 0; g < n_targets; g++) {
+			h = &targets[g].pos;
+			targets[g].rect.x = targets[g].puntos[*h].x;
+			targets[g].rect.y = targets[g].puntos[*h].y;
+			
+			(*h)++;
+			if (*h >= targets[g].total_vel) *h = 0;
+			
+			SDL_BlitSurface (images[targets[g].image], NULL, game_buffer, (SDL_Rect *)&targets[g]);
 		}
 		
 		if (shooting) {
@@ -400,11 +427,13 @@ void leer_archivo (void) {
 	}
 }
 
-void leer_nivel (int level, int *next_level, Linea *lineas, int *n_lineas) {
+void leer_nivel (int level, int *next_level, Linea *lineas, int *n_lineas, Target *targets, int *n_targets) {
 	/* Brincar directo al nivel y leer la información */
-	int g;
+	int g, h, i, k;
 	off_t pos;
 	uint32_t temp;
+	Punto puntos[20];
+	int tomar[20];
 	
 	for (g = 0; g < levels.total; g++) {
 		if (levels.levels[g] == level) {
@@ -428,6 +457,8 @@ void leer_nivel (int level, int *next_level, Linea *lineas, int *n_lineas) {
 	read (fd_levels, &temp, sizeof (uint32_t));
 	*n_lineas = (temp & 0xFF);
 	
+	*n_targets = (temp & 0xFF0000) >> 16;
+	
 	for (g = 0; g < *n_lineas; g++) {
 		read (fd_levels, &temp, sizeof (uint32_t));
 		lineas[g].image = temp;
@@ -441,6 +472,37 @@ void leer_nivel (int level, int *next_level, Linea *lineas, int *n_lineas) {
 		/* Cargar su w y h */
 		lineas[g].rect.w = images[lineas[g].image]->w;
 		lineas[g].rect.h = images[lineas[g].image]->h;
+	}
+	
+	for (g = 0; g < *n_targets; g++) {
+		read (fd_levels, &temp, sizeof (uint32_t));
+		targets[g].image = temp;
+		targets[g].rect.w = images[temp]->w;
+		targets[g].rect.h = images[temp]->h;
+		
+		read (fd_levels, &temp, sizeof (uint32_t));
+		k = temp;
+		
+		for (h = 0; h < k; h++) {
+			read (fd_levels, &temp, sizeof (uint32_t));
+			puntos[h].x = temp;
+			
+			read (fd_levels, &temp, sizeof (uint32_t));
+			puntos[h].y = temp;
+			
+			read (fd_levels, &temp, sizeof (uint32_t));
+			tomar[h] = temp;
+		}
+		
+		/* Ahora, utilizar la linea de bresenham para estimar los puntos intermedios */
+		i = 0;
+		for (h = 0; h < k; h++) {
+			line (puntos[h].x, puntos[h].y, puntos[(h + 1) % k].x, puntos[(h + 1) % k].y, &targets[g].puntos[i], tomar[h]);
+			i += tomar[h];
+		}
+		
+		targets[g].total_vel = i;
+		targets[g].pos = 0;
 	}
 }
 

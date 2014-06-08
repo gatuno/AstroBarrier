@@ -38,7 +38,7 @@ Seguido de N de:
 Seguido de O de:
 	[uint32_t] id del target
 	[uint32_t] K puntos de movimiento
-	Seguido de K pares de:
+	Seguido de K trios de:
 		[uint32_t] X
 		[uint32_t] Y
 		[uint32_t] Velocidad
