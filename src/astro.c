@@ -299,10 +299,12 @@ int game_loop (void) {
 		}
 		
 		if (shooting) {
-			if (shoot_rect.y < 0) {
+			if (shoot_rect.y < -56) {
 				shooting = FALSE;
 			}
-			SDL_BlitSurface (images[IMG_SHOOT], NULL, game_buffer, &shoot_rect);
+			if (shoot_rect.y >= 0) {
+				SDL_BlitSurface (images[IMG_SHOOT], NULL, game_buffer, &shoot_rect);
+			}
 		}
 		
 		SDL_BlitSurface (images[IMG_ASTRO], NULL, game_buffer, &astro_rect);
