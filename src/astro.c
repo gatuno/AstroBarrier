@@ -214,7 +214,7 @@ int game_loop (void) {
 	
 	int astro_dir = 0;
 	SDL_Rect astro_rect;
-	SDL_Surface *game_buffer;
+	SDL_Surface *game_buffer, *stretch_buffer;
 	int shooting = FALSE;
 	SDL_Rect shoot_rect;
 	Linea lineas[10];
@@ -246,6 +246,8 @@ int game_loop (void) {
 	
 	/* Quitarle el alpha, para que cuando se copie a la superficie no tenga problemas */
 	SDL_SetAlpha (images[IMG_GAMEAREA], 0, 0);
+	
+	stretch_buffer = SDL_AllocSurface (SDL_SWSURFACE, 263, 305, 32, 0x00FF0000, 0x0000FF00, 0x000000FF, 0xFF000000);
 	
 	SDL_EventState (SDL_MOUSEMOTION, SDL_IGNORE);
 	
@@ -366,14 +368,15 @@ int game_loop (void) {
 		/* Redibujar el marco blanco por los objetos que se salen */
 		SDL_BlitSurface (images[IMG_FRAME], NULL, game_buffer, NULL);
 		
-		/* TODO: Escalar el area de juego antes de copiarla a la pantalla */
-		rect.x = GAME_AREA_X;
-		//rect.y = GAME_AREA_Y; original
-		rect.y = 20;
-		rect.w = game_buffer->w;
-		rect.h = game_buffer->h;
+		/* Escalar el area de juego antes de copiarla a la pantalla */
+		SDL_StretchSurfaceBlit (game_buffer, NULL, stretch_buffer, NULL);
 		
-		SDL_BlitSurface (game_buffer, NULL, screen, &rect);
+		rect.x = GAME_AREA_X;
+		rect.y = GAME_AREA_Y;
+		rect.w = stretch_buffer->w;
+		rect.h = stretch_buffer->h;
+		
+		SDL_BlitSurface (stretch_buffer, NULL, screen, &rect);
 		
 		SDL_Flip (screen);
 		

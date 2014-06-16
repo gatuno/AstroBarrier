@@ -46,5 +46,7 @@ __attribute__((always_inline)) static inline int SDL_RectEmpty (const SDL_Rect *
 
 int SDL_HasIntersection (const SDL_Rect * A, const SDL_Rect * B);
 
+int SDL_StretchSurfaceBlit (SDL_Surface *src, SDL_Rect *srcrect, SDL_Surface *dst, SDL_Rect *dstrect);
+
 #endif /* __UTIL_BRESENHAM_H__ */
 

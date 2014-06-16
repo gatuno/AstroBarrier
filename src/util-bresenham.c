@@ -188,3 +188,125 @@ int SDL_HasIntersection (const SDL_Rect * A, const SDL_Rect * B) {
 	return TRUE;
 }
 
+#include "SDL_stretchcode.h"
+#include "SDL_stretchasm.h"
+
+/* Robado sínicamente desde la SDL_stretch */
+int SDL_StretchSurfaceBlit(SDL_Surface *src, SDL_Rect *srcrect,
+			   SDL_Surface *dst, SDL_Rect *dstrect) {
+	int i = 0;
+	int src_row, dst_row;
+	SDL_Rect rect;
+#     if defined SDL_STRETCH_USE_ASM
+	unsigned char* code = 0;
+#     endif
+	const int bpp = dst->format->BytesPerPixel;
+	auto int dest_w;
+	auto int dest_x;
+
+	if ( src->format->BitsPerPixel != dst->format->BitsPerPixel ) {
+		SDL_SetError("Only works with same format surfaces");
+		return(-1);
+	}
+
+	/* Verify the blit rectangles */
+	if ( srcrect ) {
+		if ( (srcrect->x < 0) || (srcrect->y < 0) ||
+		     ((srcrect->x+srcrect->w) > src->w) ||
+		     ((srcrect->y+srcrect->h) > src->h) ) {
+			SDL_SetError("Invalid source blit rectangle");
+			return(-1);
+		}
+	} else {
+		rect.x = 0;
+		rect.y = 0;
+		rect.w = src->w;
+		rect.h = src->h;
+		srcrect = &rect;
+	}
+
+        dest_w = srcrect->w * dst->w / src->w;
+        dest_x = srcrect->x * dst->w / src->w;
+
+#      ifdef SDL_STRETCH_USE_ASM
+	/* Write the opcodes for this stretch */
+	/* if ( (bpp != 3) */
+	code = SDL_SetRowStretchCode(srcrect->w, dest_w, bpp);
+#      endif
+
+
+	/*if (PRERUN)   // let the compiler do the dead-code removal 
+	{   // Pre-Run the stretch blit (the invisible lines) 
+	    src_row = 0;
+	    dst_row = 0;
+	    while (1)
+	    {
+		if (src_row >= srcrect->y) break;
+		dst_row++; i += src->h;
+		if (i < dst->h) continue;
+		do { i -= dst->h; src_row++; } while (i >= dst->h);
+	    }
+	}else */
+	{   /* or compute the resulting dst_row and i-fraction directly: */
+	    src_row = srcrect->y;
+	    dst_row = ((src_row * dst->h)+(src->h-1)) / src->h;
+	    i = (dst_row * src->h - src_row * dst->h ) % dst->h;
+	    if (i < 0) i += dst->h;
+	}
+
+	if (dstrect) { /*returnvalue*/
+	    dstrect->y = dst_row;
+	    dstrect->x = dest_x;
+	    dstrect->w = dest_w;
+	}
+
+
+	while (src_row < srcrect->y + srcrect->h)
+	{
+	    Uint8 *srcp, *dstp;
+	    srcp = (Uint8 *)src->pixels
+	        + (src_row*src->pitch)
+		+ (srcrect->x*bpp);
+	draw:
+	    dstp = (Uint8 *)dst->pixels
+	        + (dst_row*dst->pitch)
+		+ (dest_x*bpp);
+#          ifdef SDL_STRETCH_USE_ASM
+	    if (code)
+	    {
+#               ifdef SDL_STRETCH_CALL
+                SDL_STRETCH_CALL(code, srcp, dstp);
+#               else
+                SDL_RunRowStretchCode(code, srcp, dstp);
+#               endif
+	    }else
+#          endif /*USE_ASM*/
+	    {
+		switch (bpp) {
+		case 1:
+		    SDL_StretchRow1(srcp, srcrect->w, dstp, dest_w);
+		    break;
+		case 2:
+		    SDL_StretchRow2((Uint16 *)srcp, srcrect->w,
+				    (Uint16 *)dstp, dest_w);
+		    break;
+		case 3:
+		    SDL_StretchRow3(srcp, srcrect->w, dstp, dest_w);
+		    break;
+		case 4:
+		    SDL_StretchRow4((Uint32 *)srcp, srcrect->w,
+				    (Uint32 *)dstp, dest_w);
+		    break;
+		}
+	    }
+
+	    dst_row++; i += src->h;
+	    if (dst_row == dst->h) break; /*oops*/
+	    if (i < dst->h) goto draw; /* draw the line again */
+	    do { i -= dst->h; src_row++; } while (i >= dst->h);
+	}
+
+	if (dstrect) dstrect->h = dst_row - dstrect->y; /*returnvalue*/
+
+	return(0);
+}
