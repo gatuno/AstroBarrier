@@ -183,6 +183,12 @@ int main (int argc, char *argv[]) {
 		for (h = 0; h < o; h++) {
 			/* ID del Target */
 			fgets (buffer, sizeof (buffer), fd_entrada);
+			sscanf (buffer, "%i", &temp);
+			out = temp;
+			
+			write (fd, &out, sizeof (uint32_t));
+			
+			fgets (buffer, sizeof (buffer), fd_entrada);
 			sscanf (buffer, "%i", &k);
 			out = k;
 			

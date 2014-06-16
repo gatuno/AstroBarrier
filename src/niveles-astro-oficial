@@ -1,21 +1,21 @@
 0 /* Versión del archivo*/
-1 /* Niveles*/
+2 /* Niveles*/
 1 /* El primer nivel */
 1 /* Número de nivel que describo */
-	-1 /* Siguiente nivel */
+	2 /* Siguiente nivel */
 	4 /* Número de objetos de lineas */
 	0 /* Número de bloques */
 	4 /* Número de targets */
-	18 /* Line 1*/
+	22 /* Line 1*/
 		4 /* X */
 		60 /* Y */
-	18 /* Line 2 */
+	22 /* Line 1 */
 		4 /* X */
 		120 /* Y */
-	18 /* Line 3 */
+	22 /* Line 1 */
 		4 /* X */
 		180 /* Y */
-	18 /* Line 4 */
+	22 /* Line 1 */
 		4 /* X */
 		240 /* Y */
 	7 /* Green Normal */
@@ -56,3 +56,21 @@
 			312
 			224
 			40
+2 /* El nivel que describo */
+	-1 /* Siguiente nivel */
+	3 /* Lineas */
+	1 /* 1 bloque */
+	0 /* 3 Targets */
+	23 /* Linea 2A */
+		8  /* X */
+		40 /* Y */
+	22 /* Linea 1 */
+		4  /* X */
+		152 /* Y */
+	24 /* Linea 2B */
+		8   /* X */
+		208 /* Y */
+	18 /* Bloque normal */
+		156 /* X */
+		248 /* Y */
+

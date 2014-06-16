@@ -151,3 +151,40 @@ void line (int x1, int y1, int x2, int y2, Punto *puntos, int vel) {
 	}
 }
 
+int SDL_HasIntersection (const SDL_Rect * A, const SDL_Rect * B) {
+	int Amin, Amax, Bmin, Bmax;
+
+	if (!A) {
+		return FALSE;
+	}
+
+	if (!B) {
+		return FALSE;
+	}
+
+	/* Special cases for empty rects */
+	if (SDL_RectEmpty(A) || SDL_RectEmpty(B)) {
+		return FALSE;
+	}
+
+	/* Horizontal intersection */
+	Amin = A->x;
+	Amax = Amin + A->w;
+	Bmin = B->x;
+	Bmax = Bmin + B->w;
+	if (Bmin > Amin) Amin = Bmin;
+	if (Bmax < Amax) Amax = Bmax;
+	if (Amax <= Amin) return FALSE;
+
+	/* Vertical intersection */
+	Amin = A->y;
+	Amax = Amin + A->h;
+	Bmin = B->y;
+	Bmax = Bmin + B->h;
+	if (Bmin > Amin) Amin = Bmin;
+	if (Bmax < Amax) Amax = Bmax;
+	if (Amax <= Amin) return FALSE;
+
+	return TRUE;
+}
+

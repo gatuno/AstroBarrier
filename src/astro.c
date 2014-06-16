@@ -53,14 +53,6 @@
 
 #define RANDOM(x) ((int) (x ## .0 * rand () / (RAND_MAX + 1.0)))
 
-#ifndef FALSE
-#define FALSE 0
-#endif
-
-#ifndef TRUE
-#define TRUE !FALSE
-#endif
-
 #define GAME_AREA_X 250
 #define GAME_AREA_Y 79
 
@@ -91,7 +83,15 @@ enum {
 	IMG_TARGET_BIG_YELLOW,
 	IMG_TARGET_BIG_RED,
 	
+	IMG_BLOCK_NORMAL,
+	IMG_BLOCK_MINI,
+	IMG_BLOCK_BIG,
+	
+	IMG_BLOCK_ORANGE,
+	
 	IMG_LINE1,
+	IMG_LINE2_A,
+	IMG_LINE2_B,
 	
 	NUM_IMAGES
 };
@@ -122,7 +122,15 @@ const char *images_names[NUM_IMAGES] = {
 	GAMEDATA_DIR "images/target_big_yellow.png",
 	GAMEDATA_DIR "images/target_big_red.png",
 	
-	GAMEDATA_DIR "images/line1.png"
+	GAMEDATA_DIR "images/block_normal.png",
+	GAMEDATA_DIR "images/block_normal.png",
+	GAMEDATA_DIR "images/block_normal.png",
+	
+	GAMEDATA_DIR "images/block_normal.png",
+	
+	GAMEDATA_DIR "images/line1.png",
+	GAMEDATA_DIR "images/line2a.png",
+	GAMEDATA_DIR "images/line2b.png"
 };
 
 /* Codigos de salida */
@@ -152,14 +160,20 @@ typedef struct {
 	int total_vel;
 	Punto puntos[200];
 	int pos;
+	int detenido;
 } Target;
+
+typedef struct {
+	struct SDL_Rect rect;
+	int image;
+} Bloque;
 
 /* Prototipos de función */
 int game_loop (void);
 void setup (void);
 SDL_Surface * set_video_mode(unsigned);
 void leer_archivo (void);
-void leer_nivel (int level, int *next_level, Linea *lineas, int *n_lineas, Target *targets, int *n_targets);
+void leer_nivel (int level, int *next_level, Linea *lineas, int *n_lineas, Target *targets, int *n_targets, Bloque *bloques, int *n_bloques);
 
 /* Variables globales */
 SDL_Surface * screen;
@@ -203,9 +217,13 @@ int game_loop (void) {
 	Target targets[10];
 	int n_targets;
 	
-	int sig_nivel;
+	Bloque bloques[10];
+	int n_bloques;
 	
-	leer_nivel (nivel_actual, &sig_nivel, lineas, &n_lineas, targets, &n_targets);
+	int sig_nivel;
+	nivel_actual = 2;
+	
+	leer_nivel (nivel_actual, &sig_nivel, lineas, &n_lineas, targets, &n_targets, bloques, &n_bloques);
 	
 	shoot_rect.w = images[IMG_SHOOT]->w;
 	shoot_rect.h = images[IMG_SHOOT]->h;
@@ -248,7 +266,7 @@ int game_loop (void) {
 					if (key == SDLK_SPACE && !shooting) {
 						shooting = TRUE;
 						shoot_rect.x = astro_rect.x + 22;
-						shoot_rect.y = astro_rect.y + 4;
+						shoot_rect.y = astro_rect.y + 8;
 					}
 					break;
 				case SDL_KEYUP:
@@ -265,8 +283,27 @@ int game_loop (void) {
 			}
 		}
 		
+		/* Mover los objetivos */
+		for (g = 0; g < n_targets; g++) {
+			h = &targets[g].pos;
+			targets[g].rect.x = targets[g].puntos[*h].x;
+			targets[g].rect.y = targets[g].puntos[*h].y;
+		}
+		
 		if (shooting) {
-			shoot_rect.y -= 24;
+			/* Verificar colisiones */
+			for (g = 0; g < n_targets; g++) {
+				if (SDL_HasIntersection (&shoot_rect, (SDL_Rect *)&targets[g])) {
+					if (!targets[g].detenido && (targets[g].image == IMG_TARGET_NORMAL_GREEN || targets[g].image == IMG_TARGET_MINI_GREEN || targets[g].image == IMG_TARGET_BIG_GREEN)) {
+						targets[g].detenido = TRUE;
+						targets[g].image += 2; /* Cambiar a rojo */
+						/* Aumentar el hit counter */
+						/* Para los verdes, sumar 10 puntos de score */
+						/* TODO: Reproducir sonido */
+					}
+					shooting = FALSE;
+				}
+			}
 		}
 		
 		/* Mover la nave a su nueva posición */
@@ -285,25 +322,28 @@ int game_loop (void) {
 		}
 		
 		/* Dibujar los bloques */
+		for (g = 0; g < n_bloques; g++) {
+			SDL_BlitSurface (images[bloques[g].image], NULL, game_buffer, (SDL_Rect *)&bloques[g]);
+		}
 		
 		/* Dibujar los targets */
 		for (g = 0; g < n_targets; g++) {
-			h = &targets[g].pos;
-			targets[g].rect.x = targets[g].puntos[*h].x;
-			targets[g].rect.y = targets[g].puntos[*h].y;
-			
-			(*h)++;
-			if (*h >= targets[g].total_vel) *h = 0;
-			
 			SDL_BlitSurface (images[targets[g].image], NULL, game_buffer, (SDL_Rect *)&targets[g]);
+			if (!targets[g].detenido) {
+				targets[g].pos++;
+				if (targets[g].pos >= targets[g].total_vel) targets[g].pos = 0;
+			}
 		}
 		
 		if (shooting) {
-			if (shoot_rect.y < -56) {
-				shooting = FALSE;
-			}
 			if (shoot_rect.y >= 0) {
 				SDL_BlitSurface (images[IMG_SHOOT], NULL, game_buffer, &shoot_rect);
+			}
+			
+			shoot_rect.y -= 24;
+			
+			if (shoot_rect.y < -56) {
+				shooting = FALSE;
 			}
 		}
 		
@@ -429,7 +469,7 @@ void leer_archivo (void) {
 	}
 }
 
-void leer_nivel (int level, int *next_level, Linea *lineas, int *n_lineas, Target *targets, int *n_targets) {
+void leer_nivel (int level, int *next_level, Linea *lineas, int *n_lineas, Target *targets, int *n_targets, Bloque *bloques, int *n_bloques) {
 	/* Brincar directo al nivel y leer la información */
 	int g, h, i, k;
 	off_t pos;
@@ -458,7 +498,7 @@ void leer_nivel (int level, int *next_level, Linea *lineas, int *n_lineas, Targe
 	
 	read (fd_levels, &temp, sizeof (uint32_t));
 	*n_lineas = (temp & 0xFF);
-	
+	*n_bloques = (temp & 0xFF00) >> 8;
 	*n_targets = (temp & 0xFF0000) >> 16;
 	
 	for (g = 0; g < *n_lineas; g++) {
@@ -474,6 +514,21 @@ void leer_nivel (int level, int *next_level, Linea *lineas, int *n_lineas, Targe
 		/* Cargar su w y h */
 		lineas[g].rect.w = images[lineas[g].image]->w;
 		lineas[g].rect.h = images[lineas[g].image]->h;
+	}
+	
+	for (g = 0; g < *n_bloques; g++) {
+		read (fd_levels, &temp, sizeof (uint32_t));
+		bloques[g].image = temp;
+		
+		read (fd_levels, &temp, sizeof (uint32_t));
+		bloques[g].rect.x = temp;
+		
+		read (fd_levels, &temp, sizeof (uint32_t));
+		bloques[g].rect.y = temp;
+		
+		/* Cargar su w y h */
+		bloques[g].rect.w = images[bloques[g].image]->w;
+		bloques[g].rect.h = images[bloques[g].image]->h;
 	}
 	
 	for (g = 0; g < *n_targets; g++) {
@@ -505,6 +560,8 @@ void leer_nivel (int level, int *next_level, Linea *lineas, int *n_lineas, Targe
 		
 		targets[g].total_vel = i;
 		targets[g].pos = 0;
+		targets[g].detenido = FALSE;
 	}
 }
+
 

@@ -21,14 +21,30 @@
 #ifndef __UTIL_BRESENHAM_H__
 #define __UTIL_BRESENHAM_H__
 
+#include <SDL.h>
+
+#ifndef FALSE
+#define FALSE 0
+#endif
+
+#ifndef TRUE
+#define TRUE !FALSE
+#endif
+
+#define SWAP(a, b, t) ((t) = (a), (a) = (b), (b) = (t))
+
 /* Definición de un Punto */
 typedef struct {
 	int x, y;
 } Punto;
 
-#define SWAP(a, b, t) ((t) = (a), (a) = (b), (b) = (t))
-
 void line (int x1, int y1, int x2, int y2, Punto *puntos, int vel);
+
+__attribute__((always_inline)) static inline int SDL_RectEmpty (const SDL_Rect *r) {
+	return ((!r) || (r->w <= 0) || (r->h <= 0)) ? TRUE : FALSE;
+}
+
+int SDL_HasIntersection (const SDL_Rect * A, const SDL_Rect * B);
 
 #endif /* __UTIL_BRESENHAM_H__ */
 
