@@ -92,6 +92,9 @@ enum {
 	IMG_LINE1,
 	IMG_LINE2_A,
 	IMG_LINE2_B,
+	IMG_LINE3,
+	IMG_LINE4,
+	IMG_LINE5,
 	
 	NUM_IMAGES
 };
@@ -124,13 +127,16 @@ const char *images_names[NUM_IMAGES] = {
 	
 	GAMEDATA_DIR "images/block_normal.png",
 	GAMEDATA_DIR "images/block_normal.png",
-	GAMEDATA_DIR "images/block_normal.png",
+	GAMEDATA_DIR "images/block_big.png",
 	
 	GAMEDATA_DIR "images/block_normal.png",
 	
 	GAMEDATA_DIR "images/line1.png",
 	GAMEDATA_DIR "images/line2a.png",
-	GAMEDATA_DIR "images/line2b.png"
+	GAMEDATA_DIR "images/line2b.png",
+	GAMEDATA_DIR "images/line3.png",
+	GAMEDATA_DIR "images/line4.png",
+	GAMEDATA_DIR "images/line5.png"
 };
 
 /* Codigos de salida */
@@ -291,7 +297,7 @@ int game_loop (void) {
 		}
 		
 		if (shooting) {
-			/* Verificar colisiones */
+			/* Verificar colisiones contra los targets */
 			for (g = 0; g < n_targets; g++) {
 				if (SDL_HasIntersection (&shoot_rect, (SDL_Rect *)&targets[g])) {
 					if (!targets[g].detenido && (targets[g].image == IMG_TARGET_NORMAL_GREEN || targets[g].image == IMG_TARGET_MINI_GREEN || targets[g].image == IMG_TARGET_BIG_GREEN)) {
@@ -304,6 +310,14 @@ int game_loop (void) {
 					shooting = FALSE;
 				}
 			}
+			
+			/* Verificar colisiones contra los bloques */
+			for (g = 0; g < n_bloques; g++) {
+				if (SDL_HasIntersection (&shoot_rect, (SDL_Rect *)&bloques[g])) {
+					shooting = FALSE;
+				}
+			}
+			
 		}
 		
 		/* Mover la nave a su nueva posición */
