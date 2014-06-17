@@ -1,3 +1,7 @@
+Versiones:
+Versión 0, inicial
+Versión 1, se agrega las balas por nivel y hits requeridos por nivel
+
 [ASTRO] 5 bytes, la palabra ASTRO
 [uint32_t] 4 bytes con el número de versión del archivo
 [uint32_t] 4 bytes con la cantidad de niveles en el archivo
@@ -18,6 +22,8 @@ Bits	31-20		Sin uso
 Cada nivel contiene:
 	[uint32_t] Número de nivel
 	[uint32_t] El siguiente nivel
+	[uint32_t] Balas por este nivel /* Agregado en Revisión 1 */
+	[uint32_t] Hits requeridos en este nivel /* Agregado en Revisión 1 */
 	[uint32_t] Numero de objetos:
 
 	Bits	7-0  		Cantidad M de lineas u objetos de fondo

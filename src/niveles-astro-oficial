@@ -1,8 +1,12 @@
-0 /* Versión del archivo*/
+1 /* Versión del archivo*/
 5 /* Niveles*/
 1 /* El primer nivel */
 1 /* Número de nivel que describo */
+	0 /* No es de explicación */
+	0 /* No está en algún paquete secreto */
 	2 /* Siguiente nivel */
+	8 /* Balas de este nivel */
+	4 /* Hits requeridos */
 	4 /* Número de objetos de lineas */
 	0 /* Número de bloques */
 	4 /* Número de targets */
@@ -57,7 +61,11 @@
 			224
 			40
 2 /* El nivel que describo */
+	0 /* No es de explicación */
+	0 /* No está en algún paquete secreto */
 	3 /* Siguiente nivel */
+	7 /* Balas de este nivel */
+	3 /* Hits requeridos */
 	3 /* Lineas */
 	1 /* 1 bloque */
 	3 /* 3 Targets */
@@ -146,7 +154,11 @@
 			244
 			6
 3 /* El nivel que describo */
+	0 /* No es de explicación */
+	0 /* No está en algún paquete secreto */
 	4 /* Siguiente nivel */
+	7 /* Balas de este nivel */
+	3 /* Hits requeridos */
 	3 /* Lineas */
 	0 /* 0 bloques */
 	3 /* 3 Targets */
@@ -187,7 +199,11 @@
 			232
 			60
 4 /* El nivel */
+	0 /* No es de explicación */
+	0 /* No está en algún paquete secreto */
 	5 /* Siguiente nivel */
+	9 /* Balas de este nivel */
+	3 /* Hits requeridos */
 	3 /* Lineas */
 	2 /* 2 Bloques */
 	3 /* Targets */
@@ -234,7 +250,11 @@
 			284
 			40
 5 /* El nivel */
+	0 /* No es de explicación */
+	0 /* No está en algún paquete secreto */
 	6 /* El siguiente nivel */
+	5 /* Balas de este nivel */
+	2 /* Hits requeridos */
 	2 /* Lineas */
 	2 /* Bloques */
 	2 /* 2 Targets */

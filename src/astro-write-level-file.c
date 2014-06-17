@@ -107,13 +107,47 @@ int main (int argc, char *argv[]) {
 		
 		fgets (buffer, sizeof (buffer), fd_entrada);
 		sscanf (buffer, "%i", &temp);
+		
+		fgets (buffer, sizeof (buffer), fd_entrada);
+printf ("Debug, Si es explicación RAW: %s", buffer);
+		sscanf (buffer, "%i", &temp2);
+		
+		fgets (buffer, sizeof (buffer), fd_entrada);
+printf ("Debug, Paquete del nivel secreto RAW: %s", buffer);
+		sscanf (buffer, "%i", &temp3);
+		
+		/* Recortar los bits sobrantes */
+		temp = temp & 0xFFFF;
+		temp2 = temp2 & 0x01;
+		temp3 = temp3 & 0x07;
+		
+		temp = (temp3 << 17) | (temp2 << 16) | temp;
+		
+		printf ("Depuración: Leo el número de nivel: %i\n", temp);
 		arr_niveles[g] = temp;
 		write (fd, &arr_niveles[g], sizeof (uint32_t));
 		
 		/* Leer el siguiente nivel */
 		fgets (buffer, sizeof (buffer), fd_entrada);
+printf ("Debug, RAW: %s", buffer);
 		sscanf (buffer, "%i", &temp);
 		out = temp;
+		printf ("Depuración: El siguiente nivel debería ser: %i\n", temp);
+		write (fd, &out, sizeof (uint32_t));
+		
+		/* Leer las balas y hits requeridos */
+		fgets (buffer, sizeof (buffer), fd_entrada);
+printf ("Debug, RAW: %s", buffer);
+		sscanf (buffer, "%i", &temp);
+		out = temp;
+		printf ("Depuración, las balas para este nivel son: %i\n", temp);
+		write (fd, &out, sizeof (uint32_t));
+		
+		fgets (buffer, sizeof (buffer), fd_entrada);
+printf ("Debug, RAW: %s", buffer);
+		sscanf (buffer, "%i", &temp);
+		out = temp;
+		printf ("Depuración, los hits requeridos para este nivel son: %i\n", temp);
 		write (fd, &out, sizeof (uint32_t));
 		
 		/* Leer los objetos por nivel */
@@ -284,6 +318,14 @@ int main (int argc, char *argv[]) {
 		temp = out;
 		
 		printf ("\tEl siguiente nivel es: %i\n", temp);
+		
+		read (fd, &out, sizeof (uint32_t));
+		temp = out;
+		printf ("\tLas balas para este nivel son: %i\n", temp);
+		
+		read (fd, &out, sizeof (uint32_t));
+		temp = out;
+		printf ("\tLos hits requeridos para este nivel son: %i\n", temp);
 		
 		read (fd, &out, sizeof (uint32_t));
 		m = (out & 0xFF);

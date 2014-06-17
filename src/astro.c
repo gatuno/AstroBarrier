@@ -179,7 +179,7 @@ int game_loop (void);
 void setup (void);
 SDL_Surface * set_video_mode(unsigned);
 void leer_archivo (void);
-void leer_nivel (int level, int *next_level, Linea *lineas, int *n_lineas, Target *targets, int *n_targets, Bloque *bloques, int *n_bloques);
+void leer_nivel (int level, int *next_level, int *shoots, int *hitsrequired, Linea *lineas, int *n_lineas, Target *targets, int *n_targets, Bloque *bloques, int *n_bloques);
 
 /* Variables globales */
 SDL_Surface * screen;
@@ -229,7 +229,9 @@ int game_loop (void) {
 	int sig_nivel;
 	nivel_actual = 2;
 	
-	leer_nivel (nivel_actual, &sig_nivel, lineas, &n_lineas, targets, &n_targets, bloques, &n_bloques);
+	int tiros, hits_requeridos;
+	
+	leer_nivel (nivel_actual, &sig_nivel, &tiros, &hits_requeridos, lineas, &n_lineas, targets, &n_targets, bloques, &n_bloques);
 	
 	shoot_rect.w = images[IMG_SHOOT]->w;
 	shoot_rect.h = images[IMG_SHOOT]->h;
@@ -469,6 +471,13 @@ void leer_archivo (void) {
 	read (fd_levels, &temp, sizeof (uint32_t));
 	levels.version = temp;
 	
+	if (temp != 1) {
+		/* Archivo incompleto */
+		fprintf (stderr, "Versión del archivo de niveles incorrecto.\n");
+		close (fd_levels);
+		exit (EXIT_FAILURE);
+	}
+	
 	read (fd_levels, &temp, sizeof (uint32_t));
 	levels.total = temp;
 	
@@ -486,7 +495,7 @@ void leer_archivo (void) {
 	}
 }
 
-void leer_nivel (int level, int *next_level, Linea *lineas, int *n_lineas, Target *targets, int *n_targets, Bloque *bloques, int *n_bloques) {
+void leer_nivel (int level, int *next_level, int *shoots, int *hitsrequired, Linea *lineas, int *n_lineas, Target *targets, int *n_targets, Bloque *bloques, int *n_bloques) {
 	/* Brincar directo al nivel y leer la información */
 	int g, h, i, k;
 	off_t pos;
@@ -512,6 +521,12 @@ void leer_nivel (int level, int *next_level, Linea *lineas, int *n_lineas, Targe
 	
 	read (fd_levels, &temp, sizeof (uint32_t));
 	*next_level = temp;
+	
+	read (fd_levels, &temp, sizeof (uint32_t));
+	*shoots = temp;
+	
+	read (fd_levels, &temp, sizeof (uint32_t));
+	*hitsrequired = temp;
 	
 	read (fd_levels, &temp, sizeof (uint32_t));
 	*n_lineas = (temp & 0xFF);
