@@ -96,6 +96,9 @@ enum {
 	IMG_LINE4,
 	IMG_LINE5,
 	
+	IMG_NEXT_LEVEL,
+	IMG_RESTART,
+	
 	NUM_IMAGES
 };
 
@@ -136,7 +139,10 @@ const char *images_names[NUM_IMAGES] = {
 	GAMEDATA_DIR "images/line2b.png",
 	GAMEDATA_DIR "images/line3.png",
 	GAMEDATA_DIR "images/line4.png",
-	GAMEDATA_DIR "images/line5.png"
+	GAMEDATA_DIR "images/line5.png",
+	
+	GAMEDATA_DIR "images/next_level.png",
+	GAMEDATA_DIR "images/restart.png"
 };
 
 /* Codigos de salida */
@@ -144,6 +150,13 @@ enum {
 	GAME_NONE = 0, /* No usado */
 	GAME_CONTINUE,
 	GAME_QUIT
+};
+
+/* Las posibles dos pantallas abiertas */
+enum {
+	SCREEN_NONE = 0,
+	SCREEN_NEXT_LEVEL,
+	SCREEN_RESTART
 };
 
 /* Estructuras */
@@ -215,24 +228,22 @@ int game_loop (void) {
 	int astro_dir = 0;
 	SDL_Rect astro_rect;
 	SDL_Surface *game_buffer, *stretch_buffer;
-	int shooting = FALSE;
+	int shooting = FALSE, space_toggle = FALSE;
 	SDL_Rect shoot_rect;
-	Linea lineas[10];
-	int n_lineas;
 	
-	Target targets[10];
-	int n_targets;
-	
-	Bloque bloques[10];
-	int n_bloques;
-	
+	int n_lineas, n_targets, n_bloques;
+	int tiros, hits_requeridos, contador_hits, refresh_tiros;
 	int sig_nivel;
-	nivel_actual = 2;
+	int pantalla_abierta = 0, timer_pantalla;
 	
-	int tiros, hits_requeridos;
+	Linea lineas[10];
+	Target targets[10];
+	Bloque bloques[10];
+	nivel_actual = 1;
 	
 	leer_nivel (nivel_actual, &sig_nivel, &tiros, &hits_requeridos, lineas, &n_lineas, targets, &n_targets, bloques, &n_bloques);
-	
+	contador_hits = 0;
+	refresh_tiros = TRUE;
 	shoot_rect.w = images[IMG_SHOOT]->w;
 	shoot_rect.h = images[IMG_SHOOT]->h;
 	
@@ -244,12 +255,13 @@ int game_loop (void) {
 	SDL_BlitSurface (images[IMG_ARCADE], NULL, screen, NULL);
 	
 	/* En esta situación tan especial, necesito varios buffers intermedios */
-	game_buffer = SDL_AllocSurface (SDL_SWSURFACE, images[IMG_GAMEAREA]->w, images[IMG_GAMEAREA]->h, 32, 0x00FF0000, 0x0000FF00, 0x000000FF, 0xFF000000);
+	game_buffer = SDL_AllocSurface (SDL_SWSURFACE, images[IMG_GAMEAREA]->w, images[IMG_GAMEAREA]->h + 52, 32, 0x00FF0000, 0x0000FF00, 0x000000FF, 0xFF000000);
+	SDL_FillRect (game_buffer, NULL, 0); /* Transparencia total */
 	
 	/* Quitarle el alpha, para que cuando se copie a la superficie no tenga problemas */
 	SDL_SetAlpha (images[IMG_GAMEAREA], 0, 0);
 	
-	stretch_buffer = SDL_AllocSurface (SDL_SWSURFACE, 263, 305, 32, 0x00FF0000, 0x0000FF00, 0x000000FF, 0xFF000000);
+	stretch_buffer = SDL_AllocSurface (SDL_SWSURFACE, 263, 305 + 36, 32, 0x00FF0000, 0x0000FF00, 0x000000FF, 0xFF000000);
 	
 	SDL_EventState (SDL_MOUSEMOTION, SDL_IGNORE);
 	
@@ -267,16 +279,10 @@ int game_loop (void) {
 					
 					if (key == SDLK_LEFT) {
 						astro_dir--;
-					}
-					
-					if (key == SDLK_RIGHT) {
+					} else if (key == SDLK_RIGHT) {
 						astro_dir++;
-					}
-					
-					if (key == SDLK_SPACE && !shooting) {
-						shooting = TRUE;
-						shoot_rect.x = astro_rect.x + 22;
-						shoot_rect.y = astro_rect.y + 8;
+					} else if (key == SDLK_SPACE) {
+						space_toggle = TRUE;
 					}
 					break;
 				case SDL_KEYUP:
@@ -284,13 +290,22 @@ int game_loop (void) {
 					
 					if (key == SDLK_LEFT) {
 						astro_dir++;
+					} else if (key == SDLK_RIGHT) {
+						astro_dir--;
+					} else if (key == SDLK_SPACE) {
+						space_toggle = FALSE;
 					}
 					
-					if (key == SDLK_RIGHT) {
-						astro_dir--;
-					}
 					break;
 			}
+		}
+		
+		if (space_toggle && !shooting && !pantalla_abierta) {
+			shooting = TRUE;
+			shoot_rect.x = astro_rect.x + 22;
+			shoot_rect.y = astro_rect.y + 8;
+			tiros--;
+			refresh_tiros = TRUE;
 		}
 		
 		/* Mover los objetivos */
@@ -307,7 +322,7 @@ int game_loop (void) {
 					if (!targets[g].detenido && (targets[g].image == IMG_TARGET_NORMAL_GREEN || targets[g].image == IMG_TARGET_MINI_GREEN || targets[g].image == IMG_TARGET_BIG_GREEN)) {
 						targets[g].detenido = TRUE;
 						targets[g].image += 2; /* Cambiar a rojo */
-						/* Aumentar el hit counter */
+						contador_hits++;
 						/* Para los verdes, sumar 10 puntos de score */
 						/* TODO: Reproducir sonido */
 					}
@@ -322,6 +337,20 @@ int game_loop (void) {
 				}
 			}
 			
+		}
+		
+		if (!pantalla_abierta && contador_hits >= hits_requeridos) {
+			/* Nivel terminado, hay que abrir la pantalla de siguiente nivel */
+			pantalla_abierta = SCREEN_NEXT_LEVEL;
+			timer_pantalla = 0;
+			tiros = 0;
+			refresh_tiros = TRUE;
+			printf ("Debug: Ganaste, siguiente nivel\n");
+		} else if (!pantalla_abierta && tiros == 0 && !shooting) {
+			/* Se acabaron los tiros, reiniciar el nivel */
+			pantalla_abierta = SCREEN_RESTART;
+			timer_pantalla = 0;
+			printf ("Debug: Tiros acabados, reiniciando nivel\n");
 		}
 		
 		/* Mover la nave a su nueva posición */
@@ -365,6 +394,64 @@ int game_loop (void) {
 			}
 		}
 		
+		/* Redibujar la cantidad de tiros */
+		if (refresh_tiros) {
+			/* Borrar el area debajo de la zona de juego */
+			rect.x = GAME_AREA_X;
+			rect.y = GAME_AREA_Y + 305;
+			rect.w = 144;
+			rect.h = 36;
+			SDL_BlitSurface (images[IMG_ARCADE], &rect, screen, &rect);
+			
+			printf ("Debug: Refrescando tiros\n");
+			/* Borrar la parte de abajo de los tiros */
+			rect.x = 0;
+			rect.y = 436;
+			rect.w = 205;
+			rect.h = 52;
+			SDL_FillRect (game_buffer, &rect, 0); /* Transparencia total */
+			
+			SDL_SetAlpha (images[IMG_SHOOT], 0, 0);
+			/* Y de los tiros disponibles: 456 */
+			/* X 3, espaciado de: 4 pixeles */
+			if (tiros == 0) {
+				/* Dibujar la palabra "0 shoots" */
+			} else {
+				printf ("Redibujando para %i tiros\n", tiros);
+				rect.x = 3;
+				rect.y = 456;
+				rect.w = images[IMG_SHOOT]->w;
+				rect.h = images[IMG_SHOOT]->h;
+				for (g = 0; g < tiros; g++) {
+					SDL_BlitSurface (images[IMG_SHOOT], NULL, game_buffer, &rect);
+					rect.x += (4 + rect.w);
+				}
+			}
+			SDL_SetAlpha (images[IMG_SHOOT], SDL_SRCALPHA, 0);
+			refresh_tiros = FALSE;
+		}
+		
+		/* Si es que hay, redibujar la pantalla de reiniciar o de siguiente nivel */
+		if (pantalla_abierta == SCREEN_NEXT_LEVEL) {
+			rect.x = 65;
+			rect.y = 100;
+			rect.h = images[IMG_NEXT_LEVEL]->h;
+			rect.w = images[IMG_NEXT_LEVEL]->w;
+			
+			SDL_BlitSurface (images[IMG_NEXT_LEVEL], NULL, game_buffer, &rect);
+			
+			/* TODO: Dibujar la cantidad de puntos */
+			timer_pantalla++;
+		} else if (pantalla_abierta == SCREEN_RESTART) {
+			rect.x = 65;
+			rect.y = 100;
+			rect.h = images[IMG_RESTART]->h;
+			rect.w = images[IMG_RESTART]->w;
+			
+			SDL_BlitSurface (images[IMG_RESTART], NULL, game_buffer, &rect);
+			timer_pantalla++;
+		}
+		
 		SDL_BlitSurface (images[IMG_ASTRO], NULL, game_buffer, &astro_rect);
 		
 		/* Redibujar el marco blanco por los objetos que se salen */
@@ -381,6 +468,29 @@ int game_loop (void) {
 		SDL_BlitSurface (stretch_buffer, NULL, screen, &rect);
 		
 		SDL_Flip (screen);
+		
+		if (pantalla_abierta && timer_pantalla > 56) {
+			if (pantalla_abierta == SCREEN_RESTART) {
+				/* Ocultar y reiniciar el nivel */
+				leer_nivel (nivel_actual, &sig_nivel, &tiros, &hits_requeridos, lineas, &n_lineas, targets, &n_targets, bloques, &n_bloques);
+				contador_hits = 0;
+				refresh_tiros = TRUE;
+				/* TODO: nivel_reiniciado = TRUE */
+				pantalla_abierta = SCREEN_NONE;
+				/* TODO: reiniciar el score */
+			} else if (pantalla_abierta == SCREEN_NEXT_LEVEL) {
+				/* Pasar al siguiente nivel */
+				if (sig_nivel != -1) {
+					nivel_actual = sig_nivel;
+					leer_nivel (nivel_actual, &sig_nivel, &tiros, &hits_requeridos, lineas, &n_lineas, targets, &n_targets, bloques, &n_bloques);
+					contador_hits = 0;
+					refresh_tiros = TRUE;
+				} else {
+					done = GAME_CONTINUE;
+				}
+				pantalla_abierta = SCREEN_NONE;
+			}
+		}
 		
 		now_time = SDL_GetTicks ();
 		if (now_time < last_time + FPS) SDL_Delay(last_time + FPS - now_time);
