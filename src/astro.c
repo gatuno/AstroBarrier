@@ -95,6 +95,8 @@ enum {
 	IMG_LINE3,
 	IMG_LINE4,
 	IMG_LINE5,
+	IMG_LINE6,
+	IMG_LINE7,
 	
 	IMG_NEXT_LEVEL,
 	IMG_RESTART,
@@ -140,6 +142,8 @@ const char *images_names[NUM_IMAGES] = {
 	GAMEDATA_DIR "images/line3.png",
 	GAMEDATA_DIR "images/line4.png",
 	GAMEDATA_DIR "images/line5.png",
+	GAMEDATA_DIR "images/line6.png",
+	GAMEDATA_DIR "images/line7.png",
 	
 	GAMEDATA_DIR "images/next_level.png",
 	GAMEDATA_DIR "images/restart.png"
@@ -228,13 +232,13 @@ int game_loop (void) {
 	int astro_dir = 0;
 	SDL_Rect astro_rect;
 	SDL_Surface *game_buffer, *stretch_buffer;
-	int shooting = FALSE, space_toggle = FALSE;
+	int shooting = FALSE, space_toggle = FALSE, enter_toggle = FALSE;
 	SDL_Rect shoot_rect;
 	
 	int n_lineas, n_targets, n_bloques;
 	int tiros, hits_requeridos, contador_hits, refresh_tiros;
 	int sig_nivel;
-	int pantalla_abierta = 0, timer_pantalla;
+	int pantalla_abierta = 0, timer_pantalla = 0;
 	
 	Linea lineas[10];
 	Target targets[10];
@@ -283,6 +287,8 @@ int game_loop (void) {
 						astro_dir++;
 					} else if (key == SDLK_SPACE) {
 						space_toggle = TRUE;
+					} else if (key == SDLK_RETURN) {
+						enter_toggle = TRUE;
 					}
 					break;
 				case SDL_KEYUP:
@@ -294,6 +300,8 @@ int game_loop (void) {
 						astro_dir--;
 					} else if (key == SDLK_SPACE) {
 						space_toggle = FALSE;
+					} else if (key == SDLK_RETURN) {
+						enter_toggle = FALSE;
 					}
 					
 					break;
@@ -326,6 +334,28 @@ int game_loop (void) {
 						/* Para los verdes, sumar 10 puntos de score */
 						/* TODO: Reproducir sonido */
 					}
+					
+					if (!targets[g].detenido && (targets[g].image == IMG_TARGET_NORMAL_BLUE || targets[g].image == IMG_TARGET_MINI_BLUE || targets[g].image == IMG_TARGET_BIG_BLUE)) {
+						if (contador_hits == 0) {
+							/* Golpearon la vida primero */
+							/* Aumentar las vidas por 1 */
+							/* Aumentar las vidas recogidas por 1 */
+							/* if (lives_collected == 8) {
+								Enviar estampa 61
+							} */
+							/* Para las vidas en el primer golpe, sumar 100 puntos al score */
+							/* TODO: Reproducir sonido */
+							/* TODO: Mostrar aviso de 1-up que se desvanece */
+						} else {
+							/* Lástima, ya no es tan importante la vida */
+							/* Para las vidas, sumar 25 puntos al score */
+							/* TODO: Reproducir sonido */
+						}
+						contador_hits++;
+						targets[g].detenido = TRUE;
+						targets[g].image += 3; /* Cambiar a rojo */
+					}
+					
 					shooting = FALSE;
 				}
 			}
@@ -342,14 +372,12 @@ int game_loop (void) {
 		if (!pantalla_abierta && contador_hits >= hits_requeridos) {
 			/* Nivel terminado, hay que abrir la pantalla de siguiente nivel */
 			pantalla_abierta = SCREEN_NEXT_LEVEL;
-			timer_pantalla = 0;
 			tiros = 0;
 			refresh_tiros = TRUE;
 			printf ("Debug: Ganaste, siguiente nivel\n");
 		} else if (!pantalla_abierta && tiros == 0 && !shooting) {
 			/* Se acabaron los tiros, reiniciar el nivel */
 			pantalla_abierta = SCREEN_RESTART;
-			timer_pantalla = 0;
 			printf ("Debug: Tiros acabados, reiniciando nivel\n");
 		}
 		
@@ -416,7 +444,7 @@ int game_loop (void) {
 			/* X 3, espaciado de: 4 pixeles */
 			if (tiros == 0) {
 				/* Dibujar la palabra "0 shoots" */
-			} else {
+			} else if (tiros > 0) {
 				printf ("Redibujando para %i tiros\n", tiros);
 				rect.x = 3;
 				rect.y = 456;
@@ -449,6 +477,8 @@ int game_loop (void) {
 			rect.w = images[IMG_RESTART]->w;
 			
 			SDL_BlitSurface (images[IMG_RESTART], NULL, game_buffer, &rect);
+			timer_pantalla++;
+		} else if (nivel_actual & (1 << 16)) {
 			timer_pantalla++;
 		}
 		
@@ -489,6 +519,21 @@ int game_loop (void) {
 					done = GAME_CONTINUE;
 				}
 				pantalla_abierta = SCREEN_NONE;
+			}
+			timer_pantalla = 0;
+		}
+		
+		if (nivel_actual & (1 << 16) && timer_pantalla > 20 && enter_toggle) {
+			/* Cargar el siguiente nivel, porque presionó enter */
+			if (sig_nivel != -1) {
+				nivel_actual = sig_nivel;
+				leer_nivel (nivel_actual, &sig_nivel, &tiros, &hits_requeridos, lineas, &n_lineas, targets, &n_targets, bloques, &n_bloques);
+				
+				timer_pantalla = 0;
+				contador_hits = 0;
+				refresh_tiros = TRUE;
+			} else {
+				done = GAME_CONTINUE;
 			}
 		}
 		

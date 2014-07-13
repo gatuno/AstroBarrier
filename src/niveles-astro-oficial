@@ -1,5 +1,5 @@
 1 /* Versión del archivo*/
-5 /* Niveles*/
+9 /* Niveles, 8 normales + 1 de explicación */
 1 /* El primer nivel */
 1 /* Número de nivel que describo */
 	0 /* No es de explicación */
@@ -310,3 +310,241 @@
 			28
 			168
 			15
+6 /* El nivel */
+	0 /* No es de explicación */
+	0 /* No está en algún paquete secreto */
+	65543 /* El siguiente nivel */
+	5 /* Balas de este nivel */
+	3 /* Hits requeridos */
+	3 /* Lineas */
+	2 /* Bloques */
+	3 /* Targets */
+	22 /* Linea 1 */
+		4  /* X */
+		24 /* Y */
+	26 /* Linea 4 */
+		112
+		116
+	23 /* Linea 2a */
+		8
+		236
+	18 /* Bloque Normal */
+		88
+		56
+	18 /* Bloque Normal */
+		220
+		56
+	11 /* Green chico */
+		2
+			16
+			16
+			60
+			328
+			16
+			60
+	11 /* Green chico */
+		6
+			240
+			128
+			20
+			240
+			228
+			30
+			104
+			228
+			20
+			104
+			128
+			20
+			104
+			228
+			30
+			240
+			228
+			20
+	7 /* Green Normal */
+		10
+			260
+			268
+			28
+			52
+			268
+			6
+			52
+			212
+			6
+			8
+			212
+			6
+			52
+			212
+			6
+			52
+			268
+			28
+			260
+			268
+			6
+			260
+			212
+			6
+			312
+			212
+			6
+			260
+			212
+			6
+7 /* El nivel */
+	1 /* Es de explicación */
+	0 /* No está en algún paquete secreto */
+	7 /* El siguiente nivel */
+	-1 /* Balas de este nivel */
+	5 /* Hits requeridos */
+	0 /* Lineas */
+	0 /* Bloques */
+	2 /* Targets */
+	7 /* Green Normal */
+		1
+			124
+			206
+			1
+	6 /* Vida */
+		1
+			188
+			206
+			1
+7 /* El nivel */
+	0 /* No es de explicación */
+	0 /* No está en algún paquete secreto */
+	8 /* El siguiente nivel */
+	4 /* Balas de este nivel */
+	2 /* Hits requeridos */
+	2 /* Lineas */
+	2 /* Bloques */
+	2 /* Targets */
+	22 /* Linea 1 */
+		4
+		80
+	24 /* Linea 2b */
+		8
+		152
+	18 /* Bloque normal */
+		80
+		244
+	18 /* Bloque normal */
+		232
+		244
+	6 /* Vida */
+		2
+			16
+			64
+			36
+			312
+			64
+			36
+	7 /* Green Normal */
+		10
+			16
+			188
+			6
+			60
+			188
+			6
+			60
+			132
+			28
+			268
+			132
+			6
+			268
+			188
+			6
+			312
+			188
+			6
+			268
+			188
+			6
+			268
+			132
+			28
+			60
+			132
+			6
+			60
+			188
+			6
+8 /* El nivel */
+	0 /* No es de explicación */
+	0 /* No está en algún paquete secreto */
+	-1 /* El siguiente nivel */
+	7 /* Balas de este nivel */
+	4 /* Hits requeridos */
+	4 /* Lineas */
+	3 /* Bloques */
+	4 /* Targets */
+	29 /* Linea 3 */
+		216
+		80
+	28 /* Linea 6 */
+		8
+		80
+	29 /* Linea 3 */
+		4
+		280
+	29 /* Linea 3*/
+		216
+		280
+	18 /* Bloque normal */
+		156
+		56
+	18 /* Bloque normal */
+		0
+		156
+	18 /* Bloque normal */
+		156
+		256
+	7 /* Green Normal */
+		2
+			312
+			64
+			15
+			228
+			64
+			15
+	7 /* Green Normal */
+		6
+			44
+			64
+			6
+			16
+			64
+			6
+			44
+			64
+			24
+			144
+			164
+			30
+			312
+			164
+			30
+			144
+			164
+			24
+	11 /* Green chico */
+		2
+			116
+			272
+			10
+			16
+			272
+			10
+	15 /* Green grande */
+		2
+			228
+			264
+			20
+			288
+			264
+			20
