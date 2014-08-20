@@ -95,8 +95,11 @@ enum {
 	IMG_LINE3,
 	IMG_LINE4,
 	IMG_LINE5,
-	IMG_LINE6,
+	IMG_LINE6_A,
+	IMG_LINE6_B,
 	IMG_LINE7,
+	IMG_LINE8,
+	IMG_LINE9,
 	
 	IMG_NEXT_LEVEL,
 	IMG_RESTART,
@@ -131,7 +134,7 @@ const char *images_names[NUM_IMAGES] = {
 	GAMEDATA_DIR "images/target_big_red.png",
 	
 	GAMEDATA_DIR "images/block_normal.png",
-	GAMEDATA_DIR "images/block_normal.png",
+	GAMEDATA_DIR "images/block_mini.png",
 	GAMEDATA_DIR "images/block_big.png",
 	
 	GAMEDATA_DIR "images/block_normal.png",
@@ -142,8 +145,11 @@ const char *images_names[NUM_IMAGES] = {
 	GAMEDATA_DIR "images/line3.png",
 	GAMEDATA_DIR "images/line4.png",
 	GAMEDATA_DIR "images/line5.png",
-	GAMEDATA_DIR "images/line6.png",
+	GAMEDATA_DIR "images/line6a.png",
+	GAMEDATA_DIR "images/line6b.png",
 	GAMEDATA_DIR "images/line7.png",
+	GAMEDATA_DIR "images/line8.png",
+	GAMEDATA_DIR "images/line9.png",
 	
 	GAMEDATA_DIR "images/next_level.png",
 	GAMEDATA_DIR "images/restart.png"

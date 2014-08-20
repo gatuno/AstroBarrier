@@ -1,5 +1,5 @@
 1 /* Versión del archivo*/
-9 /* Niveles, 8 normales + 1 de explicación */
+11 /* Niveles, 9 normales + 1 de explicación */
 1 /* El primer nivel */
 1 /* Número de nivel que describo */
 	0 /* No es de explicación */
@@ -477,22 +477,22 @@
 8 /* El nivel */
 	0 /* No es de explicación */
 	0 /* No está en algún paquete secreto */
-	-1 /* El siguiente nivel */
+	9 /* El siguiente nivel */
 	7 /* Balas de este nivel */
 	4 /* Hits requeridos */
 	4 /* Lineas */
 	3 /* Bloques */
 	4 /* Targets */
-	29 /* Linea 3 */
+	30 /* Linea 7 */
 		216
 		80
 	28 /* Linea 6 */
 		8
 		80
-	29 /* Linea 3 */
+	30 /* Linea 7 */
 		4
 		280
-	29 /* Linea 3*/
+	30 /* Linea 7 */
 		216
 		280
 	18 /* Bloque normal */
@@ -548,3 +548,268 @@
 			288
 			264
 			20
+9 /* El nivel */
+	0 /* No es de explicación */
+	0 /* No está en algún paquete secreto */
+	10 /* El siguiente nivel */
+	4 /* Balas de este nivel */
+	3 /* Hits requeridos */
+	3 /* Lineas */
+	2 /* Bloques */
+	3 /* Targets */
+	26 /* Linea 4 */
+		44
+		80
+	30 /* Linea 7 */
+		216
+		44
+	29 /* Linea 6b */
+		8
+		178
+	18 /* Bloque normal */
+		20
+		20
+	18 /* Bloque normal */
+		156
+		20
+	15 /* Green grande */
+		2
+			228
+			28
+			20
+			288
+			28
+			20
+	11 /* Green chico */
+		6
+			172
+			92
+			20
+			172
+			192
+			30
+			36
+			192
+			20
+			36
+			92
+			20
+			36
+			192
+			30
+			172
+			192
+			20
+	7 /* Green normal */
+		6
+			284
+			162
+			6
+			312
+			162
+			6
+			284
+			162
+			24
+			184
+			262
+			30
+			16
+			262
+			30
+			184
+			262
+			24
+10 /* El nivel */
+	0 /* No es de explicación */
+	0 /* No está en algún paquete secreto */
+	-1 /* El siguiente nivel */
+	8 /* Balas de este nivel */
+	5 /* Hits requeridos */
+	5 /* Lineas */
+	5 /* Bloques */
+	5 /* Targets */
+	31 /* Linea 8 */
+		8
+		48
+	32 /* Linea 9 */
+		32
+		102
+	32 /* Linea 9 */
+		240
+		212
+	32 /* Linea 9 */
+		240
+		102
+	32 /* Linea 9 */
+		32
+		212
+	18 /* Bloque normal */
+		156
+		240
+	19 /* Bloque chico */
+		68
+		144
+	19 /* Bloque chico */
+		276
+		256
+	19 /* Bloque chico */
+		68
+		256
+	19 /* Bloque chico */
+		276
+		144
+	6 /* Vida normal */
+		8
+			16
+			32
+			25
+			164
+			32
+			25
+			164
+			184
+			25
+			164
+			32
+			25
+			312
+			32
+			25
+			164
+			32
+			25
+			164
+			184
+			25
+			164
+			32
+			25
+	11 /* Green Chico */
+		10
+			28
+			144
+			2
+			20
+			144
+			14
+			20
+			88
+			26
+			116
+			88
+			14
+			116
+			144
+			2
+			108
+			144
+			2
+			116
+			144
+			14
+			116
+			88
+			26
+			20
+			88
+			14
+			20
+			144
+			2
+	11 /* Green Chico */
+		10
+			236
+			256
+			2
+			228
+			256
+			14
+			228
+			200
+			26
+			324
+			200
+			14
+			324
+			256
+			2
+			316
+			256
+			2
+			324
+			256
+			14
+			324
+			200
+			26
+			228
+			200
+			14
+			228
+			256
+			2
+	11 /* Green chico */
+		10
+			108
+			256
+			2
+			116
+			256
+			14
+			116
+			200
+			26
+			20
+			200
+			14
+			20
+			256
+			2
+			28
+			256
+			2
+			20
+			256
+			14
+			20
+			200
+			26
+			116
+			200
+			14
+			116
+			256
+			2
+	11 /* Green chico */
+		10
+			316
+			144
+			2
+			324
+			144
+			14
+			324
+			88
+			26
+			228
+			88
+			14
+			228
+			144
+			2
+			236
+			144
+			2
+			228
+			144
+			14
+			228
+			88
+			26
+			324
+			88
+			14
+			324
+			144
+			2
