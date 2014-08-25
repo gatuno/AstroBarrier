@@ -101,6 +101,8 @@ enum {
 	IMG_LINE8,
 	IMG_LINE9,
 	IMG_LINE10,
+	IMG_LINE11_A,
+	IMG_LINE11_B,
 	
 	IMG_SWITCH_ORANGE,
 	IMG_SWITCH_ORANGE_HIT,
@@ -155,6 +157,8 @@ const char *images_names[NUM_IMAGES] = {
 	GAMEDATA_DIR "images/line8.png",
 	GAMEDATA_DIR "images/line9.png",
 	GAMEDATA_DIR "images/line10.png",
+	GAMEDATA_DIR "images/line11a.png",
+	GAMEDATA_DIR "images/line11b.png",
 	
 	GAMEDATA_DIR "images/switch_orange.png",
 	GAMEDATA_DIR "images/switch_orange_hit.png",
@@ -376,6 +380,14 @@ int game_loop (void) {
 						switch_toggle = TRUE;
 						switch_timer = 0;
 						targets[g].image++; /* Switch golpeado */
+						targets[g].detenido = TRUE;
+					}
+					
+					if (!targets[g].detenido && (targets[g].image == IMG_TARGET_NORMAL_YELLOW || targets[g].image == IMG_TARGET_MINI_YELLOW || targets[g].image == IMG_TARGET_BIG_YELLOW)) {
+						targets[g].image -= 1; /* Cambiar a verde */
+						contador_hits++;
+						/* Para los amarillos, sumar 25 puntos de score */
+						/* TODO: Reproducir sonido */
 					}
 					
 					shooting = FALSE;

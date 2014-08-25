@@ -1,7 +1,7 @@
 #include "astro_images.h"
 START_ASTRO
 1 /* Versión del archivo*/
-13 /* Niveles, 11 normales + 2 de explicación */
+19 /* Niveles, 16 normales + 3 de explicación */
 1 /* El primer nivel */
 1 /* Número de nivel que describo */
 	0 /* No es de explicación */
@@ -840,7 +840,7 @@ START_ASTRO
 11
 	0 /* No es de explicación */
 	0 /* No es secreto */
-	-1
+	12 /* Siguiente nivel */
 	5 /* Balas de este nivel */
 	2 /* Hits requeridos */
 	2 /* Lineas */
@@ -879,3 +879,402 @@ START_ASTRO
 			172
 			44
 			1
+12
+	0 /* no es de explicación */
+	0 /* No es secreto */
+	13 /* Siguiente nivel */
+	7 /* Balas de esta nivel */
+	3 /* Hits requeridos */
+	3 /* Lineas */
+	4 /* Bloques */
+	4 /* Targets */
+	IMG_LINE1
+		4
+		32
+	IMG_LINE7
+		4
+		136
+	IMG_LINE7
+		216
+		248
+	IMG_BLOCK_NORMAL
+		156
+		112
+	IMG_BLOCK_NORMAL
+		12
+		224
+	IMG_BLOCK_NORMAL
+		156
+		224
+	IMG_BLOCK_ORANGE
+		84
+		224
+	IMG_TARGET_BIG_GREEN
+		2
+			16
+			16
+			36
+			288
+			16
+			36
+	IMG_TARGET_BIG_GREEN
+		2
+			228
+			232
+			20
+			288
+			232
+			20
+	IMG_TARGET_MINI_GREEN
+		2
+			116
+			128
+			10
+			16
+			128
+			10
+	IMG_SWITCH_ORANGE
+		1
+			320
+			160
+			1
+13
+	0 /* no es de explicación */
+	0 /* No es secreto */
+	14 /* Siguiente nivel */
+	4 /* Balas de esta nivel */
+	3 /* Hits requeridos */
+	3 /* Lineas */
+	4 /* Bloques */
+	3 /* Targets */
+	IMG_LINE1
+		4
+		44
+	IMG_LINE1
+		4
+		172
+	IMG_LINE1
+		4
+		300
+	IMG_BLOCK_BIG
+		16
+		84
+	IMG_BLOCK_BIG
+		224
+		84
+	IMG_BLOCK_NORMAL
+		88
+		212
+	IMG_BLOCK_NORMAL
+		224
+		212
+	IMG_TARGET_NORMAL_GREEN
+		3
+			102
+			28
+			30
+			312
+			28
+			40
+			16
+			28
+			10
+	IMG_TARGET_BIG_GREEN
+		2
+			16
+			156
+			36
+			288
+			156
+			36
+	IMG_TARGET_BIG_GREEN
+		3
+			152
+			284
+			20
+			16
+			284
+			40
+			288
+			284
+			20
+14
+	0 /* no es de explicación */
+	0 /* No es secreto */
+	15 /* Siguiente nivel */
+	7 /* Balas de esta nivel */
+	4 /* Hits requeridos */
+	4 /* Lineas */
+	3 /* Bloques */
+	5 /* Targets */
+	IMG_LINE7
+		4
+		36
+	IMG_LINE7
+		216
+		36
+	IMG_LINE11_A
+		8
+		92
+	IMG_LINE11_B
+		224
+		92
+	IMG_BLOCK_NORMAL
+		156
+		12
+	IMG_BLOCK_ORANGE
+		12
+		180
+	IMG_BLOCK_ORANGE
+		300
+		180
+	IMG_SWITCH_ORANGE
+		1
+			172
+			108
+			1
+	IMG_TARGET_MINI_GREEN
+		2
+			116
+			28
+			10
+			16
+			28
+			10
+	IMG_TARGET_NORMAL_GREEN
+		2
+			312
+			20
+			15
+			228
+			20
+			15
+	IMG_TARGET_MINI_GREEN
+		10
+			328
+			308
+			6
+			292
+			308
+			20
+			212
+			228
+			11
+			212
+			164
+			20
+			292
+			84
+			6
+			328
+			84
+			6
+			292
+			84
+			20
+			212
+			164
+			11
+			212
+			228
+			20
+			292
+			308
+			6
+	IMG_TARGET_NORMAL_GREEN
+		10
+			16
+			76
+			4
+			44
+			76
+			19
+			124
+			156
+			11
+			124
+			220
+			19
+			44
+			300
+			4
+			16
+			300
+			4
+			44
+			300
+			19
+			124
+			220
+			11
+			124
+			156
+			19
+			44
+			76
+			4
+15
+	0 /* no es de explicación */
+	0 /* No es secreto */
+	65552 /* Siguiente nivel */
+	6 /* Balas de esta nivel */
+	3 /* Hits requeridos */
+	3 /* Lineas */
+	7 /* Bloques */
+	4 /* Targets */
+	IMG_LINE1
+		4
+		32
+	IMG_LINE2_A
+		8
+		124
+	IMG_LINE7
+		4
+		244
+	IMG_BLOCK_ORANGE
+		156
+		220
+	IMG_BLOCK_MINI
+		32
+		72
+	IMG_BLOCK_MINI
+		88
+		72
+	IMG_BLOCK_MINI
+		144
+		72
+	IMG_BLOCK_MINI
+		200
+		72
+	IMG_BLOCK_MINI
+		256
+		72
+	IMG_BLOCK_MINI
+		312
+		72
+	IMG_TARGET_NORMAL_GREEN
+		2
+			16
+			16
+			40
+			312
+			16
+			40
+	IMG_TARGET_NORMAL_GREEN
+		10
+			312
+			108
+			6
+			268
+			108
+			6
+			268
+			164
+			28
+			60
+			164
+			6
+			60
+			108
+			6
+			16
+			108
+			6
+			60
+			108
+			6
+			60
+			164
+			28
+			268
+			164
+			6
+			268
+			108
+			6
+	IMG_TARGET_BIG_GREEN
+		2
+			16
+			228
+			20
+			76
+			228
+			20
+	IMG_SWITCH_ORANGE
+		1
+			256
+			236
+			1
+16
+	1 /* Es de explicación */
+	0 /* No es secreto */
+	16 /* Siguiente nivel */
+	-1 /* Balas de esta nivel */
+	5 /* Hits requeridos */
+	0 /* Lineas */
+	0 /* Bloques */
+	1 /* Targets */
+	IMG_TARGET_NORMAL_YELLOW
+		1
+			164
+			150
+			1
+16
+	0 /* no es de explicación */
+	0 /* No es secreto */
+	-1 /* Siguiente nivel */
+	9 /* Balas de este nivel */
+	5 /* Hits requeridos */
+	4 /* Número de objetos de lineas */
+	0 /* Número de bloques */
+	4 /* Número de targets */
+	IMG_LINE1 /* Line 1*/
+		4 /* X */
+		60 /* Y */
+	IMG_LINE1 /* Line 1 */
+		4 /* X */
+		120 /* Y */
+	IMG_LINE1 /* Line 1 */
+		4 /* X */
+		180 /* Y */
+	IMG_LINE1 /* Line 1 */
+		4 /* X */
+		240 /* Y */
+	IMG_TARGET_NORMAL_YELLOW /* Yellow Normal */
+		3 /* Puntos */
+			105 /* X */
+			44 /* Y */
+			28 /* Vel */
+			312 /* X */
+			44 /* Y */
+			40 /* Vel */
+			16
+			44
+			12
+	IMG_TARGET_NORMAL_BLUE /* Blue Normal */
+		2
+			16 /* X */
+			104 /* Y */
+			40 /* Vel */
+			312
+			104
+			40
+	IMG_TARGET_NORMAL_GREEN /* Green Normal */
+		3
+			105 /* X */
+			164 /* Y */
+			28 /* Vel */
+			312 /* X */
+			164 /* Y */
+			40 /* Vel */
+			16
+			164
+			12
+	IMG_TARGET_NORMAL_GREEN /* Green Normal */
+		2
+			16 /* X */
+			224 /* Y */
+			40 /* Vel */
+			312
+			224
+			40
