@@ -1,5 +1,7 @@
+#include "astro_images.h"
+START_ASTRO
 1 /* Versión del archivo*/
-11 /* Niveles, 9 normales + 1 de explicación */
+13 /* Niveles, 11 normales + 2 de explicación */
 1 /* El primer nivel */
 1 /* Número de nivel que describo */
 	0 /* No es de explicación */
@@ -10,19 +12,19 @@
 	4 /* Número de objetos de lineas */
 	0 /* Número de bloques */
 	4 /* Número de targets */
-	22 /* Line 1*/
+	IMG_LINE1 /* Line 1*/
 		4 /* X */
 		60 /* Y */
-	22 /* Line 1 */
+	IMG_LINE1 /* Line 1 */
 		4 /* X */
 		120 /* Y */
-	22 /* Line 1 */
+	IMG_LINE1 /* Line 1 */
 		4 /* X */
 		180 /* Y */
-	22 /* Line 1 */
+	IMG_LINE1 /* Line 1 */
 		4 /* X */
 		240 /* Y */
-	7 /* Green Normal */
+	IMG_TARGET_NORMAL_GREEN /* Green Normal */
 		3 /* Puntos */
 			105 /* X */
 			44 /* Y */
@@ -33,7 +35,7 @@
 			16
 			44
 			12
-	7 /* Green Normal */
+	IMG_TARGET_NORMAL_GREEN /* Green Normal */
 		2
 			16 /* X */
 			104 /* Y */
@@ -41,7 +43,7 @@
 			312
 			104
 			40
-	7 /* Green Normal */
+	IMG_TARGET_NORMAL_GREEN /* Green Normal */
 		3
 			105 /* X */
 			164 /* Y */
@@ -52,7 +54,7 @@
 			16
 			164
 			12
-	7 /* Green Normal */
+	IMG_TARGET_NORMAL_GREEN /* Green Normal */
 		2
 			16 /* X */
 			224 /* Y */
@@ -69,19 +71,19 @@
 	3 /* Lineas */
 	1 /* 1 bloque */
 	3 /* 3 Targets */
-	23 /* Linea 2A */
+	IMG_LINE2_A /* Linea 2A */
 		8  /* X */
 		40 /* Y */
-	22 /* Linea 1 */
+	IMG_LINE1 /* Linea 1 */
 		4  /* X */
 		152 /* Y */
-	24 /* Linea 2B */
+	IMG_LINE2_B /* Linea 2B */
 		8   /* X */
 		208 /* Y */
-	18 /* Bloque normal */
+	IMG_BLOCK_NORMAL /* Bloque normal */
 		156 /* X */
 		248 /* Y */
-	7 /* Green Normal */
+	IMG_TARGET_NORMAL_GREEN /* Green Normal */
 		10
 			268 /* X */
 			80 /* Y */
@@ -113,7 +115,7 @@
 			268
 			24
 			6
-	7 /* Green Normal */
+	IMG_TARGET_NORMAL_GREEN /* Green Normal */
 		2
 			16
 			136
@@ -121,7 +123,7 @@
 			312
 			136
 			40
-	7 /* Green Normal */
+	IMG_TARGET_NORMAL_GREEN /* Green Normal */
 		10
 			16
 			244
@@ -162,16 +164,16 @@
 	3 /* Lineas */
 	0 /* 0 bloques */
 	3 /* 3 Targets */
-	22 /* Linea 1 */
+	IMG_LINE1 /* Linea 1 */
 		4  /* X */
 		60 /* Y */
-	22 /* Linea 1 */
+	IMG_LINE1 /* Linea 1 */
 		4  /* X */
 		180 /* Y */
-	22 /* Linea 1 */
+	IMG_LINE1 /* Linea 1 */
 		4  /* X */
 		240 /* Y */
-	15 /* Green Grande */
+	IMG_TARGET_BIG_GREEN /* Green Grande */
 		2
 			16
 			44
@@ -179,7 +181,7 @@
 			288
 			44
 			36
-	7 /* Green Normal */
+	IMG_TARGET_NORMAL_GREEN /* Green Normal */
 		3
 			100
 			164
@@ -190,7 +192,7 @@
 			16
 			164
 			10
-	11 /* Green chicho */
+	IMG_TARGET_MINI_GREEN /* Green chicho */
 		2
 			16
 			232
@@ -207,22 +209,22 @@
 	3 /* Lineas */
 	2 /* 2 Bloques */
 	3 /* Targets */
-	25 /* Linea 3 */
+	IMG_LINE3 /* Linea 3 */
 		140
 		40
-	25 /* Linea 3 */
+	IMG_LINE3 /* Linea 3 */
 		4
 		216
-	22 /* Linea 1 */
+	IMG_LINE1 /* Linea 1 */
 		4
 		300
-	18 /* Bloque normal */
+	IMG_BLOCK_NORMAL /* Bloque normal */
 		80
 		16
-	18 /* Bloque normal */
+	IMG_BLOCK_NORMAL /* Bloque normal */
 		232
 		192
-	11 /* Green chicho */
+	IMG_TARGET_MINI_GREEN /* Green chicho */
 		3
 			200
 			32
@@ -233,7 +235,7 @@
 			152
 			32
 			10
-	11 /* Green chico */
+	IMG_TARGET_MINI_GREEN /* Green chico */
 		2
 			16
 			208
@@ -241,7 +243,7 @@
 			192
 			208
 			36
-	7 /* Green normal */
+	IMG_TARGET_NORMAL_GREEN /* Green normal */
 		2
 			16
 			284
@@ -258,19 +260,19 @@
 	2 /* Lineas */
 	2 /* Bloques */
 	2 /* 2 Targets */
-	26 /* Linea 4 */
+	IMG_LINE4 /* Linea 4 */
 		112
 		4
-	27 /* Linea 5 */
+	IMG_LINE5 /* Linea 5 */
 		56
 		8
-	20 /* Bloque normal */
+	IMG_BLOCK_BIG /* Bloque grande */
 		12
 		236
-	20 /* Bloque normal */
+	IMG_BLOCK_BIG /* Bloque grande */
 		228
 		236
-	11 /* Green chico */
+	IMG_TARGET_MINI_GREEN /* Green chico */
 		6
 			240
 			16
@@ -290,7 +292,7 @@
 			240
 			116
 			20
-	15 /* Green Grande */
+	IMG_TARGET_BIG_GREEN /* Green Grande */
 		6
 			28
 			16
@@ -319,22 +321,22 @@
 	3 /* Lineas */
 	2 /* Bloques */
 	3 /* Targets */
-	22 /* Linea 1 */
+	IMG_LINE1 /* Linea 1 */
 		4  /* X */
 		24 /* Y */
-	26 /* Linea 4 */
+	IMG_LINE4 /* Linea 4 */
 		112
 		116
-	23 /* Linea 2a */
+	IMG_LINE2_A /* Linea 2a */
 		8
 		236
-	18 /* Bloque Normal */
+	IMG_BLOCK_NORMAL /* Bloque Normal */
 		88
 		56
-	18 /* Bloque Normal */
+	IMG_BLOCK_NORMAL /* Bloque Normal */
 		220
 		56
-	11 /* Green chico */
+	IMG_TARGET_MINI_GREEN /* Green chico */
 		2
 			16
 			16
@@ -342,7 +344,7 @@
 			328
 			16
 			60
-	11 /* Green chico */
+	IMG_TARGET_MINI_GREEN /* Green chico */
 		6
 			240
 			128
@@ -362,7 +364,7 @@
 			240
 			228
 			20
-	7 /* Green Normal */
+	IMG_TARGET_NORMAL_GREEN /* Green Normal */
 		10
 			260
 			268
@@ -403,12 +405,12 @@
 	0 /* Lineas */
 	0 /* Bloques */
 	2 /* Targets */
-	7 /* Green Normal */
+	IMG_TARGET_NORMAL_GREEN /* Green Normal */
 		1
 			124
 			206
 			1
-	6 /* Vida */
+	IMG_TARGET_NORMAL_BLUE /* Vida */
 		1
 			188
 			206
@@ -422,19 +424,19 @@
 	2 /* Lineas */
 	2 /* Bloques */
 	2 /* Targets */
-	22 /* Linea 1 */
+	IMG_LINE1 /* Linea 1 */
 		4
 		80
-	24 /* Linea 2b */
+	IMG_LINE2_B /* Linea 2b */
 		8
 		152
-	18 /* Bloque normal */
+	IMG_BLOCK_NORMAL /* Bloque normal */
 		80
 		244
-	18 /* Bloque normal */
+	IMG_BLOCK_NORMAL /* Bloque normal */
 		232
 		244
-	6 /* Vida */
+	IMG_TARGET_NORMAL_BLUE /* Vida */
 		2
 			16
 			64
@@ -442,7 +444,7 @@
 			312
 			64
 			36
-	7 /* Green Normal */
+	IMG_TARGET_NORMAL_GREEN /* Green Normal */
 		10
 			16
 			188
@@ -483,28 +485,28 @@
 	4 /* Lineas */
 	3 /* Bloques */
 	4 /* Targets */
-	30 /* Linea 7 */
+	IMG_LINE7 /* Linea 7 */
 		216
 		80
-	28 /* Linea 6 */
+	IMG_LINE6_A /* Linea 6 */
 		8
 		80
-	30 /* Linea 7 */
+	IMG_LINE7 /* Linea 7 */
 		4
 		280
-	30 /* Linea 7 */
+	IMG_LINE7 /* Linea 7 */
 		216
 		280
-	18 /* Bloque normal */
+	IMG_BLOCK_NORMAL /* Bloque normal */
 		156
 		56
-	18 /* Bloque normal */
+	IMG_BLOCK_NORMAL /* Bloque normal */
 		0
 		156
-	18 /* Bloque normal */
+	IMG_BLOCK_NORMAL /* Bloque normal */
 		156
 		256
-	7 /* Green Normal */
+	IMG_TARGET_NORMAL_GREEN /* Green Normal */
 		2
 			312
 			64
@@ -512,7 +514,7 @@
 			228
 			64
 			15
-	7 /* Green Normal */
+	IMG_TARGET_NORMAL_GREEN /* Green Normal */
 		6
 			44
 			64
@@ -532,7 +534,7 @@
 			144
 			164
 			24
-	11 /* Green chico */
+	IMG_TARGET_MINI_GREEN /* Green chico */
 		2
 			116
 			272
@@ -540,7 +542,7 @@
 			16
 			272
 			10
-	15 /* Green grande */
+	IMG_TARGET_BIG_GREEN /* Green grande */
 		2
 			228
 			264
@@ -557,22 +559,22 @@
 	3 /* Lineas */
 	2 /* Bloques */
 	3 /* Targets */
-	26 /* Linea 4 */
+	IMG_LINE4 /* Linea 4 */
 		44
 		80
-	30 /* Linea 7 */
+	IMG_LINE7 /* Linea 7 */
 		216
 		44
-	29 /* Linea 6b */
+	IMG_LINE6_B /* Linea 6b */
 		8
 		178
-	18 /* Bloque normal */
+	IMG_BLOCK_NORMAL /* Bloque normal */
 		20
 		20
-	18 /* Bloque normal */
+	IMG_BLOCK_NORMAL /* Bloque normal */
 		156
 		20
-	15 /* Green grande */
+	IMG_TARGET_BIG_GREEN /* Green grande */
 		2
 			228
 			28
@@ -580,7 +582,7 @@
 			288
 			28
 			20
-	11 /* Green chico */
+	IMG_TARGET_MINI_GREEN /* Green chico */
 		6
 			172
 			92
@@ -600,7 +602,7 @@
 			172
 			192
 			20
-	7 /* Green normal */
+	IMG_TARGET_NORMAL_GREEN /* Green normal */
 		6
 			284
 			162
@@ -623,43 +625,43 @@
 10 /* El nivel */
 	0 /* No es de explicación */
 	0 /* No está en algún paquete secreto */
-	-1 /* El siguiente nivel */
+	65547 /* El siguiente nivel */
 	8 /* Balas de este nivel */
 	5 /* Hits requeridos */
 	5 /* Lineas */
 	5 /* Bloques */
 	5 /* Targets */
-	31 /* Linea 8 */
+	IMG_LINE8 /* Linea 8 */
 		8
 		48
-	32 /* Linea 9 */
+	IMG_LINE9 /* Linea 9 */
 		32
 		102
-	32 /* Linea 9 */
+	IMG_LINE9 /* Linea 9 */
 		240
 		212
-	32 /* Linea 9 */
+	IMG_LINE9 /* Linea 9 */
 		240
 		102
-	32 /* Linea 9 */
+	IMG_LINE9 /* Linea 9 */
 		32
 		212
-	18 /* Bloque normal */
+	IMG_BLOCK_NORMAL /* Bloque normal */
 		156
 		240
-	19 /* Bloque chico */
+	IMG_BLOCK_MINI /* Bloque chico */
 		68
 		144
-	19 /* Bloque chico */
+	IMG_BLOCK_MINI /* Bloque chico */
 		276
 		256
-	19 /* Bloque chico */
+	IMG_BLOCK_MINI /* Bloque chico */
 		68
 		256
-	19 /* Bloque chico */
+	IMG_BLOCK_MINI /* Bloque chico */
 		276
 		144
-	6 /* Vida normal */
+	IMG_TARGET_NORMAL_BLUE /* Vida normal */
 		8
 			16
 			32
@@ -685,7 +687,7 @@
 			164
 			32
 			25
-	11 /* Green Chico */
+	IMG_TARGET_MINI_GREEN /* Green Chico */
 		10
 			28
 			144
@@ -717,7 +719,7 @@
 			20
 			144
 			2
-	11 /* Green Chico */
+	IMG_TARGET_MINI_GREEN /* Green Chico */
 		10
 			236
 			256
@@ -749,7 +751,7 @@
 			228
 			256
 			2
-	11 /* Green chico */
+	IMG_TARGET_MINI_GREEN /* Green chico */
 		10
 			108
 			256
@@ -781,7 +783,7 @@
 			116
 			256
 			2
-	11 /* Green chico */
+	IMG_TARGET_MINI_GREEN /* Green chico */
 		10
 			316
 			144
@@ -813,3 +815,67 @@
 			324
 			144
 			2
+11 /* El nivel de explicación */
+	1 /* Es de explicación */
+	0 /* No está en algún paquete secreto */
+	11 /* El siguiente nivel */
+	-1 /* Balas de este nivel */
+	5 /* Hits requeridos */
+	0 /* Lineas */
+	1 /* Bloques */
+	2 /* Targets */
+	IMG_BLOCK_ORANGE
+		272
+		148
+	IMG_TARGET_NORMAL_GREEN
+		1
+			280
+			68
+			1
+	IMG_SWITCH_ORANGE /* switch naranja */
+		1
+			172
+			76
+			1
+11
+	0 /* No es de explicación */
+	0 /* No es secreto */
+	-1
+	5 /* Balas de este nivel */
+	2 /* Hits requeridos */
+	2 /* Lineas */
+	2 /* Bloques */
+	3 /* Targets */
+	IMG_LINE10
+		128
+		4
+	IMG_LINE10
+		232
+		4
+	IMG_BLOCK_ORANGE
+		104
+		232
+	IMG_BLOCK_ORANGE
+		208
+		232
+	IMG_TARGET_NORMAL_GREEN
+		2
+			112
+			16
+			25
+			112
+			176
+			25
+	IMG_TARGET_NORMAL_GREEN
+		2
+			216
+			16
+			25
+			216
+			176
+			25
+	IMG_SWITCH_ORANGE
+		1
+			172
+			44
+			1

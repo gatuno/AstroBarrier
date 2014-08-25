@@ -100,6 +100,10 @@ enum {
 	IMG_LINE7,
 	IMG_LINE8,
 	IMG_LINE9,
+	IMG_LINE10,
+	
+	IMG_SWITCH_ORANGE,
+	IMG_SWITCH_ORANGE_HIT,
 	
 	IMG_NEXT_LEVEL,
 	IMG_RESTART,
@@ -137,7 +141,7 @@ const char *images_names[NUM_IMAGES] = {
 	GAMEDATA_DIR "images/block_mini.png",
 	GAMEDATA_DIR "images/block_big.png",
 	
-	GAMEDATA_DIR "images/block_normal.png",
+	GAMEDATA_DIR "images/block_orange.png",
 	
 	GAMEDATA_DIR "images/line1.png",
 	GAMEDATA_DIR "images/line2a.png",
@@ -150,6 +154,10 @@ const char *images_names[NUM_IMAGES] = {
 	GAMEDATA_DIR "images/line7.png",
 	GAMEDATA_DIR "images/line8.png",
 	GAMEDATA_DIR "images/line9.png",
+	GAMEDATA_DIR "images/line10.png",
+	
+	GAMEDATA_DIR "images/switch_orange.png",
+	GAMEDATA_DIR "images/switch_orange_hit.png",
 	
 	GAMEDATA_DIR "images/next_level.png",
 	GAMEDATA_DIR "images/restart.png"
@@ -238,7 +246,8 @@ int game_loop (void) {
 	int astro_dir = 0;
 	SDL_Rect astro_rect;
 	SDL_Surface *game_buffer, *stretch_buffer;
-	int shooting = FALSE, space_toggle = FALSE, enter_toggle = FALSE;
+	int shooting = FALSE, space_toggle = FALSE, enter_toggle = FALSE, switch_toggle = FALSE;
+	int switch_timer;
 	SDL_Rect shoot_rect;
 	
 	int n_lineas, n_targets, n_bloques;
@@ -362,6 +371,13 @@ int game_loop (void) {
 						targets[g].image += 3; /* Cambiar a rojo */
 					}
 					
+					if (!targets[g].detenido && targets[g].image == IMG_SWITCH_ORANGE) {
+						/* Golpearon el switch naranja, desaparecer los bloques lentamente */
+						switch_toggle = TRUE;
+						switch_timer = 0;
+						targets[g].image++; /* Switch golpeado */
+					}
+					
 					shooting = FALSE;
 				}
 			}
@@ -402,9 +418,24 @@ int game_loop (void) {
 			SDL_BlitSurface (images[lineas[g].image], NULL, game_buffer, (SDL_Rect *)&lineas[g]);
 		}
 		
+		if (switch_toggle && switch_timer < 17) {
+			switch_timer++;
+		}
+		
 		/* Dibujar los bloques */
 		for (g = 0; g < n_bloques; g++) {
-			SDL_BlitSurface (images[bloques[g].image], NULL, game_buffer, (SDL_Rect *)&bloques[g]);
+			if (bloques[g].image == IMG_BLOCK_ORANGE && switch_toggle) {
+				if (switch_timer < 17) {
+					rect.y = switch_timer * 4;
+					bloques[g].rect.y += 4;
+					rect.x = 0;
+					rect.h = bloques[g].rect.h -= 4;
+					rect.w = bloques[g].rect.w;
+					SDL_BlitSurface (images[bloques[g].image], &rect, game_buffer, (SDL_Rect *)&bloques[g]);
+				}
+			} else {
+				SDL_BlitSurface (images[bloques[g].image], NULL, game_buffer, (SDL_Rect *)&bloques[g]);
+			}
 		}
 		
 		/* Dibujar los targets */
@@ -509,6 +540,7 @@ int game_loop (void) {
 			if (pantalla_abierta == SCREEN_RESTART) {
 				/* Ocultar y reiniciar el nivel */
 				leer_nivel (nivel_actual, &sig_nivel, &tiros, &hits_requeridos, lineas, &n_lineas, targets, &n_targets, bloques, &n_bloques);
+				switch_toggle = FALSE;
 				contador_hits = 0;
 				refresh_tiros = TRUE;
 				/* TODO: nivel_reiniciado = TRUE */
@@ -519,6 +551,7 @@ int game_loop (void) {
 				if (sig_nivel != -1) {
 					nivel_actual = sig_nivel;
 					leer_nivel (nivel_actual, &sig_nivel, &tiros, &hits_requeridos, lineas, &n_lineas, targets, &n_targets, bloques, &n_bloques);
+					switch_toggle = FALSE;
 					contador_hits = 0;
 					refresh_tiros = TRUE;
 				} else {
@@ -535,6 +568,7 @@ int game_loop (void) {
 				nivel_actual = sig_nivel;
 				leer_nivel (nivel_actual, &sig_nivel, &tiros, &hits_requeridos, lineas, &n_lineas, targets, &n_targets, bloques, &n_bloques);
 				
+				switch_toggle = FALSE;
 				timer_pantalla = 0;
 				contador_hits = 0;
 				refresh_tiros = TRUE;

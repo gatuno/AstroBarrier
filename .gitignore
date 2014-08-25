@@ -19,6 +19,9 @@ config.log
 config.status
 .deps
 src/astro-barrier
+src/astro-level
+src/levels.bin
+src/niveles-astro-oficial.E
 *.o
 stamp-h1
 

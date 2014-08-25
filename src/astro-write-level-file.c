@@ -52,7 +52,7 @@ int main (int argc, char *argv[]) {
 		return EXIT_FAILURE;
 	}
 	
-	fd = open (argv[2], O_CREAT | O_TRUNC | O_WRONLY);
+	fd = open (argv[2], O_CREAT | O_TRUNC | O_WRONLY, 0644);
 	
 	if (fd < 0) {
 		fprintf (stderr, "Imposible abrir el archivo de salida\n");
@@ -63,6 +63,12 @@ int main (int argc, char *argv[]) {
 	
 	/* Escribimos la cabecera */
 	write (fd, "ASTRO", strlen ("ASTRO"));
+	
+	/* Recorrer hasta encontrar la palabra "START_ASTRO" */
+	do {
+		fgets (buffer, sizeof (buffer), fd_entrada);
+		printf ("Descartando: %s\n", buffer);
+	} while (strcmp (buffer, "START_ASTRO\n") != 0);
 	
 	/* Leer la versión del archivo */
 	fgets (buffer, sizeof (buffer), fd_entrada);
