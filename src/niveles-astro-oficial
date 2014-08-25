@@ -1,7 +1,7 @@
 #include "astro_images.h"
 START_ASTRO
 1 /* Versión del archivo*/
-19 /* Niveles, 16 normales + 3 de explicación */
+20 /* Niveles, 17 normales + 3 de explicación */
 1 /* El primer nivel */
 1 /* Número de nivel que describo */
 	0 /* No es de explicación */
@@ -1222,7 +1222,7 @@ START_ASTRO
 16
 	0 /* no es de explicación */
 	0 /* No es secreto */
-	-1 /* Siguiente nivel */
+	17 /* Siguiente nivel */
 	9 /* Balas de este nivel */
 	5 /* Hits requeridos */
 	4 /* Número de objetos de lineas */
@@ -1278,3 +1278,155 @@ START_ASTRO
 			312
 			224
 			40
+17
+	0 /* no es de explicación */
+	0 /* No es secreto */
+	-1 /* Siguiente nivel */
+	9 /* Balas de este nivel */
+	6 /* Hits requeridos */
+	4 /* Número de objetos de lineas */
+	3 /* Número de bloques */
+	4 /* Número de targets */
+	IMG_LINE8
+		8
+		32
+	IMG_LINE9
+		32
+		100
+	IMG_LINE9
+		240
+		100
+	IMG_LINE12
+		4
+		280
+	IMG_BLOCK_MINI
+		68
+		144
+	IMG_BLOCK_MINI
+		276
+		144
+	IMG_BLOCK_NORMAL
+		156
+		224
+	IMG_TARGET_NORMAL_YELLOW
+		8
+			16
+			16
+			25
+			164
+			16
+			25
+			164
+			168
+			25
+			164
+			16
+			25
+			312
+			16
+			25
+			164
+			16
+			25
+			164
+			168
+			25
+			164
+			16
+			25
+	IMG_TARGET_MINI_GREEN /* Green Chico */
+		10
+			28
+			144
+			2
+			20
+			144
+			14
+			20
+			88
+			26
+			116
+			88
+			14
+			116
+			144
+			2
+			108
+			144
+			2
+			116
+			144
+			14
+			116
+			88
+			26
+			20
+			88
+			14
+			20
+			144
+			2
+	IMG_TARGET_MINI_GREEN /* Green chico */
+		10
+			316
+			144
+			2
+			324
+			144
+			14
+			324
+			88
+			26
+			228
+			88
+			14
+			228
+			144
+			2
+			236
+			144
+			2
+			228
+			144
+			14
+			228
+			88
+			26
+			324
+			88
+			14
+			324
+			144
+			2
+	IMG_TARGET_MINI_YELLOW
+		10
+			16
+			272
+			10
+			84
+			272
+			8
+			124
+			312
+			14
+			220
+			312
+			8
+			260
+			272
+			10
+			328
+			272
+			10
+			260
+			272
+			8
+			220
+			312
+			14
+			124
+			312
+			8
+			84
+			272
+			10

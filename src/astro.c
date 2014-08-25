@@ -103,6 +103,7 @@ enum {
 	IMG_LINE10,
 	IMG_LINE11_A,
 	IMG_LINE11_B,
+	IMG_LINE12,
 	
 	IMG_SWITCH_ORANGE,
 	IMG_SWITCH_ORANGE_HIT,
@@ -159,6 +160,7 @@ const char *images_names[NUM_IMAGES] = {
 	GAMEDATA_DIR "images/line10.png",
 	GAMEDATA_DIR "images/line11a.png",
 	GAMEDATA_DIR "images/line11b.png",
+	GAMEDATA_DIR "images/line12.png",
 	
 	GAMEDATA_DIR "images/switch_orange.png",
 	GAMEDATA_DIR "images/switch_orange_hit.png",
