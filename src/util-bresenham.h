@@ -39,6 +39,7 @@ typedef struct {
 } Punto;
 
 void line (int x1, int y1, int x2, int y2, Punto *puntos, int vel);
+void circle (int xc, int yc, int r, Punto *puntos, int vel, int dir);
 
 __attribute__((always_inline)) static inline int SDL_RectEmpty (const SDL_Rect *r) {
 	return ((!r) || (r->w <= 0) || (r->h <= 0)) ? TRUE : FALSE;

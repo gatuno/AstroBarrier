@@ -310,3 +310,73 @@ int SDL_StretchSurfaceBlit(SDL_Surface *src, SDL_Rect *srcrect,
 
 	return(0);
 }
+
+void circle (int xc, int yc, int r, Punto *puntos, int vel, int dir) {
+	int p;
+	int x, y, e;
+	Punto temp[250];
+	
+	p = 1 - r;
+	x = 0;
+	y = r;
+	e = 1;
+	
+	temp[0].x = x;
+	temp[0].y = y;
+	
+	while (x < y) {
+		if (p < 0) {
+			x++;
+			
+			p = p + (2 * x) + 1;
+		} else {
+			x++;
+			y--;
+			p = p + (2 * x) + 1 - (2 * y);
+		}
+		
+		temp[e].x = x;
+		temp[e++].y = y;
+	}
+	
+	x = vel / 8;
+	r = 0;
+	//printf ("Total de puntos del circulo %i, yo voy a tomar: %i\n", e, x);
+	//printf ("circulo, recogiendo puntos\n");
+	/* Recoger los puntos */
+	for (y = 0; y < e; y++) {
+		p = roundf (((float) (e * r)) / ((float) x));
+		//printf ("Punto: %i\n", y);
+		if (p == y) {
+			//printf ("Tomo este punto y lo pongo en R: %i\n", r);
+			//printf ("Y en %i, %i, %i, %i, %i, %i, %i\n", (2 * x) - r, (2 * x) + r, (4 * x) - r, (4 * x) + r, (6 * x) - r, (6 * x) + r, (8 * x) - r);
+			/* Tomar este punto */
+			puntos[r].x = puntos[(4 * x) - r].x = xc + temp[y].x;
+			puntos[r].y = puntos[(8 * x) - r].y = yc + temp[y].y;
+		
+			puntos[(2 * x) - r].x = puntos[(2 * x) + r].x = xc + temp[y].y;
+			puntos[(2 * x) - r].y = puntos[(6 * x) + r].y = yc + temp[y].x;
+		
+			puntos[(2 * x) + r].y = puntos[(6 * x) - r].y = yc - temp[y].x;
+			puntos[(4 * x) - r].y = puntos[(4 * x) + r].y = yc - temp[y].y;
+		
+			puntos[(4 * x) + r].x = puntos[(8 * x) - r].x = xc - temp[y].x;
+			puntos[(6 * x) - r].x = puntos[(6 * x) + r].x = xc - temp[y].y;
+		
+			r++;
+		}
+	}
+
+	puntos[x].x = puntos[x * 3].x = xc + temp[e - 1].x;
+	puntos[x].y = puntos[x * 7].y = yc + temp[e - 1].y;
+	puntos[x * 3].y = puntos[x * 5].y = yc - temp[e - 1].y;
+	puntos[x * 5].x = puntos[x * 7].x = xc - temp[e - 1].x;
+	
+	if (dir == 0) {
+		for (y = 0; y < vel / 2; y++) {
+			temp[e] = puntos[y];
+			puntos[y] = puntos[vel - y - 1];
+			puntos[vel - y - 1] = temp[e];
+		}
+	}
+}

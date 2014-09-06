@@ -482,7 +482,6 @@ int game_loop (void) {
 			rect.h = 36;
 			SDL_BlitSurface (images[IMG_ARCADE], &rect, screen, &rect);
 			
-			printf ("Debug: Refrescando tiros\n");
 			/* Borrar la parte de abajo de los tiros */
 			rect.x = 0;
 			rect.y = 436;
@@ -496,7 +495,6 @@ int game_loop (void) {
 			if (tiros == 0) {
 				/* Dibujar la palabra "0 shoots" */
 			} else if (tiros > 0) {
-				printf ("Redibujando para %i tiros\n", tiros);
 				rect.x = 3;
 				rect.y = 456;
 				rect.w = images[IMG_SHOOT]->w;
@@ -680,7 +678,7 @@ void leer_archivo (void) {
 	read (fd_levels, &temp, sizeof (uint32_t));
 	levels.version = temp;
 	
-	if (temp != 1) {
+	if (temp != 2) {
 		/* Archivo incompleto */
 		fprintf (stderr, "Versión del archivo de niveles incorrecto.\n");
 		close (fd_levels);
@@ -781,25 +779,48 @@ void leer_nivel (int level, int *next_level, int *shoots, int *hitsrequired, Lin
 		read (fd_levels, &temp, sizeof (uint32_t));
 		k = temp;
 		
-		for (h = 0; h < k; h++) {
+		if (k == 0) {
 			read (fd_levels, &temp, sizeof (uint32_t));
-			puntos[h].x = temp;
+			puntos[0].x = temp;
+		
+			read (fd_levels, &temp, sizeof (uint32_t));
+			puntos[0].y = temp;
+		
+			read (fd_levels, &temp, sizeof (uint32_t));
+			tomar[0] = temp;
 			
 			read (fd_levels, &temp, sizeof (uint32_t));
-			puntos[h].y = temp;
+			tomar[1] = temp;
 			
 			read (fd_levels, &temp, sizeof (uint32_t));
-			tomar[h] = temp;
+			tomar[2] = temp;
+		} else if (k > 0) {
+			for (h = 0; h < k; h++) {
+				read (fd_levels, &temp, sizeof (uint32_t));
+				puntos[h].x = temp;
+			
+				read (fd_levels, &temp, sizeof (uint32_t));
+				puntos[h].y = temp;
+			
+				read (fd_levels, &temp, sizeof (uint32_t));
+				tomar[h] = temp;
+			}
 		}
 		
 		/* Ahora, utilizar la linea de bresenham para estimar los puntos intermedios */
-		i = 0;
-		for (h = 0; h < k; h++) {
-			line (puntos[h].x, puntos[h].y, puntos[(h + 1) % k].x, puntos[(h + 1) % k].y, &targets[g].puntos[i], tomar[h]);
-			i += tomar[h];
+		if (k == 0) {
+			circle (puntos[0].x, puntos[0].y, tomar[1], targets[g].puntos, tomar[0], tomar[2]);
+			targets[g].total_vel = tomar[0];
+		} else if (k > 0) {
+			/* Es una trayectoria con puntos */
+			i = 0;
+			for (h = 0; h < k; h++) {
+				line (puntos[h].x, puntos[h].y, puntos[(h + 1) % k].x, puntos[(h + 1) % k].y, &targets[g].puntos[i], tomar[h]);
+				i += tomar[h];
+			}
+			targets[g].total_vel = i;
 		}
 		
-		targets[g].total_vel = i;
 		targets[g].pos = 0;
 		targets[g].detenido = FALSE;
 	}

@@ -33,7 +33,7 @@ int main (int argc, char *argv[]) {
 	int m, n, o, k;
 	int niveles;
 	
-	int temp, temp2, temp3;
+	int temp, temp2, temp3, temp4, temp5;
 	uint32_t out;
 	
 	int fd;
@@ -234,27 +234,65 @@ printf ("Debug, RAW: %s", buffer);
 			
 			write (fd, &out, sizeof (uint32_t));
 			
-			for (i = 0; i < k; i++) {
-				/* X del objeto */
+			if (k == 0) {
+				/* Es un movimiento circular */
 				fgets (buffer, sizeof (buffer), fd_entrada);
 				sscanf (buffer, "%i", &temp);
 				out = temp;
-			
+				
 				write (fd, &out, sizeof (uint32_t));
-			
+				
 				/* Y del objeto */
 				fgets (buffer, sizeof (buffer), fd_entrada);
 				sscanf (buffer, "%i", &temp);
 				out = temp;
-			
+				
 				write (fd, &out, sizeof (uint32_t));
 				
 				/* Velocidad del objeto */
 				fgets (buffer, sizeof (buffer), fd_entrada);
 				sscanf (buffer, "%i", &temp);
 				out = temp;
-			
+		
 				write (fd, &out, sizeof (uint32_t));
+				
+				/* Radio del objeto */
+				fgets (buffer, sizeof (buffer), fd_entrada);
+				sscanf (buffer, "%i", &temp);
+				out = temp;
+				
+				write (fd, &out, sizeof (uint32_t));
+				
+				/* Dirección */
+				fgets (buffer, sizeof (buffer), fd_entrada);
+				sscanf (buffer, "%i", &temp);
+				out = temp;
+				
+				write (fd, &out, sizeof (uint32_t));
+			} else {
+				/* Es un movimiento lineal */
+				for (i = 0; i < k; i++) {
+					/* X del objeto */
+					fgets (buffer, sizeof (buffer), fd_entrada);
+					sscanf (buffer, "%i", &temp);
+					out = temp;
+			
+					write (fd, &out, sizeof (uint32_t));
+			
+					/* Y del objeto */
+					fgets (buffer, sizeof (buffer), fd_entrada);
+					sscanf (buffer, "%i", &temp);
+					out = temp;
+			
+					write (fd, &out, sizeof (uint32_t));
+				
+					/* Velocidad del objeto */
+					fgets (buffer, sizeof (buffer), fd_entrada);
+					sscanf (buffer, "%i", &temp);
+					out = temp;
+			
+					write (fd, &out, sizeof (uint32_t));
+				}
 			}
 		}
 	}
@@ -381,17 +419,42 @@ printf ("Debug, RAW: %s", buffer);
 			read (fd, &out, sizeof (uint32_t));
 			k = out;
 			
-			for (i = 0; i < k; i++) {
+			if (k == 0) {
+				/* Es un movimiento circular */
+				printf ("\t\tEste target se mueve en circulos\n");
 				read (fd, &out, sizeof (uint32_t));
 				temp = out;
-				
+			
 				read (fd, &out, sizeof (uint32_t));
 				temp2 = out;
-				
+			
 				read (fd, &out, sizeof (uint32_t));
 				temp3 = out;
 				
-				printf ("\t\t\tPunto (%i, %i), vel: %i\n", temp, temp2, temp3);
+				read (fd, &out, sizeof (uint32_t));
+				temp4 = out;
+				
+				read (fd, &out, sizeof (uint32_t));
+				temp5 = out;
+				
+				printf ("\t\t\tCirculo con centro en (%i, %i) r = %i; vel: %i\n", temp, temp2, temp4, temp3);
+				if (temp5 == 0) printf ("\t\t\t\tMovimiento en sentido de las manecillas del reloj\n");
+				else printf ("\t\t\t\tSentido contrario\n");
+			} else {
+				/* Es un movimiento lineal */
+				printf ("\t\tEste target se mueve en lineas rectas\n");
+				for (i = 0; i < k; i++) {
+					read (fd, &out, sizeof (uint32_t));
+					temp = out;
+				
+					read (fd, &out, sizeof (uint32_t));
+					temp2 = out;
+				
+					read (fd, &out, sizeof (uint32_t));
+					temp3 = out;
+				
+					printf ("\t\t\tPunto (%i, %i), vel: %i\n", temp, temp2, temp3);
+				}
 			}
 		}
 	}

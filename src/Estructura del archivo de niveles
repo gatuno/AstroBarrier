@@ -1,6 +1,7 @@
 Versiones:
 Versión 0, inicial
 Versión 1, se agrega las balas por nivel y hits requeridos por nivel
+Versión 2, se agregan los movimientos circulares
 
 [ASTRO] 5 bytes, la palabra ASTRO
 [uint32_t] 4 bytes con el número de versión del archivo
@@ -44,8 +45,14 @@ Seguido de N de:
 Seguido de O de:
 	[uint32_t] id del target
 	[uint32_t] K puntos de movimiento
-	Seguido de K trios de:
+	Si K > 0 significa movimiento lineal
+		Seguido de K trios de:
+			[uint32_t] X
+			[uint32_t] Y
+			[uint32_t] Velocidad
+	Si K == 0 significa movimiento circular
 		[uint32_t] X
 		[uint32_t] Y
 		[uint32_t] Velocidad
-
+		[uint32_t] Radio
+		[uint32_t] Direccion, 0 = manecillas del reloj, 1 = sentido contrario
