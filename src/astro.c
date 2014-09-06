@@ -86,6 +86,7 @@ enum {
 	IMG_BLOCK_NORMAL,
 	IMG_BLOCK_MINI,
 	IMG_BLOCK_BIG,
+	IMG_BLOCK_TALL,
 	
 	IMG_BLOCK_ORANGE,
 	
@@ -97,6 +98,7 @@ enum {
 	IMG_LINE5,
 	IMG_LINE6_A,
 	IMG_LINE6_B,
+	IMG_LINE6_C,
 	IMG_LINE7,
 	IMG_LINE8,
 	IMG_LINE9,
@@ -104,6 +106,9 @@ enum {
 	IMG_LINE11_A,
 	IMG_LINE11_B,
 	IMG_LINE12,
+	IMG_LINE13,
+	IMG_LINE14,
+	IMG_LINE15,
 	
 	IMG_SWITCH_ORANGE,
 	IMG_SWITCH_ORANGE_HIT,
@@ -143,6 +148,7 @@ const char *images_names[NUM_IMAGES] = {
 	GAMEDATA_DIR "images/block_normal.png",
 	GAMEDATA_DIR "images/block_mini.png",
 	GAMEDATA_DIR "images/block_big.png",
+	GAMEDATA_DIR "images/block_tall.png",
 	
 	GAMEDATA_DIR "images/block_orange.png",
 	
@@ -154,6 +160,7 @@ const char *images_names[NUM_IMAGES] = {
 	GAMEDATA_DIR "images/line5.png",
 	GAMEDATA_DIR "images/line6a.png",
 	GAMEDATA_DIR "images/line6b.png",
+	GAMEDATA_DIR "images/line6c.png",
 	GAMEDATA_DIR "images/line7.png",
 	GAMEDATA_DIR "images/line8.png",
 	GAMEDATA_DIR "images/line9.png",
@@ -161,6 +168,9 @@ const char *images_names[NUM_IMAGES] = {
 	GAMEDATA_DIR "images/line11a.png",
 	GAMEDATA_DIR "images/line11b.png",
 	GAMEDATA_DIR "images/line12.png",
+	GAMEDATA_DIR "images/line13.png",
+	GAMEDATA_DIR "images/line14.png",
+	GAMEDATA_DIR "images/line15.png",
 	
 	GAMEDATA_DIR "images/switch_orange.png",
 	GAMEDATA_DIR "images/switch_orange_hit.png",
@@ -201,7 +211,7 @@ typedef struct {
 	struct SDL_Rect rect;
 	int image;
 	int total_vel;
-	Punto puntos[200];
+	Punto puntos[350];
 	int pos;
 	int detenido;
 } Target;

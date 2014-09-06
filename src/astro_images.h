@@ -16,25 +16,28 @@
 #define IMG_BLOCK_NORMAL 18
 #define IMG_BLOCK_MINI 19
 #define IMG_BLOCK_BIG 20
+#define IMG_BLOCK_TALL 21
 
-#define IMG_BLOCK_ORANGE 21
+#define IMG_BLOCK_ORANGE 22
 
-#define IMG_LINE1 22
-#define IMG_LINE2_A 23
-#define IMG_LINE2_B 24
-#define IMG_LINE3 25
-#define IMG_LINE4 26
-#define IMG_LINE5 27
-#define IMG_LINE6_A 28
-#define IMG_LINE6_B 29
-#define IMG_LINE7 30
-#define IMG_LINE8 31
-#define IMG_LINE9 32
-#define IMG_LINE10 33
-#define IMG_LINE11_A 34
-#define IMG_LINE11_B 35
-#define IMG_LINE12 36
+#define IMG_LINE1 23
+#define IMG_LINE2_A 24
+#define IMG_LINE2_B 25
+#define IMG_LINE3 26
+#define IMG_LINE4 27
+#define IMG_LINE5 28
+#define IMG_LINE6_A 29
+#define IMG_LINE6_B 30
+#define IMG_LINE6_C 31
+#define IMG_LINE7 32
+#define IMG_LINE8 33
+#define IMG_LINE9 34
+#define IMG_LINE10 35
+#define IMG_LINE11_A 36
+#define IMG_LINE11_B 37
+#define IMG_LINE12 38
+#define IMG_LINE13 39
+#define IMG_LINE14 40
+#define IMG_LINE15 41
 
-#define IMG_SWITCH_ORANGE 37
-#define IMG_SWITCH_ORANGE_HIT 38
-
+#define IMG_SWITCH_ORANGE 42
