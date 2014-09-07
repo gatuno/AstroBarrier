@@ -23,6 +23,12 @@ nobase_dist_gamedata_DATA = images/arcade.png \
 	images/target_normal_green.png \
 	images/target_normal_red.png \
 	images/target_normal_yellow.png \
+	images/target_expand1.png \
+	images/target_expand2.png \
+	images/target_expand3.png \
+	images/target_expand4.png \
+	images/target_expand5.png \
+	images/target_expand_red.png \
 	images/line1.png \
 	images/line2a.png \
 	images/line2b.png \
@@ -46,6 +52,10 @@ nobase_dist_gamedata_DATA = images/arcade.png \
 	images/line17.png \
 	images/line18.png \
 	images/line19.png \
+	images/line20.png \
+	images/line21.png \
+	images/line22a.png \
+	images/line22b.png \
 	images/switch_orange.png \
 	images/switch_orange_hit.png \
 	images/restart.png \

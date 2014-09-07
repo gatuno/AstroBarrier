@@ -83,6 +83,14 @@ enum {
 	IMG_TARGET_BIG_YELLOW,
 	IMG_TARGET_BIG_RED,
 	
+	IMG_TARGET_EXPAND_1,
+	IMG_TARGET_EXPAND_2,
+	IMG_TARGET_EXPAND_3,
+	IMG_TARGET_EXPAND_4,
+	IMG_TARGET_EXPAND_5,
+	
+	IMG_TARGET_EXPAND_RED,
+	
 	IMG_BLOCK_NORMAL,
 	IMG_BLOCK_MINI,
 	IMG_BLOCK_BIG,
@@ -113,6 +121,10 @@ enum {
 	IMG_LINE17,
 	IMG_LINE18,
 	IMG_LINE19,
+	IMG_LINE20,
+	IMG_LINE21,
+	IMG_LINE22_A,
+	IMG_LINE22_B,
 	
 	IMG_SWITCH_ORANGE,
 	IMG_SWITCH_ORANGE_HIT,
@@ -149,6 +161,13 @@ const char *images_names[NUM_IMAGES] = {
 	GAMEDATA_DIR "images/target_big_yellow.png",
 	GAMEDATA_DIR "images/target_big_red.png",
 	
+	GAMEDATA_DIR "images/target_expand1.png",
+	GAMEDATA_DIR "images/target_expand2.png",
+	GAMEDATA_DIR "images/target_expand3.png",
+	GAMEDATA_DIR "images/target_expand4.png",
+	GAMEDATA_DIR "images/target_expand5.png",
+	GAMEDATA_DIR "images/target_expand_red.png",
+	
 	GAMEDATA_DIR "images/block_normal.png",
 	GAMEDATA_DIR "images/block_mini.png",
 	GAMEDATA_DIR "images/block_big.png",
@@ -179,6 +198,10 @@ const char *images_names[NUM_IMAGES] = {
 	GAMEDATA_DIR "images/line17.png",
 	GAMEDATA_DIR "images/line18.png",
 	GAMEDATA_DIR "images/line19.png",
+	GAMEDATA_DIR "images/line20.png",
+	GAMEDATA_DIR "images/line21.png",
+	GAMEDATA_DIR "images/line22a.png",
+	GAMEDATA_DIR "images/line22b.png",
 	
 	GAMEDATA_DIR "images/switch_orange.png",
 	GAMEDATA_DIR "images/switch_orange_hit.png",
@@ -366,50 +389,64 @@ int game_loop (void) {
 			/* Verificar colisiones contra los targets */
 			for (g = 0; g < n_targets; g++) {
 				if (SDL_HasIntersection (&shoot_rect, (SDL_Rect *)&targets[g])) {
-					if (!targets[g].detenido && (targets[g].image == IMG_TARGET_NORMAL_GREEN || targets[g].image == IMG_TARGET_MINI_GREEN || targets[g].image == IMG_TARGET_BIG_GREEN)) {
-						targets[g].detenido = TRUE;
-						targets[g].image += 2; /* Cambiar a rojo */
-						contador_hits++;
-						/* Para los verdes, sumar 10 puntos de score */
-						/* TODO: Reproducir sonido */
-					}
-					
-					if (!targets[g].detenido && (targets[g].image == IMG_TARGET_NORMAL_BLUE || targets[g].image == IMG_TARGET_MINI_BLUE || targets[g].image == IMG_TARGET_BIG_BLUE)) {
-						if (contador_hits == 0) {
-							/* Golpearon la vida primero */
-							/* Aumentar las vidas por 1 */
-							/* Aumentar las vidas recogidas por 1 */
-							/* if (lives_collected == 8) {
-								Enviar estampa 61
-							} */
-							/* Para las vidas en el primer golpe, sumar 100 puntos al score */
-							/* TODO: Reproducir sonido */
-							/* TODO: Mostrar aviso de 1-up que se desvanece */
-						} else {
-							/* Lástima, ya no es tan importante la vida */
-							/* Para las vidas, sumar 25 puntos al score */
-							/* TODO: Reproducir sonido */
+					if (!targets[g].detenido) {
+						switch (targets[g].image) {
+							case IMG_TARGET_NORMAL_GREEN:
+							case IMG_TARGET_MINI_GREEN:
+							case IMG_TARGET_BIG_GREEN:
+								targets[g].detenido = TRUE;
+								targets[g].image += 2; /* Cambiar a rojo */
+								contador_hits++;
+								/* Para los verdes, sumar 10 puntos de score */
+								/* TODO: Reproducir sonido */
+								break;
+							case IMG_TARGET_NORMAL_BLUE:
+							case IMG_TARGET_MINI_BLUE:
+							case IMG_TARGET_BIG_BLUE:
+								if (contador_hits == 0) {
+									/* Golpearon la vida primero */
+									printf ("Ganaste 1 vida\n");
+									/* Aumentar las vidas por 1 */
+									/* Aumentar las vidas recogidas por 1 */
+									/* if (lives_collected == 8) {
+										Enviar estampa 61
+									} */
+									/* Para las vidas en el primer golpe, sumar 100 puntos al score */
+									/* TODO: Reproducir sonido */
+									/* TODO: Mostrar aviso de 1-up que se desvanece */
+								} else {
+									/* Lástima, ya no es tan importante la vida */
+									/* Para las vidas, sumar 25 puntos al score */
+									/* TODO: Reproducir sonido */
+								}
+								contador_hits++;
+								targets[g].detenido = TRUE;
+								targets[g].image += 3; /* Cambiar a rojo */
+								break;
+							case IMG_SWITCH_ORANGE:
+								/* Golpearon el switch naranja, desaparecer los bloques lentamente */
+								switch_toggle = TRUE;
+								switch_timer = 0;
+								targets[g].image++; /* Switch golpeado */
+								targets[g].detenido = TRUE;
+								break;
+							case IMG_TARGET_NORMAL_YELLOW:
+							case IMG_TARGET_MINI_YELLOW:
+							case IMG_TARGET_BIG_YELLOW:
+								targets[g].image -= 1; /* Cambiar a verde */
+								contador_hits++;
+								/* Para los amarillos, sumar 25 puntos de score */
+								/* TODO: Reproducir sonido */
+								break;
+							case IMG_TARGET_EXPAND_1:
+								targets[g].detenido = TRUE;
+								contador_hits++;
+								/* El cambio de color ocurre abajo */
+								/* Sumar 25 de score */
+								/* TODO: Reproducir sonido */
+								break;
 						}
-						contador_hits++;
-						targets[g].detenido = TRUE;
-						targets[g].image += 3; /* Cambiar a rojo */
 					}
-					
-					if (!targets[g].detenido && targets[g].image == IMG_SWITCH_ORANGE) {
-						/* Golpearon el switch naranja, desaparecer los bloques lentamente */
-						switch_toggle = TRUE;
-						switch_timer = 0;
-						targets[g].image++; /* Switch golpeado */
-						targets[g].detenido = TRUE;
-					}
-					
-					if (!targets[g].detenido && (targets[g].image == IMG_TARGET_NORMAL_YELLOW || targets[g].image == IMG_TARGET_MINI_YELLOW || targets[g].image == IMG_TARGET_BIG_YELLOW)) {
-						targets[g].image -= 1; /* Cambiar a verde */
-						contador_hits++;
-						/* Para los amarillos, sumar 25 puntos de score */
-						/* TODO: Reproducir sonido */
-					}
-					
 					shooting = FALSE;
 				}
 			}
@@ -472,6 +509,14 @@ int game_loop (void) {
 		
 		/* Dibujar los targets */
 		for (g = 0; g < n_targets; g++) {
+			if (targets[g].detenido && targets[g].image < IMG_TARGET_EXPAND_RED && targets[g].image >= IMG_TARGET_EXPAND_1) {
+				targets[g].image++;
+				if (targets[g].image < IMG_TARGET_EXPAND_5) {
+					targets[g].puntos[targets[g].pos].x -= 8;
+					targets[g].rect.x -= 8;
+					targets[g].rect.w += 16;
+				}
+			}
 			SDL_BlitSurface (images[targets[g].image], NULL, game_buffer, (SDL_Rect *)&targets[g]);
 			if (!targets[g].detenido) {
 				targets[g].pos++;
@@ -843,5 +888,4 @@ void leer_nivel (int level, int *next_level, int *shoots, int *hitsrequired, Lin
 		targets[g].detenido = FALSE;
 	}
 }
-
 

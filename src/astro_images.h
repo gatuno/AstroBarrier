@@ -13,35 +13,47 @@
 #define IMG_TARGET_BIG_YELLOW 16
 #define IMG_TARGET_BIG_RED 17
 
-#define IMG_BLOCK_NORMAL 18
-#define IMG_BLOCK_MINI 19
-#define IMG_BLOCK_BIG 20
-#define IMG_BLOCK_TALL 21
+#define IMG_TARGET_EXPAND_1 18
+#define IMG_TARGET_EXPAND_2 19
+#define IMG_TARGET_EXPAND_3 20
+#define IMG_TARGET_EXPAND_4 21
+#define IMG_TARGET_EXPAND_5 22
+	
+#define IMG_TARGET_EXPAND_RED 23
 
-#define IMG_BLOCK_ORANGE 22
+#define IMG_BLOCK_NORMAL 24
+#define IMG_BLOCK_MINI 25
+#define IMG_BLOCK_BIG 26
+#define IMG_BLOCK_TALL 27
 
-#define IMG_LINE1 23
-#define IMG_LINE2_A 24
-#define IMG_LINE2_B 25
-#define IMG_LINE3 26
-#define IMG_LINE4 27
-#define IMG_LINE5 28
-#define IMG_LINE6_A 29
-#define IMG_LINE6_B 30
-#define IMG_LINE6_C 31
-#define IMG_LINE7 32
-#define IMG_LINE8 33
-#define IMG_LINE9 34
-#define IMG_LINE10 35
-#define IMG_LINE11_A 36
-#define IMG_LINE11_B 37
-#define IMG_LINE12 38
-#define IMG_LINE13 39
-#define IMG_LINE14 40
-#define IMG_LINE15 41
-#define IMG_LINE16 42
-#define IMG_LINE17 43
-#define IMG_LINE18 44
-#define IMG_LINE19 45
+#define IMG_BLOCK_ORANGE 28
 
-#define IMG_SWITCH_ORANGE 46
+#define IMG_LINE1 29
+#define IMG_LINE2_A 30
+#define IMG_LINE2_B 31
+#define IMG_LINE3 32
+#define IMG_LINE4 33
+#define IMG_LINE5 34
+#define IMG_LINE6_A 35
+#define IMG_LINE6_B 36
+#define IMG_LINE6_C 37
+#define IMG_LINE7 38
+#define IMG_LINE8 39
+#define IMG_LINE9 40
+#define IMG_LINE10 41
+#define IMG_LINE11_A 42
+#define IMG_LINE11_B 43
+#define IMG_LINE12 44
+#define IMG_LINE13 45
+#define IMG_LINE14 46
+#define IMG_LINE15 47
+#define IMG_LINE16 48
+#define IMG_LINE17 49
+#define IMG_LINE18 50
+#define IMG_LINE19 51
+#define IMG_LINE20 52
+#define IMG_LINE21 53
+#define IMG_LINE22_A 54
+#define IMG_LINE22_B 55
+
+#define IMG_SWITCH_ORANGE 56

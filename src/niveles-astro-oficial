@@ -1,7 +1,7 @@
 #include "astro_images.h"
 START_ASTRO
 2 /* Versión del archivo*/
-26 /* Niveles, 23 normales + 3 de explicación */
+29 /* Niveles, 26 normales + 3 de explicación */
 1 /* El primer nivel */
 1 /* Número de nivel que describo */
 	0 /* No es de explicación */
@@ -1855,7 +1855,7 @@ START_ASTRO
 23
 	0 /* no es de explicación */
 	0 /* No es secreto */
-	-1 /* Siguiente nivel */
+	24 /* Siguiente nivel */
 	10 /* Balas de este nivel */
 	6 /* Hits requeridos */
 	5 /* Número de objetos de lineas */
@@ -1993,3 +1993,202 @@ START_ASTRO
 			244
 			316
 			6
+24
+	0 /* no es de explicación */
+	0 /* No es secreto */
+	25 /* Siguiente nivel */
+	8 /* Balas de este nivel */
+	4 /* Hits requeridos */
+	4 /* Número de objetos de lineas */
+	0 /* Número de bloques */
+	4 /* Número de targets */
+	IMG_LINE20
+		4 /* X */
+		60 /* Y */
+	IMG_LINE20
+		4 /* X */
+		120 /* Y */
+	IMG_LINE20
+		4 /* X */
+		180 /* Y */
+	IMG_LINE20
+		4 /* X */
+		240 /* Y */
+	IMG_TARGET_EXPAND_1
+		3
+			164
+			48
+			30
+			40
+			48
+			60
+			288
+			48
+			30
+	IMG_TARGET_EXPAND_1
+		2
+			288
+			108
+			60
+			40
+			108
+			60
+	IMG_TARGET_EXPAND_1
+		2
+			40
+			168
+			60
+			288
+			168
+			60
+	IMG_TARGET_EXPAND_1
+		3
+			164
+			228
+			30
+			40
+			228
+			60
+			288
+			228
+			30
+25
+	0 /* no es de explicación */
+	0 /* No es secreto */
+	26 /* Siguiente nivel */
+	7 /* Balas de este nivel */
+	4 /* Hits requeridos */
+	4 /* Número de objetos de lineas */
+	2 /* Número de bloques */
+	4 /* Número de targets */
+	IMG_LINE1
+		4
+		40
+	IMG_LINE21
+		216
+		116
+	IMG_LINE20
+		4
+		188
+	IMG_LINE21
+		4
+		260
+	IMG_BLOCK_NORMAL
+		156
+		92
+	IMG_BLOCK_NORMAL
+		156
+		236
+	IMG_TARGET_NORMAL_BLUE
+		2
+			16
+			24
+			40
+			312
+			24
+			40
+	IMG_TARGET_EXPAND_1
+		2
+			288
+			104
+			15
+			252
+			104
+			15
+	IMG_TARGET_EXPAND_1
+		3
+			164
+			176
+			30
+			40
+			176
+			60
+			288
+			176
+			30
+	IMG_TARGET_EXPAND_1
+		2
+			40
+			248
+			15
+			76
+			248
+			15
+26
+	0 /* no es de explicación */
+	0 /* No es secreto */
+	-1 /* Siguiente nivel */
+	7 /* Balas de este nivel */
+	3 /* Hits requeridos */
+	3 /* Número de objetos de lineas */
+	4 /* Número de bloques */
+	3 /* Número de targets */
+	IMG_LINE4
+		112
+		4
+	IMG_LINE22_A
+		108
+		8
+	IMG_LINE22_B
+		40
+		8
+	IMG_BLOCK_MINI
+		76
+		164
+	IMG_BLOCK_MINI
+		220
+		208
+	IMG_BLOCK_BIG
+		16
+		288
+	IMG_BLOCK_BIG
+		224
+		288
+	IMG_TARGET_MINI_GREEN
+		6
+			240
+			16
+			20
+			240
+			116
+			30
+			104
+			116
+			20
+			104
+			16
+			20
+			104
+			116
+			30
+			240
+			116
+			20
+	IMG_TARGET_EXPAND_1
+		4
+			300
+			36
+			20
+			300
+			160
+			30
+			140
+			160
+			30
+			300
+			160
+			20
+	IMG_TARGET_EXPAND_1
+		4
+			24
+			36
+			30
+			24
+			204
+			20
+			140
+			204
+			20
+			24
+			204
+			30
