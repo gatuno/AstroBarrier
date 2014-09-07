@@ -2,7 +2,7 @@
  * astro.c
  * This file is part of Astro Barrier
  *
- * Copyright (C) 2013 - Félix Arreola Rodríguez
+ * Copyright (C) 2013, 2014 - Félix Arreola Rodríguez
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -109,6 +109,10 @@ enum {
 	IMG_LINE13,
 	IMG_LINE14,
 	IMG_LINE15,
+	IMG_LINE16,
+	IMG_LINE17,
+	IMG_LINE18,
+	IMG_LINE19,
 	
 	IMG_SWITCH_ORANGE,
 	IMG_SWITCH_ORANGE_HIT,
@@ -171,6 +175,10 @@ const char *images_names[NUM_IMAGES] = {
 	GAMEDATA_DIR "images/line13.png",
 	GAMEDATA_DIR "images/line14.png",
 	GAMEDATA_DIR "images/line15.png",
+	GAMEDATA_DIR "images/line16.png",
+	GAMEDATA_DIR "images/line17.png",
+	GAMEDATA_DIR "images/line18.png",
+	GAMEDATA_DIR "images/line19.png",
 	
 	GAMEDATA_DIR "images/switch_orange.png",
 	GAMEDATA_DIR "images/switch_orange_hit.png",

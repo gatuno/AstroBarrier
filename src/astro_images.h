@@ -39,5 +39,9 @@
 #define IMG_LINE13 39
 #define IMG_LINE14 40
 #define IMG_LINE15 41
+#define IMG_LINE16 42
+#define IMG_LINE17 43
+#define IMG_LINE18 44
+#define IMG_LINE19 45
 
-#define IMG_SWITCH_ORANGE 42
+#define IMG_SWITCH_ORANGE 46

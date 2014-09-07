@@ -1,7 +1,7 @@
 #include "astro_images.h"
 START_ASTRO
 2 /* Versión del archivo*/
-24 /* Niveles, 21 normales + 3 de explicación */
+26 /* Niveles, 23 normales + 3 de explicación */
 1 /* El primer nivel */
 1 /* Número de nivel que describo */
 	0 /* No es de explicación */
@@ -1659,7 +1659,7 @@ START_ASTRO
 21
 	0 /* no es de explicación */
 	0 /* No es secreto */
-	-1 /* Siguiente nivel */
+	22 /* Siguiente nivel */
 	3 /* Balas de este nivel */
 	2 /* Hits requeridos */
 	1 /* Número de objetos de lineas */
@@ -1739,3 +1739,257 @@ START_ASTRO
 			308
 			200
 			25
+22
+	0 /* no es de explicación */
+	0 /* No es secreto */
+	23 /* Siguiente nivel */
+	6 /* Balas de este nivel */
+	4 /* Hits requeridos */
+	4 /* Número de objetos de lineas */
+	3 /* Número de bloques */
+	4 /* Número de targets */
+	IMG_LINE3
+		72
+		36
+	IMG_LINE1
+		4
+		92
+	IMG_LINE2_B
+		8
+		148
+	IMG_LINE2_A
+		8
+		256
+	IMG_BLOCK_NORMAL
+		12
+		12
+	IMG_BLOCK_NORMAL
+		300
+		12
+	IMG_BLOCK_BIG
+		120
+		204
+	IMG_TARGET_BIG_GREEN
+		3
+			104
+			20
+			5
+			84
+			20
+			35
+			220
+			20
+			30
+	IMG_TARGET_MINI_BLUE
+		2
+			16
+			84
+			40
+			328
+			84
+			40
+	IMG_TARGET_NORMAL_GREEN
+		10
+			16
+			184
+			7
+			60
+			184
+			7
+			60
+			128
+			28
+			268
+			128
+			7
+			268
+			184
+			7
+			312
+			184
+			7
+			268
+			184
+			7
+			268
+			128
+			28
+			60
+			128
+			7
+			60
+			184
+			7
+	IMG_TARGET_NORMAL_GREEN
+		10
+			268
+			296
+			28
+			60
+			296
+			7
+			60
+			240
+			7
+			16
+			240
+			7
+			60
+			240
+			7
+			60
+			296
+			28
+			268
+			296
+			7
+			268
+			240
+			7
+			312
+			240
+			7
+			268
+			240
+			7
+23
+	0 /* no es de explicación */
+	0 /* No es secreto */
+	-1 /* Siguiente nivel */
+	10 /* Balas de este nivel */
+	6 /* Hits requeridos */
+	5 /* Número de objetos de lineas */
+	6 /* Número de bloques */
+	6 /* Número de targets */
+	IMG_LINE1
+		4
+		36
+	IMG_LINE16
+		40
+		108
+	IMG_LINE17
+		184
+		144
+	IMG_LINE18
+		288
+		252
+	IMG_LINE19
+		4
+		288
+	IMG_BLOCK_NORMAL
+		84
+		84
+	IMG_BLOCK_NORMAL
+		228
+		84
+	IMG_BLOCK_ORANGE
+		300
+		84
+	IMG_BLOCK_ORANGE
+		12
+		228
+	IMG_BLOCK_NORMAL
+		84
+		228
+	IMG_BLOCK_NORMAL
+		228
+		228
+	IMG_TARGET_BIG_YELLOW
+		2
+			288
+			20
+			50
+			16
+			20
+			50
+	IMG_SWITCH_ORANGE
+		1
+			172
+			100
+			1
+	IMG_TARGET_NORMAL_GREEN
+		8
+			28
+			92
+			2
+			20
+			92
+			18
+			20
+			164
+			18
+			92
+			164
+			2
+			92
+			156
+			2
+			92
+			164
+			18
+			20
+			164
+			18
+			20
+			92
+			2
+	IMG_TARGET_NORMAL_GREEN
+		8
+			308
+			156
+			2
+			308
+			164
+			22
+			164
+			164
+			16
+			164
+			236
+			2
+			172
+			236
+			2
+			164
+			236
+			16
+			164
+			164
+			22
+			308
+			164
+			2
+	IMG_TARGET_MINI_GREEN
+		6
+			316
+			244
+			2
+			300
+			244
+			2
+			316
+			244
+			16
+			316
+			316
+			2
+			328
+			316
+			2
+			316
+			316
+			16
+	IMG_TARGET_MINI_GREEN
+		4
+			244
+			300
+			6
+			244
+			316
+			30
+			16
+			316
+			30
+			244
+			316
+			6
