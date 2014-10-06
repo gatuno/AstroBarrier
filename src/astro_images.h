@@ -63,4 +63,9 @@
 #define IMG_LINE23_A 61
 #define IMG_LINE23_B 62
 
-#define IMG_SWITCH_ORANGE 63
+#define IMG_TURRET_1 63
+#define IMG_TURRET_2 64
+#define IMG_TURRET_3 65
+#define IMG_TURRET_4 66
+
+#define IMG_SWITCH_ORANGE 72

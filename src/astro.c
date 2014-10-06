@@ -133,6 +133,18 @@ enum {
 	IMG_LINE23_A,
 	IMG_LINE23_B,
 	
+	IMG_TURRET_1,
+	IMG_TURRET_2,
+	IMG_TURRET_3,
+	IMG_TURRET_4,
+	
+	IMG_TURRET_DESTROYED,
+	
+	IMG_TURRET_SHOOT_1,
+	IMG_TURRET_SHOOT_2,
+	IMG_TURRET_SHOOT_3,
+	IMG_TURRET_SHOOT_4,
+	
 	IMG_SWITCH_ORANGE,
 	IMG_SWITCH_ORANGE_HIT,
 	
@@ -217,6 +229,17 @@ const char *images_names[NUM_IMAGES] = {
 	GAMEDATA_DIR "images/line23a.png",
 	GAMEDATA_DIR "images/line23b.png",
 	
+	GAMEDATA_DIR "images/turret1.png",
+	GAMEDATA_DIR "images/turret2.png",
+	GAMEDATA_DIR "images/turret3.png",
+	GAMEDATA_DIR "images/turret4.png",
+	GAMEDATA_DIR "images/turret_destroyed.png",
+	
+	GAMEDATA_DIR "images/turret_shoot1.png",
+	GAMEDATA_DIR "images/turret_shoot2.png",
+	GAMEDATA_DIR "images/turret_shoot3.png",
+	GAMEDATA_DIR "images/turret_shoot4.png",
+	
 	GAMEDATA_DIR "images/switch_orange.png",
 	GAMEDATA_DIR "images/switch_orange_hit.png",
 	
@@ -271,7 +294,7 @@ int game_loop (void);
 void setup (void);
 SDL_Surface * set_video_mode(unsigned);
 void leer_archivo (void);
-void leer_nivel (int level, int *next_level, int *shoots, int *hitsrequired, Linea *lineas, int *n_lineas, Target *targets, int *n_targets, Bloque *bloques, int *n_bloques);
+void leer_nivel (int level, int *next_level, int *shoots, int *hitsrequired, Linea *lineas, int *n_lineas, Target *targets, int *n_targets, Bloque *bloques, int *n_bloques, int *has_turret);
 
 /* Variables globales */
 SDL_Surface * screen;
@@ -307,21 +330,31 @@ int game_loop (void) {
 	int astro_dir = 0;
 	SDL_Rect astro_rect;
 	SDL_Surface *game_buffer, *stretch_buffer;
-	int shooting = FALSE, space_toggle = FALSE, enter_toggle = FALSE, switch_toggle = FALSE;
+	int shooting, space_toggle, enter_toggle, switch_toggle;
+	int turret_shooting, has_turret, turret_dir;
 	int switch_timer;
-	SDL_Rect shoot_rect;
+	SDL_Rect shoot_rect, turret_shoot_rect;
 	
 	int n_lineas, n_targets, n_bloques;
 	int tiros, hits_requeridos, contador_hits, refresh_tiros;
 	int sig_nivel;
 	int pantalla_abierta = 0, timer_pantalla = 0;
 	
+	shooting = space_toggle = enter_toggle = switch_toggle = turret_shooting = FALSE;
+	has_turret = -1;
+	
 	Linea lineas[10];
 	Target targets[10];
 	Bloque bloques[10];
 	nivel_actual = 1;
 	
-	leer_nivel (nivel_actual, &sig_nivel, &tiros, &hits_requeridos, lineas, &n_lineas, targets, &n_targets, bloques, &n_bloques);
+	leer_nivel (nivel_actual, &sig_nivel, &tiros, &hits_requeridos, lineas, &n_lineas, targets, &n_targets, bloques, &n_bloques, &has_turret);
+	if (has_turret != -1) {
+		turret_dir = targets[has_turret].image - IMG_TURRET_1;
+		turret_shoot_rect.w = images[IMG_TURRET_SHOOT_1 + turret_dir]->w;
+		turret_shoot_rect.h = images[IMG_TURRET_SHOOT_1 + turret_dir]->h;
+	}
+	
 	contador_hits = 0;
 	refresh_tiros = TRUE;
 	shoot_rect.w = images[IMG_SHOOT]->w;
@@ -392,6 +425,21 @@ int game_loop (void) {
 			refresh_tiros = TRUE;
 		}
 		
+		/* Que el turret también tire */
+		if (has_turret != -1 && space_toggle && !turret_shooting && !pantalla_abierta) {
+			if (targets[has_turret].image != IMG_TURRET_DESTROYED) {
+				turret_shooting = TRUE;
+				
+				if (turret_dir == 0 || turret_dir == 2) {
+					turret_shoot_rect.x = targets[has_turret].rect.x + 20;
+					turret_shoot_rect.y = targets[has_turret].rect.y + 26;
+				} else {
+					turret_shoot_rect.x = targets[has_turret].rect.x + 26;
+					turret_shoot_rect.y = targets[has_turret].rect.y + 20;
+				}
+			}
+		}
+		
 		/* Mover los objetivos */
 		for (g = 0; g < n_targets; g++) {
 			h = &targets[g].pos;
@@ -409,7 +457,37 @@ int game_loop (void) {
 			
 			/* Verificar colisiones contra los targets */
 			for (g = 0; g < n_targets; g++) {
-				if (SDL_HasIntersection (&shoot_rect, (SDL_Rect *)&targets[g])) {
+				if (g == has_turret) {
+					/* La colisión contra el turret es un poco recortada */
+					rect = targets[g].rect;
+					switch (turret_dir) {
+						case 0:
+							rect.x += 16;
+						case 2:
+							rect.w -= 16;
+							rect.h -= 28;
+							rect.y += 14;
+							break;
+						case 1:
+							rect.y += 16;
+						case 3:
+							rect.x += 14;
+							rect.w -= 28;
+							rect.h -= 16;
+							break;
+					}
+					
+					if (SDL_HasIntersection (&shoot_rect, &rect)) {
+						if (!targets[g].detenido) {
+							targets[g].detenido = TRUE;
+							targets[g].image = IMG_TURRET_DESTROYED;
+							
+							shooting = FALSE;
+							/* Sumar 5  de score */
+							/* TODO: Reproducir sonido */
+						}
+					}
+				} else if (SDL_HasIntersection (&shoot_rect, (SDL_Rect *)&targets[g])) {
 					if (!targets[g].detenido) {
 						switch (targets[g].image) {
 							case IMG_TARGET_NORMAL_GREEN:
@@ -467,11 +545,11 @@ int game_loop (void) {
 								/* TODO: Reproducir sonido */
 								break;
 						}
-					}
+					} /* Cierro if de detenido */
 					shooting = FALSE;
-				}
-			}
-		}
+				} /* Cierro if de intersección */
+			} /* Cierro for contra los targets */
+		} /* Si está tirando */
 		
 		if (!pantalla_abierta && contador_hits >= hits_requeridos) {
 			/* Nivel terminado, hay que abrir la pantalla de siguiente nivel */
@@ -558,6 +636,34 @@ int game_loop (void) {
 			}
 		}
 		
+		if (has_turret != -1 && turret_shooting) {
+			g = IMG_TURRET_SHOOT_1 + turret_dir;
+			turret_shoot_rect.w = images[g]->w;
+			turret_shoot_rect.h = images[g]->h;
+			
+			SDL_BlitSurface (images[g], NULL, game_buffer, &turret_shoot_rect);
+			
+			
+			switch (turret_dir) {
+				case 0:
+					turret_shoot_rect.x += 30;
+					break;
+				case 1:
+					turret_shoot_rect.y += 30;
+					break;
+				case 2:
+					turret_shoot_rect.x -= 30;
+					break;
+				case 3:
+					turret_shoot_rect.y -= 30;
+					break;
+			}
+			
+			if (turret_shoot_rect.x < 0 || turret_shoot_rect.x > 400 || turret_shoot_rect.y < 0 || turret_shoot_rect.y > 480) {
+				turret_shooting = FALSE;
+			}
+		}
+		
 		/* Redibujar la cantidad de tiros */
 		if (refresh_tiros) {
 			/* Borrar el area debajo de la zona de juego */
@@ -636,7 +742,12 @@ int game_loop (void) {
 		if (pantalla_abierta && timer_pantalla > 56) {
 			if (pantalla_abierta == SCREEN_RESTART) {
 				/* Ocultar y reiniciar el nivel */
-				leer_nivel (nivel_actual, &sig_nivel, &tiros, &hits_requeridos, lineas, &n_lineas, targets, &n_targets, bloques, &n_bloques);
+				leer_nivel (nivel_actual, &sig_nivel, &tiros, &hits_requeridos, lineas, &n_lineas, targets, &n_targets, bloques, &n_bloques, &has_turret);
+				if (has_turret != -1) {
+					turret_dir = targets[has_turret].image - IMG_TURRET_1;
+					turret_shoot_rect.w = images[IMG_TURRET_SHOOT_1 + turret_dir]->w;
+					turret_shoot_rect.h = images[IMG_TURRET_SHOOT_1 + turret_dir]->h;
+				}
 				switch_toggle = FALSE;
 				contador_hits = 0;
 				refresh_tiros = TRUE;
@@ -647,7 +758,12 @@ int game_loop (void) {
 				/* Pasar al siguiente nivel */
 				if (sig_nivel != -1) {
 					nivel_actual = sig_nivel;
-					leer_nivel (nivel_actual, &sig_nivel, &tiros, &hits_requeridos, lineas, &n_lineas, targets, &n_targets, bloques, &n_bloques);
+					leer_nivel (nivel_actual, &sig_nivel, &tiros, &hits_requeridos, lineas, &n_lineas, targets, &n_targets, bloques, &n_bloques, &has_turret);
+					if (has_turret != -1) {
+						turret_dir = targets[has_turret].image - IMG_TURRET_1;
+						turret_shoot_rect.w = images[IMG_TURRET_SHOOT_1 + turret_dir]->w;
+						turret_shoot_rect.h = images[IMG_TURRET_SHOOT_1 + turret_dir]->h;
+					}
 					switch_toggle = FALSE;
 					contador_hits = 0;
 					refresh_tiros = TRUE;
@@ -663,7 +779,12 @@ int game_loop (void) {
 			/* Cargar el siguiente nivel, porque presionó enter */
 			if (sig_nivel != -1) {
 				nivel_actual = sig_nivel;
-				leer_nivel (nivel_actual, &sig_nivel, &tiros, &hits_requeridos, lineas, &n_lineas, targets, &n_targets, bloques, &n_bloques);
+				leer_nivel (nivel_actual, &sig_nivel, &tiros, &hits_requeridos, lineas, &n_lineas, targets, &n_targets, bloques, &n_bloques, &has_turret);
+				if (has_turret != -1) {
+					turret_dir = targets[has_turret].image - IMG_TURRET_1;
+					turret_shoot_rect.w = images[IMG_TURRET_SHOOT_1 + turret_dir]->w;
+					turret_shoot_rect.h = images[IMG_TURRET_SHOOT_1 + turret_dir]->h;
+				}
 				
 				switch_toggle = FALSE;
 				timer_pantalla = 0;
@@ -787,13 +908,14 @@ void leer_archivo (void) {
 	}
 }
 
-void leer_nivel (int level, int *next_level, int *shoots, int *hitsrequired, Linea *lineas, int *n_lineas, Target *targets, int *n_targets, Bloque *bloques, int *n_bloques) {
+void leer_nivel (int level, int *next_level, int *shoots, int *hitsrequired, Linea *lineas, int *n_lineas, Target *targets, int *n_targets, Bloque *bloques, int *n_bloques, int *has_turret) {
 	/* Brincar directo al nivel y leer la información */
 	int g, h, i, k;
 	off_t pos;
 	uint32_t temp;
 	Punto puntos[20];
 	int tomar[20];
+	*has_turret = -1;
 	
 	for (g = 0; g < levels.total; g++) {
 		if (levels.levels[g] == level) {
@@ -857,6 +979,9 @@ void leer_nivel (int level, int *next_level, int *shoots, int *hitsrequired, Lin
 	
 	for (g = 0; g < *n_targets; g++) {
 		read (fd_levels, &temp, sizeof (uint32_t));
+		
+		if (temp >= IMG_TURRET_1 && temp <= IMG_TURRET_4) *has_turret = g;
+		
 		targets[g].image = temp;
 		targets[g].rect.w = images[temp]->w;
 		targets[g].rect.h = images[temp]->h;

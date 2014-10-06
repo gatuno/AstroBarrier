@@ -65,6 +65,15 @@ nobase_dist_gamedata_DATA = images/arcade.png \
 	images/line23b.png \
 	images/switch_orange.png \
 	images/switch_orange_hit.png \
+	images/turret1.png \
+	images/turret2.png \
+	images/turret3.png \
+	images/turret4.png \
+	images/turret_destroyed.png \
+	images/turret_shoot1.png \
+	images/turret_shoot2.png \
+	images/turret_shoot3.png \
+	images/turret_shoot4.png \
 	images/restart.png \
 	images/next_level.png
 

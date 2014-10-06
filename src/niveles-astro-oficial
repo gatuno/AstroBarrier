@@ -1,7 +1,7 @@
 #include "astro_images.h"
 START_ASTRO
 2 /* Versión del archivo*/
-33 /* Niveles, 30 normales + 3 de explicación */
+34 /* Niveles, 30 normales + 4 de explicación */
 1 /* El primer nivel */
 1 /* Número de nivel que describo */
 	0 /* No es de explicación */
@@ -2417,7 +2417,7 @@ START_ASTRO
 30
 	0 /* no es de explicación */
 	0 /* No es secreto */
-	-1 /* Siguiente nivel */
+	65566 /* Siguiente nivel */
 	9 /* Balas de este nivel */
 	6 /* Hits requeridos */
 	5 /* Número de objetos de lineas */
@@ -2539,4 +2539,26 @@ START_ASTRO
 		1
 			120
 			100
+			1
+30
+	1 /* Es de explicación */
+	0 /* No es secreto */
+	-1 /* Siguiente nivel */
+	-1 /* Balas de este nivel */
+	6 /* Hits requeridos */
+	0 /* Número de objetos de lineas */
+	1 /* Número de bloques */
+	2 /* Número de targets */
+	IMG_BLOCK_BIG
+		224
+		208
+	IMG_TARGET_NORMAL_GREEN
+		1
+			308
+			20
+			1
+	IMG_TURRET_1
+		1
+			8
+			12
 			1
