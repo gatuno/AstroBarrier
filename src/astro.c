@@ -97,6 +97,7 @@ enum {
 	IMG_BLOCK_TALL,
 	
 	IMG_BLOCK_ORANGE,
+	IMG_BLOCK_ORANGE_MINI,
 	
 	IMG_LINE1,
 	IMG_LINE2_A,
@@ -113,18 +114,24 @@ enum {
 	IMG_LINE10,
 	IMG_LINE11_A,
 	IMG_LINE11_B,
-	IMG_LINE12,
+	IMG_LINE12_A,
+	IMG_LINE12_B,
 	IMG_LINE13,
 	IMG_LINE14,
 	IMG_LINE15,
 	IMG_LINE16,
 	IMG_LINE17,
-	IMG_LINE18,
-	IMG_LINE19,
+	IMG_LINE18_A,
+	IMG_LINE18_B,
+	IMG_LINE19_A,
+	IMG_LINE19_B,
+	IMG_LINE19_C,
 	IMG_LINE20,
 	IMG_LINE21,
 	IMG_LINE22_A,
 	IMG_LINE22_B,
+	IMG_LINE23_A,
+	IMG_LINE23_B,
 	
 	IMG_SWITCH_ORANGE,
 	IMG_SWITCH_ORANGE_HIT,
@@ -174,6 +181,7 @@ const char *images_names[NUM_IMAGES] = {
 	GAMEDATA_DIR "images/block_tall.png",
 	
 	GAMEDATA_DIR "images/block_orange.png",
+	GAMEDATA_DIR "images/block_orange_mini.png",
 	
 	GAMEDATA_DIR "images/line1.png",
 	GAMEDATA_DIR "images/line2a.png",
@@ -190,18 +198,24 @@ const char *images_names[NUM_IMAGES] = {
 	GAMEDATA_DIR "images/line10.png",
 	GAMEDATA_DIR "images/line11a.png",
 	GAMEDATA_DIR "images/line11b.png",
-	GAMEDATA_DIR "images/line12.png",
+	GAMEDATA_DIR "images/line12a.png",
+	GAMEDATA_DIR "images/line12b.png",
 	GAMEDATA_DIR "images/line13.png",
 	GAMEDATA_DIR "images/line14.png",
 	GAMEDATA_DIR "images/line15.png",
 	GAMEDATA_DIR "images/line16.png",
 	GAMEDATA_DIR "images/line17.png",
-	GAMEDATA_DIR "images/line18.png",
-	GAMEDATA_DIR "images/line19.png",
+	GAMEDATA_DIR "images/line18a.png",
+	GAMEDATA_DIR "images/line18b.png",
+	GAMEDATA_DIR "images/line19a.png",
+	GAMEDATA_DIR "images/line19b.png",
+	GAMEDATA_DIR "images/line19c.png",
 	GAMEDATA_DIR "images/line20.png",
 	GAMEDATA_DIR "images/line21.png",
 	GAMEDATA_DIR "images/line22a.png",
 	GAMEDATA_DIR "images/line22b.png",
+	GAMEDATA_DIR "images/line23a.png",
+	GAMEDATA_DIR "images/line23b.png",
 	
 	GAMEDATA_DIR "images/switch_orange.png",
 	GAMEDATA_DIR "images/switch_orange_hit.png",
@@ -386,6 +400,13 @@ int game_loop (void) {
 		}
 		
 		if (shooting) {
+			/* Verificar colisiones contra los bloques */
+			for (g = 0; g < n_bloques; g++) {
+				if (SDL_HasIntersection (&shoot_rect, (SDL_Rect *)&bloques[g])) {
+					shooting = FALSE;
+				}
+			}
+			
 			/* Verificar colisiones contra los targets */
 			for (g = 0; g < n_targets; g++) {
 				if (SDL_HasIntersection (&shoot_rect, (SDL_Rect *)&targets[g])) {
@@ -450,14 +471,6 @@ int game_loop (void) {
 					shooting = FALSE;
 				}
 			}
-			
-			/* Verificar colisiones contra los bloques */
-			for (g = 0; g < n_bloques; g++) {
-				if (SDL_HasIntersection (&shoot_rect, (SDL_Rect *)&bloques[g])) {
-					shooting = FALSE;
-				}
-			}
-			
 		}
 		
 		if (!pantalla_abierta && contador_hits >= hits_requeridos) {
@@ -491,22 +504,6 @@ int game_loop (void) {
 			switch_timer++;
 		}
 		
-		/* Dibujar los bloques */
-		for (g = 0; g < n_bloques; g++) {
-			if (bloques[g].image == IMG_BLOCK_ORANGE && switch_toggle) {
-				if (switch_timer < 17) {
-					rect.y = switch_timer * 4;
-					bloques[g].rect.y += 4;
-					rect.x = 0;
-					rect.h = bloques[g].rect.h -= 4;
-					rect.w = bloques[g].rect.w;
-					SDL_BlitSurface (images[bloques[g].image], &rect, game_buffer, (SDL_Rect *)&bloques[g]);
-				}
-			} else {
-				SDL_BlitSurface (images[bloques[g].image], NULL, game_buffer, (SDL_Rect *)&bloques[g]);
-			}
-		}
-		
 		/* Dibujar los targets */
 		for (g = 0; g < n_targets; g++) {
 			if (targets[g].detenido && targets[g].image < IMG_TARGET_EXPAND_RED && targets[g].image >= IMG_TARGET_EXPAND_1) {
@@ -521,6 +518,31 @@ int game_loop (void) {
 			if (!targets[g].detenido) {
 				targets[g].pos++;
 				if (targets[g].pos >= targets[g].total_vel) targets[g].pos = 0;
+			}
+		}
+		
+		/* Dibujar los bloques */
+		for (g = 0; g < n_bloques; g++) {
+			if (bloques[g].image == IMG_BLOCK_ORANGE && switch_toggle) {
+				if (switch_timer < 17) {
+					rect.y = switch_timer * 4;
+					bloques[g].rect.y += 4;
+					rect.x = 0;
+					rect.h = bloques[g].rect.h -= 4;
+					rect.w = bloques[g].rect.w;
+					SDL_BlitSurface (images[bloques[g].image], &rect, game_buffer, (SDL_Rect *)&bloques[g]);
+				}
+			} else if (bloques[g].image == IMG_BLOCK_ORANGE_MINI && switch_toggle) {
+				if (switch_timer < 17) {
+					rect.y = switch_timer * 2;
+					bloques[g].rect.y += 2;
+					rect.x = 0;
+					rect.h = bloques[g].rect.h -= 2;
+					rect.w = bloques[g].rect.w;
+					SDL_BlitSurface (images[bloques[g].image], &rect, game_buffer, (SDL_Rect *)&bloques[g]);
+				}
+			} else {
+				SDL_BlitSurface (images[bloques[g].image], NULL, game_buffer, (SDL_Rect *)&bloques[g]);
 			}
 		}
 		

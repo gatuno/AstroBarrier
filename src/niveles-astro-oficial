@@ -1,7 +1,7 @@
 #include "astro_images.h"
 START_ASTRO
 2 /* Versión del archivo*/
-29 /* Niveles, 26 normales + 3 de explicación */
+33 /* Niveles, 30 normales + 3 de explicación */
 1 /* El primer nivel */
 1 /* Número de nivel que describo */
 	0 /* No es de explicación */
@@ -1296,7 +1296,7 @@ START_ASTRO
 	IMG_LINE9
 		240
 		100
-	IMG_LINE12
+	IMG_LINE12_A
 		4
 		280
 	IMG_BLOCK_MINI
@@ -1870,10 +1870,10 @@ START_ASTRO
 	IMG_LINE17
 		184
 		144
-	IMG_LINE18
+	IMG_LINE18_A
 		288
 		252
-	IMG_LINE19
+	IMG_LINE19_A
 		4
 		288
 	IMG_BLOCK_NORMAL
@@ -2117,7 +2117,7 @@ START_ASTRO
 26
 	0 /* no es de explicación */
 	0 /* No es secreto */
-	-1 /* Siguiente nivel */
+	27 /* Siguiente nivel */
 	7 /* Balas de este nivel */
 	3 /* Hits requeridos */
 	3 /* Número de objetos de lineas */
@@ -2192,3 +2192,351 @@ START_ASTRO
 			24
 			204
 			30
+27
+	0 /* no es de explicación */
+	0 /* No es secreto */
+	28 /* Siguiente nivel */
+	8 /* Balas de este nivel */
+	2 /* 4 */ /* Hits requeridos */
+	4 /* Número de objetos de lineas */
+	3 /* Número de bloques */
+	2 /*4*/ /* Número de targets */
+	IMG_LINE21
+		4
+		312
+	IMG_LINE21
+		216
+		312
+	IMG_LINE23_A
+		80
+		36
+	IMG_LINE23_B
+		80
+		132
+	IMG_BLOCK_MINI
+		68
+		168
+	IMG_BLOCK_MINI
+		276
+		100
+	IMG_BLOCK_NORMAL
+		156
+		288
+	IMG_TARGET_EXPAND_1
+		2
+			40
+			300
+			15
+			76
+			300
+			15
+	IMG_TARGET_EXPAND_1
+		2
+			288
+			300
+			15
+			252
+			300
+			15
+28
+	0 /* no es de explicación */
+	0 /* No es secreto */
+	29 /* Siguiente nivel */
+	5 /* Balas de este nivel */
+	3 /* Hits requeridos */
+	2 /* Número de objetos de lineas */
+	4 /* Número de bloques */
+	3 /* Número de targets */
+	IMG_LINE1
+		4
+		48
+	IMG_LINE20
+		4
+		272
+	IMG_BLOCK_NORMAL
+		16
+		180
+	IMG_BLOCK_ORANGE
+		84
+		180
+	IMG_BLOCK_BIG
+		152
+		180
+	IMG_BLOCK_MINI
+		328
+		196
+	IMG_SWITCH_ORANGE
+		1
+			292
+			196
+			1
+	IMG_TARGET_NORMAL_YELLOW
+		3
+			90
+			32
+			30
+			312
+			32
+			40
+			16
+			32
+			10
+	IMG_TARGET_EXPAND_1
+		2
+			40
+			260
+			60
+			288
+			260
+			60
+29
+	0 /* no es de explicación */
+	0 /* No es secreto */
+	30 /* Siguiente nivel */
+	7 /* Balas de este nivel */
+	5 /* Hits requeridos */
+	4 /* Número de objetos de lineas */
+	7 /* Número de bloques */
+	4 /* Número de targets */
+	IMG_LINE1
+		4
+		32
+	IMG_LINE12_B
+		4
+		120
+	IMG_LINE12_A
+		4
+		204
+	IMG_LINE20
+		4
+		320
+	IMG_BLOCK_MINI
+		32
+		72
+	IMG_BLOCK_MINI
+		144
+		72
+	IMG_BLOCK_MINI
+		200
+		72
+	IMG_BLOCK_MINI
+		312
+		72
+	IMG_BLOCK_MINI
+		88
+		268
+	IMG_BLOCK_MINI
+		172
+		268
+	IMG_BLOCK_MINI
+		256
+		268
+	IMG_TARGET_NORMAL_GREEN
+		2
+			16
+			16
+			40
+			312
+			16
+			40
+	IMG_TARGET_MINI_YELLOW
+		10
+			328
+			148
+			10
+			260
+			148
+			8
+			220
+			108
+			14
+			124
+			108
+			8
+			84
+			148
+			10
+			16
+			148
+			10
+			84
+			148
+			8
+			124
+			108
+			14
+			220
+			108
+			8
+			260
+			148
+			10
+	IMG_TARGET_MINI_GREEN
+		10
+			16
+			196
+			9
+			84
+			196
+			7
+			124
+			236
+			13
+			220
+			236
+			7
+			260
+			196
+			9
+			328
+			196
+			9
+			260
+			196
+			7
+			220
+			236
+			13
+			124
+			236
+			7
+			84
+			196
+			9
+	IMG_TARGET_EXPAND_1
+		3
+			164
+			308
+			30
+			40
+			308
+			60
+			288
+			308
+			30
+30
+	0 /* no es de explicación */
+	0 /* No es secreto */
+	-1 /* Siguiente nivel */
+	9 /* Balas de este nivel */
+	6 /* Hits requeridos */
+	5 /* Número de objetos de lineas */
+	5 /* Número de bloques */
+	6 /* Número de targets */
+	IMG_LINE19_B
+		4
+		36
+	IMG_LINE19_C
+		288
+		4
+	IMG_LINE18_B
+		4
+		108
+	IMG_LINE17
+		112
+		144
+	IMG_LINE20
+		4
+		316
+	IMG_BLOCK_BIG
+		156
+		84
+	IMG_BLOCK_BIG
+		156
+		228
+	IMG_BLOCK_ORANGE_MINI
+		84
+		100
+	IMG_BLOCK_ORANGE
+		16
+		292
+	IMG_BLOCK_ORANGE
+		296
+		292
+	IMG_TARGET_MINI_GREEN
+		4
+			244
+			44
+			6
+			244
+			28
+			30
+			16
+			28
+			30
+			244
+			28
+			6
+	IMG_TARGET_MINI_YELLOW
+		6
+			32
+			172
+			4
+			16
+			172
+			4
+			32
+			172
+			18
+			32
+			100
+			4
+			44
+			100
+			4
+			32
+			100
+			18
+	IMG_TARGET_NORMAL_GREEN
+		8
+			236
+			156
+			2
+			236
+			164
+			22
+			92
+			164
+			16
+			92
+			236
+			2
+			100
+			236
+			2
+			92
+			236
+			16
+			92
+			164
+			22
+			236
+			164
+			2
+	IMG_TARGET_MINI_GREEN
+		4
+			300
+			244
+			6
+			316
+			244
+			30
+			316
+			16
+			30
+			316
+			244
+			6
+	IMG_TARGET_EXPAND_1
+		2
+			40
+			304
+			60
+			288
+			304
+			60
+	IMG_SWITCH_ORANGE
+		1
+			120
+			100
+			1

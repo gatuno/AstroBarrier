@@ -7,6 +7,7 @@ nobase_dist_gamedata_DATA = images/arcade.png \
 	images/block_big.png \
 	images/block_tall.png \
 	images/block_orange.png \
+	images/block_orange_mini.png \
 	images/frame.png \
 	images/gamearea.png \
 	images/gameintro.png \
@@ -44,18 +45,24 @@ nobase_dist_gamedata_DATA = images/arcade.png \
 	images/line10.png \
 	images/line11a.png \
 	images/line11b.png \
-	images/line12.png \
+	images/line12a.png \
+	images/line12b.png \
 	images/line13.png \
 	images/line14.png \
 	images/line15.png \
 	images/line16.png \
 	images/line17.png \
-	images/line18.png \
-	images/line19.png \
+	images/line18a.png \
+	images/line18b.png \
+	images/line19a.png \
+	images/line19b.png \
+	images/line19c.png \
 	images/line20.png \
 	images/line21.png \
 	images/line22a.png \
 	images/line22b.png \
+	images/line23a.png \
+	images/line23b.png \
 	images/switch_orange.png \
 	images/switch_orange_hit.png \
 	images/restart.png \
