@@ -1,7 +1,7 @@
 #include "astro_images.h"
 START_ASTRO
 2 /* Versión del archivo*/
-34 /* Niveles, 30 normales + 4 de explicación */
+36 /* Niveles, 33 normales + 4 de explicación */
 1 /* El primer nivel */
 1 /* Número de nivel que describo */
 	0 /* No es de explicación */
@@ -2543,7 +2543,7 @@ START_ASTRO
 30
 	1 /* Es de explicación */
 	0 /* No es secreto */
-	-1 /* Siguiente nivel */
+	31 /* Siguiente nivel */
 	-1 /* Balas de este nivel */
 	6 /* Hits requeridos */
 	0 /* Número de objetos de lineas */
@@ -2561,4 +2561,125 @@ START_ASTRO
 		1
 			8
 			12
+			1
+31
+	0 /* No es de explicación */
+	0 /* No es secreto */
+	32/* Siguiente nivel */
+	5 /* Balas de este nivel */
+	3 /* Hits requeridos */
+	3 /* Número de objetos de lineas */
+	2 /* Número de bloques */
+	4 /* Número de targets */
+	IMG_LINE24
+		320
+		4
+	IMG_LINE7
+		4
+		40
+	IMG_LINE6_A
+		8
+		152
+	IMG_BLOCK_MINI
+		156
+		32
+	IMG_BLOCK_NORMAL
+		296
+		156
+	IMG_TARGET_BIG_GREEN
+		2
+			16
+			24
+			20
+			76
+			24
+			20
+	IMG_TARGET_NORMAL_GREEN
+		2
+			304
+			100
+			15
+			304
+			16
+			15
+	IMG_TARGET_NORMAL_GREEN
+		6
+			44
+			136
+			6
+			16
+			136
+			6
+			44
+			136
+			24
+			144
+			236
+			30
+			312
+			236
+			30
+			144
+			236
+			24
+	IMG_TURRET_1
+		1
+			16
+			64
+			1
+32
+	0 /* No es de explicación */
+	0 /* No es secreto */
+	-1/* Siguiente nivel */
+	7 /* Balas de este nivel */
+	3 /* Hits requeridos */
+	3 /* Número de objetos de lineas */
+	2 /* Número de bloques */
+	4 /* Número de targets */
+	IMG_LINE3
+		140
+		100
+	IMG_LINE3
+		4
+		216
+	IMG_LINE1
+		4
+		300
+	IMG_BLOCK_NORMAL
+		80
+		76
+	IMG_BLOCK_NORMAL
+		232
+		192
+	IMG_TARGET_MINI_GREEN
+		3
+			200
+			92
+			26
+			328
+			92
+			36
+			152
+			92
+			10
+	IMG_TARGET_MINI_GREEN
+		2
+			16
+			208
+			36
+			192
+			208
+			36
+	IMG_TARGET_NORMAL_GREEN
+		2
+			16
+			284
+			40
+			312
+			284
+			40
+	IMG_TURRET_2
+		1
+			158
+			18
 			1

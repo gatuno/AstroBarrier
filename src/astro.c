@@ -61,6 +61,7 @@ enum {
 	IMG_ARCADE,
 	
 	IMG_ASTRO,
+	IMG_ASTRO_DESTROYED,
 	
 	IMG_FRAME,
 	IMG_GAMEAREA,
@@ -132,6 +133,7 @@ enum {
 	IMG_LINE22_B,
 	IMG_LINE23_A,
 	IMG_LINE23_B,
+	IMG_LINE24,
 	
 	IMG_TURRET_1,
 	IMG_TURRET_2,
@@ -158,6 +160,7 @@ const char *images_names[NUM_IMAGES] = {
 	GAMEDATA_DIR "images/arcade.png",
 	
 	GAMEDATA_DIR "images/astro.png",
+	GAMEDATA_DIR "images/astro_destroyed.png",
 	
 	GAMEDATA_DIR "images/frame.png",
 	GAMEDATA_DIR "images/gamearea.png",
@@ -228,6 +231,7 @@ const char *images_names[NUM_IMAGES] = {
 	GAMEDATA_DIR "images/line22b.png",
 	GAMEDATA_DIR "images/line23a.png",
 	GAMEDATA_DIR "images/line23b.png",
+	GAMEDATA_DIR "images/line24.png",
 	
 	GAMEDATA_DIR "images/turret1.png",
 	GAMEDATA_DIR "images/turret2.png",
@@ -330,7 +334,7 @@ int game_loop (void) {
 	int astro_dir = 0;
 	SDL_Rect astro_rect;
 	SDL_Surface *game_buffer, *stretch_buffer;
-	int shooting, space_toggle, enter_toggle, switch_toggle;
+	int shooting, space_toggle, enter_toggle, switch_toggle, astro_destroyed;
 	int turret_shooting, has_turret, turret_dir;
 	int switch_timer;
 	SDL_Rect shoot_rect, turret_shoot_rect;
@@ -340,7 +344,7 @@ int game_loop (void) {
 	int sig_nivel;
 	int pantalla_abierta = 0, timer_pantalla = 0;
 	
-	shooting = space_toggle = enter_toggle = switch_toggle = turret_shooting = FALSE;
+	astro_destroyed = shooting = space_toggle = enter_toggle = switch_toggle = turret_shooting = FALSE;
 	has_turret = -1;
 	
 	Linea lineas[10];
@@ -551,6 +555,91 @@ int game_loop (void) {
 			} /* Cierro for contra los targets */
 		} /* Si está tirando */
 		
+		/* Si el turret está tirando */
+		if (has_turret && turret_shooting) {
+			/* Verificar colisiones contra los bloques */
+			for (g = 0; g < n_bloques; g++) {
+				if (SDL_HasIntersection (&turret_shoot_rect, (SDL_Rect *)&bloques[g])) {
+					turret_shooting = FALSE;
+				}
+			}
+			
+			/* Verificar colisiones contra los targets */
+			for (g = 0; g < n_targets; g++) {
+				if (g == has_turret) continue;
+				if (SDL_HasIntersection (&turret_shoot_rect, (SDL_Rect *)&targets[g])) {
+					if (!targets[g].detenido) {
+						switch (targets[g].image) {
+							case IMG_TARGET_NORMAL_GREEN:
+							case IMG_TARGET_MINI_GREEN:
+							case IMG_TARGET_BIG_GREEN:
+								targets[g].detenido = TRUE;
+								targets[g].image += 2; /* Cambiar a rojo */
+								contador_hits++;
+								/* Para los verdes, sumar 10 puntos de score */
+								/* TODO: Reproducir sonido */
+								break;
+							case IMG_TARGET_NORMAL_BLUE:
+							case IMG_TARGET_MINI_BLUE:
+							case IMG_TARGET_BIG_BLUE:
+								if (contador_hits == 0) {
+									/* Golpearon la vida primero */
+									printf ("Ganaste 1 vida por turret\n");
+									/* Aumentar las vidas por 1 */
+									/* Aumentar las vidas recogidas por 1 */
+									/* if (lives_collected == 8) {
+										Enviar estampa 61
+									} */
+									/* Para las vidas en el primer golpe, sumar 100 puntos al score */
+									/* TODO: Reproducir sonido */
+									/* TODO: Mostrar aviso de 1-up que se desvanece */
+								} else {
+									/* Lástima, ya no es tan importante la vida */
+									/* Para las vidas, sumar 25 puntos al score */
+									/* TODO: Reproducir sonido */
+								}
+								contador_hits++;
+								targets[g].detenido = TRUE;
+								targets[g].image += 3; /* Cambiar a rojo */
+								break;
+							case IMG_SWITCH_ORANGE:
+								/* Golpearon el switch naranja, desaparecer los bloques lentamente */
+								switch_toggle = TRUE;
+								switch_timer = 0;
+								targets[g].image++; /* Switch golpeado */
+								targets[g].detenido = TRUE;
+								break;
+							case IMG_TARGET_NORMAL_YELLOW:
+							case IMG_TARGET_MINI_YELLOW:
+							case IMG_TARGET_BIG_YELLOW:
+								targets[g].image -= 1; /* Cambiar a verde */
+								contador_hits++;
+								/* Para los amarillos, sumar 25 puntos de score */
+								/* TODO: Reproducir sonido */
+								break;
+							case IMG_TARGET_EXPAND_1:
+								targets[g].detenido = TRUE;
+								contador_hits++;
+								/* El cambio de color ocurre abajo */
+								/* Sumar 25 de score */
+								/* TODO: Reproducir sonido */
+								break;
+						}
+					} /* Cierro if de detenido */
+					turret_shooting = FALSE;
+				} /* Cierro if de intersección */
+			} /* Cierro for contra los targets */
+			
+			/* Colisión contra la nave */
+			if (SDL_HasIntersection (&astro_rect, &turret_shoot_rect)) {
+				/* Nave destruida */
+				pantalla_abierta = SCREEN_RESTART;
+				shooting = FALSE;
+				turret_shooting = FALSE;
+				astro_destroyed = TRUE;
+			}
+		} /* Si está tirando el turret*/
+		
 		if (!pantalla_abierta && contador_hits >= hits_requeridos) {
 			/* Nivel terminado, hay que abrir la pantalla de siguiente nivel */
 			pantalla_abierta = SCREEN_NEXT_LEVEL;
@@ -564,9 +653,9 @@ int game_loop (void) {
 		}
 		
 		/* Mover la nave a su nueva posición */
-		if (astro_dir < 0 && astro_rect.x > 5) {
+		if (!astro_destroyed && astro_dir < 0 && astro_rect.x > 5) {
 			astro_rect.x -= 5;
-		} else if (astro_dir > 0 && astro_rect.x < 315) {
+		} else if (!astro_destroyed && astro_dir > 0 && astro_rect.x < 315) {
 			astro_rect.x += 5;
 		}
 		
@@ -580,6 +669,34 @@ int game_loop (void) {
 		
 		if (switch_toggle && switch_timer < 17) {
 			switch_timer++;
+		}
+		
+		if (has_turret != -1 && turret_shooting) {
+			g = IMG_TURRET_SHOOT_1 + turret_dir;
+			turret_shoot_rect.w = images[g]->w;
+			turret_shoot_rect.h = images[g]->h;
+			
+			SDL_BlitSurface (images[g], NULL, game_buffer, &turret_shoot_rect);
+			
+			
+			switch (turret_dir) {
+				case 0:
+					turret_shoot_rect.x += 30;
+					break;
+				case 1:
+					turret_shoot_rect.y += 30;
+					break;
+				case 2:
+					turret_shoot_rect.x -= 30;
+					break;
+				case 3:
+					turret_shoot_rect.y -= 30;
+					break;
+			}
+			
+			if (turret_shoot_rect.x < 0 || turret_shoot_rect.x > 400 || turret_shoot_rect.y < 0 || turret_shoot_rect.y > 480) {
+				turret_shooting = FALSE;
+			}
 		}
 		
 		/* Dibujar los targets */
@@ -633,34 +750,6 @@ int game_loop (void) {
 			
 			if (shoot_rect.y < -56) {
 				shooting = FALSE;
-			}
-		}
-		
-		if (has_turret != -1 && turret_shooting) {
-			g = IMG_TURRET_SHOOT_1 + turret_dir;
-			turret_shoot_rect.w = images[g]->w;
-			turret_shoot_rect.h = images[g]->h;
-			
-			SDL_BlitSurface (images[g], NULL, game_buffer, &turret_shoot_rect);
-			
-			
-			switch (turret_dir) {
-				case 0:
-					turret_shoot_rect.x += 30;
-					break;
-				case 1:
-					turret_shoot_rect.y += 30;
-					break;
-				case 2:
-					turret_shoot_rect.x -= 30;
-					break;
-				case 3:
-					turret_shoot_rect.y -= 30;
-					break;
-			}
-			
-			if (turret_shoot_rect.x < 0 || turret_shoot_rect.x > 400 || turret_shoot_rect.y < 0 || turret_shoot_rect.y > 480) {
-				turret_shooting = FALSE;
 			}
 		}
 		
@@ -722,7 +811,11 @@ int game_loop (void) {
 			timer_pantalla++;
 		}
 		
-		SDL_BlitSurface (images[IMG_ASTRO], NULL, game_buffer, &astro_rect);
+		if (!astro_destroyed) {
+			SDL_BlitSurface (images[IMG_ASTRO], NULL, game_buffer, &astro_rect);
+		} else {
+			SDL_BlitSurface (images[IMG_ASTRO_DESTROYED], NULL, game_buffer, &astro_rect);
+		}
 		
 		/* Redibujar el marco blanco por los objetos que se salen */
 		SDL_BlitSurface (images[IMG_FRAME], NULL, game_buffer, NULL);
@@ -742,6 +835,7 @@ int game_loop (void) {
 		if (pantalla_abierta && timer_pantalla > 56) {
 			if (pantalla_abierta == SCREEN_RESTART) {
 				/* Ocultar y reiniciar el nivel */
+				astro_destroyed = FALSE;
 				leer_nivel (nivel_actual, &sig_nivel, &tiros, &hits_requeridos, lineas, &n_lineas, targets, &n_targets, bloques, &n_bloques, &has_turret);
 				if (has_turret != -1) {
 					turret_dir = targets[has_turret].image - IMG_TURRET_1;
@@ -786,6 +880,7 @@ int game_loop (void) {
 					turret_shoot_rect.h = images[IMG_TURRET_SHOOT_1 + turret_dir]->h;
 				}
 				
+				shooting = turret_shooting = FALSE;
 				switch_toggle = FALSE;
 				timer_pantalla = 0;
 				contador_hits = 0;

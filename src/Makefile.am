@@ -14,5 +14,5 @@ astro_barrier_LDADD = $(SDL_LIBS) $(SDL_image_LIBS) $(SDL_mixer_LIBS) $(SDL_ttf_
 levels.bin: niveles-astro-oficial.E
 	./astro-level niveles-astro-oficial.E levels.bin
 
-niveles-astro-oficial.E: niveles-astro-oficial
+niveles-astro-oficial.E: niveles-astro-oficial astro_images.h
 	cpp niveles-astro-oficial -o niveles-astro-oficial.E

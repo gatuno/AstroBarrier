@@ -2,6 +2,7 @@ gamedatadir = $(pkgdatadir)/data
 
 nobase_dist_gamedata_DATA = images/arcade.png \
 	images/astro.png \
+	images/astro_destroyed.png \
 	images/block_normal.png \
 	images/block_mini.png \
 	images/block_big.png \
@@ -63,6 +64,7 @@ nobase_dist_gamedata_DATA = images/arcade.png \
 	images/line22b.png \
 	images/line23a.png \
 	images/line23b.png \
+	images/line24.png \
 	images/switch_orange.png \
 	images/switch_orange_hit.png \
 	images/turret1.png \
