@@ -1,0 +1,15 @@
+-- Pantalla de explicación en el Nivel 30
+astro.level.explanation = 1
+astro.level.secret_pack = 0
+astro.level.next_level = 31
+astro.level.shoots = -1
+astro.level.hits_required = 6
+
+-- Hay que dibujar 1 bloques
+b = astro.blocks.new (IMG_BLOCK_BIG, 224, 208)
+
+-- Hay que dibujar 2 targets
+t = astro.targets.new (IMG_TARGET_NORMAL_GREEN)
+t:addPoint (308, 20)
+t = astro.targets.new (IMG_TURRET_1)
+t:addPoint (8, 12)

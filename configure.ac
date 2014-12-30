@@ -23,6 +23,7 @@ PKG_PROG_PKG_CONFIG
 SDL_VERSION=1.2.14
 SDL_IMAGE_VERSION=1.2.10
 SDL_TTF_VERSION=2.0.11
+LUA_VERSION=5.1.5
 
 AC_MSG_CHECKING([if you have SDL installed on your system])
 PKG_CHECK_EXISTS([sdl >= $SDL_VERSION], [AC_MSG_RESULT([yes])], [AC_MSG_FAILURE([SDL not found in your system])])
@@ -42,6 +43,10 @@ AC_ARG_VAR(SDL_mixer_LIBS, [linker flags for SDL_mixer])
 # AC_MSG_CHECKING([if you have SDL_mixer installed on your system])
 AC_CHECK_HEADERS(SDL/SDL_mixer.h, [], [AC_MSG_FAILURE([SDL_mixer not found in your system])])
 AC_CHECK_LIB(SDL_mixer, main, [SDL_mixer_LIBS="-lSDL_mixer"], [AC_MSG_FAILURE([SDL_mixer not found in your system])])
+
+AC_MSG_CHECKING([if you have Lua 5.1 installed on your system])
+PKG_CHECK_EXISTS([lua5.1 >= $LUA_VERSION], [AC_MSG_RESULT([yes])], [AC_MSG_FAILURE([Lua 5.1 not found in your system])])
+PKG_CHECK_MODULES(LUA, [lua5.1 >= $LUA_VERSION], [], [])
 
 AC_CONFIG_HEADERS([config.h])
 

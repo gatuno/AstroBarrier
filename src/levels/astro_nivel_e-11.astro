@@ -1,0 +1,17 @@
+-- Pantalla de explicación en el Nivel 11
+astro.level.explanation = 1
+astro.level.secret_pack = 0
+astro.level.next_level = 11
+astro.level.shoots = -1
+astro.level.hits_required = 5
+
+-- Hay que dibujar 0 lineas
+
+-- Hay que dibujar 1 bloques
+b = astro.blocks.new (IMG_BLOCK_ORANGE, 272, 148)
+
+-- Hay que dibujar 2 targets
+t = astro.targets.new (IMG_TARGET_NORMAL_GREEN)
+t:addPoint (280, 68)
+t = astro.targets.new (IMG_SWITCH_ORANGE)
+t:addPoint (172, 76)

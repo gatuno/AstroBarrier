@@ -1,0 +1,27 @@
+-- Nivel 1
+astro.level.explanation = 0
+astro.level.secret_pack = 0
+astro.level.next_level = 2
+astro.level.shoots = 8
+astro.level.hits_required = 4
+
+-- Dibujar las lineas
+for y = 60,240,60 do
+	l = astro.lines.new (IMG_LINE1, 4, y)
+end
+
+-- Dibujar los targets
+for y = 44,164,120 do
+	t = astro.targets.new (IMG_TARGET_NORMAL_GREEN)
+	t:addPoint (105, y)
+	t:traceLine (312, y, 28)
+	t:traceLine (16, y, 40)
+	t:closeLine (12)
+end
+
+for y = 104,224,120 do
+	t = astro.targets.new (IMG_TARGET_NORMAL_GREEN)
+	t:addPoint (16, y)
+	t:traceLine (312, y, 40)
+	t:closeLine (40)
+end

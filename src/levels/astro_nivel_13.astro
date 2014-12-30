@@ -1,0 +1,43 @@
+-- Nivel 13
+astro.level.explanation = 0
+astro.level.secret_pack = 0
+astro.level.next_level = 14
+astro.level.shoots = 4
+astro.level.hits_required = 3
+
+-- Hay que dibujar 3 lineas
+l = astro.lines.new (	IMG_LINE1
+, 4, 44)
+l = astro.lines.new (	IMG_LINE1
+, 4, 172)
+l = astro.lines.new (	IMG_LINE1
+, 4, 300)
+
+-- Hay que dibujar 4 bloques
+b = astro.blocks.new (	IMG_BLOCK_BIG
+, 16, 84)
+b = astro.blocks.new (	IMG_BLOCK_BIG
+, 224, 84)
+b = astro.blocks.new (	IMG_BLOCK_NORMAL
+, 88, 212)
+b = astro.blocks.new (	IMG_BLOCK_NORMAL
+, 224, 212)
+
+-- Hay que dibujar 3 targets
+t = astro.targets.new (	IMG_TARGET_NORMAL_GREEN
+)
+t:addPoint (102, 28)
+t:traceLine (312, 28, 30)
+t:traceLine (16, 28, 40)
+t:closeLine (10)
+t = astro.targets.new (	IMG_TARGET_BIG_GREEN
+)
+t:addPoint (16, 156)
+t:traceLine (288, 156, 36)
+t:closeLine (36)
+t = astro.targets.new (	IMG_TARGET_BIG_GREEN
+)
+t:addPoint (152, 284)
+t:traceLine (16, 284, 20)
+t:traceLine (288, 284, 40)
+t:closeLine (20)

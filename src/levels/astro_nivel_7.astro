@@ -1,0 +1,32 @@
+-- Nivel 7
+astro.level.explanation = 0
+astro.level.secret_pack = 0
+astro.level.next_level = 8
+astro.level.shoots = 4
+astro.level.hits_required = 2
+
+-- Hay que dibujar 2 lineas
+l = astro.lines.new (	IMG_LINE1, 4, 80)
+l = astro.lines.new (	IMG_LINE2_B, 8, 152)
+
+-- Hay que dibujar 2 bloques
+b = astro.blocks.new (	IMG_BLOCK_NORMAL, 80, 244)
+b = astro.blocks.new (	IMG_BLOCK_NORMAL, 232, 244)
+
+-- Hay que dibujar 2 targets
+t = astro.targets.new (	IMG_TARGET_NORMAL_BLUE)
+t:addPoint (16, 64)
+t:traceLine (312, 64, 36)
+t:closeLine (36)
+t = astro.targets.new (	IMG_TARGET_NORMAL_GREEN)
+t:addPoint (16, 188)
+t:traceLine (60, 188, 6)
+t:traceLine (60, 132, 6)
+t:traceLine (268, 132, 28)
+t:traceLine (268, 188, 6)
+t:traceLine (312, 188, 6)
+t:traceLine (268, 188, 6)
+t:traceLine (268, 132, 6)
+t:traceLine (60, 132, 28)
+t:traceLine (60, 188, 6)
+t:closeLine (6)

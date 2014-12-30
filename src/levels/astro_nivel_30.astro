@@ -1,0 +1,59 @@
+-- Nivel 30
+astro.level.explanation = 0
+astro.level.secret_pack = 0
+astro.level.next_level = 65566
+astro.level.shoots = 9
+astro.level.hits_required = 6
+
+-- Hay que dibujar 5 lineas
+l = astro.lines.new (IMG_LINE19_B, 4, 36)
+l = astro.lines.new (IMG_LINE19_C, 288, 4)
+l = astro.lines.new (IMG_LINE18_B, 4, 108)
+l = astro.lines.new (IMG_LINE17, 112, 144)
+l = astro.lines.new (IMG_LINE20, 4, 316)
+
+-- Hay que dibujar 5 bloques
+b = astro.blocks.new (IMG_BLOCK_BIG, 156, 84)
+b = astro.blocks.new (IMG_BLOCK_BIG, 156, 228)
+b = astro.blocks.new (IMG_BLOCK_ORANGE_MINI, 84, 100)
+b = astro.blocks.new (IMG_BLOCK_ORANGE, 16, 292)
+b = astro.blocks.new (IMG_BLOCK_ORANGE, 296, 292)
+
+-- Hay que dibujar 6 targets
+t = astro.targets.new (IMG_TARGET_MINI_GREEN)
+t:addPoint (244, 44)
+t:traceLine (244, 28, 6)
+t:traceLine (16, 28, 30)
+t:traceLine (244, 28, 30)
+t:closeLine (6)
+t = astro.targets.new (IMG_TARGET_MINI_YELLOW)
+t:addPoint (32, 172)
+t:traceLine (16, 172, 4)
+t:traceLine (32, 172, 4)
+t:traceLine (32, 100, 18)
+t:traceLine (44, 100, 4)
+t:traceLine (32, 100, 4)
+t:closeLine (18)
+t = astro.targets.new (IMG_TARGET_NORMAL_GREEN)
+t:addPoint (236, 156)
+t:traceLine (236, 164, 2)
+t:traceLine (92, 164, 22)
+t:traceLine (92, 236, 16)
+t:traceLine (100, 236, 2)
+t:traceLine (92, 236, 2)
+t:traceLine (92, 164, 16)
+t:traceLine (236, 164, 22)
+t:closeLine (2)
+t = astro.targets.new (IMG_TARGET_MINI_GREEN)
+t:addPoint (300, 244)
+t:traceLine (316, 244, 6)
+t:traceLine (316, 16, 30)
+t:traceLine (316, 244, 30)
+t:closeLine (6)
+t = astro.targets.new (IMG_TARGET_EXPAND)
+t:addPoint (40, 304)
+t:traceLine (288, 304, 60)
+t:closeLine (60)
+t = astro.targets.new (IMG_SWITCH_ORANGE)
+t:addPoint (120, 100)
+t:closeLine (1)
