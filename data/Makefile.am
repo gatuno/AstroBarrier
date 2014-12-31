@@ -55,9 +55,12 @@ nobase_dist_gamedata_DATA = images/arcade.png \
 	images/line17.png \
 	images/line18a.png \
 	images/line18b.png \
+	images/line18c.png \
+	images/line18d.png \
 	images/line19a.png \
 	images/line19b.png \
 	images/line19c.png \
+	images/line19d.png \
 	images/line20.png \
 	images/line21.png \
 	images/line22a.png \

@@ -125,9 +125,12 @@ const char *images_names[NUM_IMAGES] = {
 	GAMEDATA_DIR "images/line17.png",
 	GAMEDATA_DIR "images/line18a.png",
 	GAMEDATA_DIR "images/line18b.png",
+	GAMEDATA_DIR "images/line18c.png",
+	GAMEDATA_DIR "images/line18d.png",
 	GAMEDATA_DIR "images/line19a.png",
 	GAMEDATA_DIR "images/line19b.png",
 	GAMEDATA_DIR "images/line19c.png",
+	GAMEDATA_DIR "images/line19d.png",
 	GAMEDATA_DIR "images/line20.png",
 	GAMEDATA_DIR "images/line21.png",
 	GAMEDATA_DIR "images/line22a.png",
@@ -224,7 +227,7 @@ int game_loop (void) {
 	astro_destroyed = shooting = space_toggle = enter_toggle = switch_toggle = turret_shooting = FALSE;
 	*has_turret = -1;
 	
-	nivel_actual = 65566;
+	nivel_actual = 1;
 	
 	astro.astro_rect.w = images[IMG_ASTRO]->w;
 	astro.astro_rect.h = images[IMG_ASTRO]->h;

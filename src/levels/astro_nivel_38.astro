@@ -1,0 +1,27 @@
+-- Nivel 38
+astro.level.explanation = 0
+astro.level.secret_pack = 0
+astro.level.next_level = 39
+astro.level.shoots = 5
+astro.level.hits_required = 2
+
+-- Lineas
+astro.lines.new (IMG_LINE7, 112, 32)
+
+-- Bloques
+astro.blocks.new (IMG_BLOCK_MINI, 84, 24)
+astro.blocks.new (IMG_BLOCK_MINI, 264, 24)
+astro.blocks.new (IMG_BLOCK_BIG, 36, 292)
+astro.blocks.new (IMG_BLOCK_BIG, 204, 292)
+
+-- Targets
+t = astro.targets.new (IMG_TARGET_MINI_GREEN)
+t:addPoint (124, 24)
+t:traceLine (224, 24, 30)
+t:closeLine (30)
+
+t = astro.targets.new (IMG_TURRET_2)
+t:addPoint (116, 44)
+
+t = astro.targets.new (IMG_TARGET_EXPAND)
+t:addPoint (124, 244)

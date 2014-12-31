@@ -28,7 +28,7 @@
 #include <SDL.h>
 
 #include "astro-lua.h"
-#include "astro_images.h"
+#include "astro-types.h"
 
 #include "util-bresenham.h"
 
@@ -88,9 +88,12 @@ const char *lua_consts[NUM_IMAGES] = {
 	"IMG_LINE17",
 	"IMG_LINE18_A",
 	"IMG_LINE18_B",
+	"IMG_LINE18_C",
+	"IMG_LINE18_D",
 	"IMG_LINE19_A",
 	"IMG_LINE19_B",
 	"IMG_LINE19_C",
+	"IMG_LINE19_D",
 	"IMG_LINE20",
 	"IMG_LINE21",
 	"IMG_LINE22_A",
