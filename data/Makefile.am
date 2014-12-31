@@ -35,7 +35,8 @@ nobase_dist_gamedata_DATA = images/arcade.png \
 	images/line2a.png \
 	images/line2b.png \
 	images/line3.png \
-	images/line4.png \
+	images/line4a.png \
+	images/line4b.png \
 	images/line5.png \
 	images/line6a.png \
 	images/line6b.png \
@@ -68,6 +69,10 @@ nobase_dist_gamedata_DATA = images/arcade.png \
 	images/line23a.png \
 	images/line23b.png \
 	images/line24.png \
+	images/line25.png \
+	images/line26a.png \
+	images/line26b.png \
+	images/line27.png \
 	images/switch_orange.png \
 	images/switch_orange_hit.png \
 	images/turret1.png \

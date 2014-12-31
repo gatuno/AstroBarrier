@@ -1,0 +1,36 @@
+-- Nivel 9 del paquete secreto
+astro.level.explanation = 0
+astro.level.secret_pack = 1
+astro.level.next_level = 131082
+astro.level.shoots = 4
+astro.level.hits_required = 2 -- Falta un target
+
+-- Lineas
+astro.lines.new (IMG_LINE23_A, 100, 28)
+astro.lines.new (IMG_LINE19_A, 60, 288)
+astro.lines.new (IMG_LINE26_A, 136, 116)
+
+-- Bloques
+astro.blocks.new (IMG_BLOCK_MINI, 32, 316)
+astro.blocks.new (IMG_BLOCK_MINI, 300, 88)
+astro.blocks.new (IMG_BLOCK_MINI, 300, 256)
+astro.blocks.new (IMG_BLOCK_NORMAL, 76, 156)
+
+-- Targets
+-- Pendiente el target de la curva
+
+t = astro.targets.new (IMG_TARGET_NORMAL_GREEN)
+t:addPoint (292, 164)
+t:traceLine (292, 128, 10)
+t:traceLine (292, 164, 10)
+t:traceLine (148, 164, 35)
+t:traceLine (292, 164, 35)
+t:traceLine (292, 200, 10)
+t:closeLine (10)
+
+t = astro.targets.new (IMG_TARGET_MINI_GREEN)
+t:addPoint (300, 300)
+t:traceLine (300, 316, 6)
+t:traceLine (72, 316, 30)
+t:traceLine (300, 316, 30)
+t:closeLine (6)

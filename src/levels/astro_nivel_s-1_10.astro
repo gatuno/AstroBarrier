@@ -1,0 +1,44 @@
+-- Nivel 10 del paquete secreto
+astro.level.explanation = 0
+astro.level.secret_pack = 1
+astro.level.next_level = 16
+astro.level.shoots = 5
+astro.level.hits_required = 1
+
+-- Una linea
+l = astro.lines.new (IMG_LINE13, 28, 28)
+
+-- Un bloque
+b = astro.blocks.new (IMG_BLOCK_NORMAL, 156, 156)
+
+function round(num, idp)
+  local mult = 10^(idp or 0)
+  return math.floor(num * mult + 0.5) / mult
+end
+
+-- Un único target
+t = astro.targets.new (IMG_TARGET_NORMAL_GREEN)
+t:traceCircle (164, 164, 156, 80, false)
+t:setAnimate (false)
+
+-- Precalcular su posición inicial
+q = astro.ship.x + 40
+q = 80 - (q / 4 - 9)
+q = round (q * (64 / 80)) + 8
+t:setPos (q);
+
+-- funcion para recalcular su posicion cada vez
+-- que la nave se mueva
+function target_on_ship_move (x, y)
+	t = astro.targets.get (0)
+	if (t:getStopped () == false) then
+		q = astro.ship.x + 40
+		q = 80 - (q / 4 - 9)
+		q = round (q * (64 / 80)) + 8
+		t:setPos (q)
+	end
+end
+
+-- Instalar el callback
+astro.ship.on_move = "target_on_ship_move"
+

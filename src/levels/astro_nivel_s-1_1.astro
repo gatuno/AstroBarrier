@@ -1,0 +1,37 @@
+-- Nivel 1 del paquete secreto
+astro.level.explanation = 0
+astro.level.secret_pack = 1
+astro.level.next_level = 131074
+astro.level.shoots = 6
+astro.level.hits_required = 3
+
+-- Lineas
+astro.lines.new (IMG_LINE25, 100, 72)
+astro.lines.new (IMG_LINE24, 180, 80)
+astro.lines.new (IMG_LINE7, 104, 316)
+
+-- Bloques
+astro.blocks.new (IMG_BLOCK_NORMAL, 156, 20)
+astro.blocks.new (IMG_BLOCK_MINI, 76, 132)
+astro.blocks.new (IMG_BLOCK_ORANGE, 156, 232)
+astro.blocks.new (IMG_BLOCK_MINI, 76, 308)
+astro.blocks.new (IMG_BLOCK_MINI, 256, 308)
+
+-- Targets
+t = astro.targets.new (IMG_TARGET_MINI_GREEN)
+t:addPoint (104, 104)
+t:traceLine (128, 80, 6)
+t:closeLine (6)
+
+t = astro.targets.new (IMG_TARGET_MINI_GREEN)
+t:addPoint (172, 192)
+t:traceLine (172, 92, 10)
+t:closeLine (10)
+
+t = astro.targets.new (IMG_TARGET_NORMAL_GREEN)
+t:addPoint (200, 300)
+t:traceLine (116, 300, 15)
+t:closeLine (15)
+
+t = astro.targets.new (IMG_SWITCH_ORANGE)
+t:addPoint (328, 16)

@@ -1,0 +1,36 @@
+-- Nivel 6 del paquete secreto
+astro.level.explanation = 0
+astro.level.secret_pack = 1
+astro.level.next_level = 131079
+astro.level.shoots = 6
+astro.level.hits_required = 2 -- Arreglar con el otro target que falta
+
+-- Lineas
+astro.lines.new (IMG_LINE25, 92, 32)
+astro.lines.new (IMG_LINE23_B, 76, 220)
+astro.lines.new (IMG_LINE26_B, 76, 120)
+
+-- Bloques
+astro.blocks.new (IMG_BLOCK_MINI, 68, 92)
+astro.blocks.new (IMG_BLOCK_MINI, 68, 260)
+astro.blocks.new (IMG_BLOCK_ORANGE_MINI, 108, 260)
+astro.blocks.new (IMG_BLOCK_MINI, 152, 24)
+astro.blocks.new (IMG_BLOCK_NORMAL, 260, 160)
+
+-- Targets
+t = astro.targets.new (IMG_SWITCH_ORANGE)
+t:addPoint (204, 24)
+
+t = astro.targets.new (IMG_TARGET_MINI_GREEN)
+t:addPoint (96, 64)
+t:traceLine (120, 40, 6)
+t:closeLine (6)
+
+t = astro.targets.new (IMG_TARGET_NORMAL_GREEN)
+t:addPoint (60, 168)
+t:traceLine (60, 204, 10)
+t:traceLine (60, 168, 10)
+t:traceLine (204, 168, 35)
+t:traceLine (60, 168, 35)
+t:traceLine (60, 132, 10)
+t:closeLine (10)

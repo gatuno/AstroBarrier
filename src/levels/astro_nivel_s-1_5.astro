@@ -1,0 +1,23 @@
+-- Nivel 5 del paquete secreto
+astro.level.explanation = 0
+astro.level.secret_pack = 1
+astro.level.next_level = 131078
+astro.level.shoots = 7
+astro.level.hits_required = 1 -- Arreglar con los otros 2 targets que faltan
+
+-- Lineas
+astro.lines.new (IMG_LINE7, 112, 32)
+astro.lines.new (IMG_LINE24, 76, 116)
+astro.lines.new (IMG_LINE23_A, 76, 144)
+astro.lines.new (IMG_LINE23_B, 76, 228)
+
+-- Bloques
+astro.blocks.new (IMG_BLOCK_TALL, 52, 12)
+astro.blocks.new (IMG_BLOCK_MINI, 264, 24)
+astro.blocks.new (IMG_BLOCK_MINI, 276, 200)
+
+-- Targets
+t = astro.targets.new (IMG_TARGET_BIG_GREEN)
+t:addPoint (124, 16)
+t:traceLine (184, 16, 20)
+t:closeLine (20)
