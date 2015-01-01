@@ -670,10 +670,12 @@ int game_loop (void) {
 				SDL_SetAlpha (images[IMG_ASTRO_BLUE], SDL_SRCALPHA, g);
 				SDL_BlitSurface (images[IMG_ASTRO_BLUE], NULL, game_buffer, (SDL_Rect *)&astro.blue.rect);
 			} else if (astro.blue.timer > 607 && astro.blue.timer < 700) {
+				SDL_SetAlpha (images[IMG_ASTRO_BLUE], SDL_SRCALPHA, SDL_ALPHA_OPAQUE);
 				SDL_BlitSurface (images[IMG_ASTRO_BLUE], NULL, game_buffer, (SDL_Rect *)&astro.blue.rect);
 			} else if (astro.blue.timer >= 700) {
 				g = astro.blue.timer - 700;
-				if (g == 3 || g == 4) {
+				
+				if (g % 4 == 3 || g % 4 == 0) {
 					SDL_BlitSurface (images[IMG_ASTRO_BLUE], NULL, game_buffer, (SDL_Rect *)&astro.blue.rect);
 				} else {
 					SDL_BlitSurface (images[IMG_ASTRO], NULL, game_buffer, (SDL_Rect *)&astro.blue.rect);
@@ -772,7 +774,7 @@ int game_loop (void) {
 		
 		SDL_Flip (screen);
 		
-		if (astro.blue.pack != 0 && astro.blue.timer >= 706) {
+		if (astro.blue.pack != 0 && astro.blue.timer >= 710) {
 			nivel_actual = 1 | (astro.blue.pack << 17);
 			
 			if (!leer_nivel (nivel_actual, &astro)) {
@@ -912,6 +914,9 @@ void setup (void) {
 		images[g] = image;
 		/* TODO: Mostrar la carga de porcentaje */
 	}
+	
+	/* La nave color azul tiene transparencia especial */
+	SDL_SetColorKey (images[IMG_ASTRO_BLUE], SDL_SRCCOLORKEY, SDL_MapRGB (images[IMG_ASTRO_BLUE]->format, 0xFF, 0, 0xFF));
 	
 	srand (SDL_GetTicks ());
 }
