@@ -1,0 +1,66 @@
+-- Nivel 4 del paquete secreto
+astro.level.explanation = 0
+astro.level.secret_pack = 2
+astro.level.next_level = 262149
+astro.level.shoots = 4
+astro.level.hits_required = 4
+
+-- Bloques
+astro.blocks.new (IMG_BLOCK_MINI, 92, 16)
+astro.blocks.new (IMG_BLOCK_MINI, 92, 272)
+astro.blocks.new (IMG_BLOCK_MINI, 284, 312)
+astro.blocks.new (IMG_BLOCK_MINI, 212, 204)
+astro.blocks.new (IMG_BLOCK_BIG, 160, 240)
+astro.blocks.new (IMG_BLOCK_NORMAL, 232, 80)
+
+-- Lineas
+astro.lines.new (IMG_LINE10, 100, 44)
+astro.lines.new (IMG_LINE9, 176, 160)
+astro.lines.new (IMG_LINE16_B, 256, 36)
+
+-- Targets
+t = astro.targets.new (IMG_TARGET_MINI_YELLOW)
+t:addPoint (92, 56)
+t:traceLine (92, 232, 30)
+t:closeLine (30)
+t:setPos (45)
+
+t = astro.targets.new (IMG_TARGET_MINI_GREEN)
+t:addPoint (172, 204)
+t:traceLine (164, 204, 2)
+t:traceLine (164, 148, 14)
+t:traceLine (260, 148, 24)
+t:traceLine (260, 204, 14)
+t:traceLine (252, 204, 2)
+t:traceLine (260, 204, 2)
+t:traceLine (260, 148, 14)
+t:traceLine (164, 148, 24)
+t:traceLine (164, 204, 14)
+t:closeLine (2)
+
+t = astro.targets.new (IMG_TARGET_NORMAL_GREEN)
+t:addPoint (304, 88)
+t:traceLine (312, 88, 2)
+t:traceLine (312, 16, 18)
+t:traceLine (240, 16, 18)
+t:traceLine (240, 24, 2)
+t:traceLine (240, 16, 2)
+t:traceLine (312, 16, 18)
+t:traceLine (312, 88, 18)
+t:closeLine (2)
+
+t = astro.targets.new (IMG_TURRET_1)
+q = astro.ship.x + 72;
+t:addPoint (12, q)
+
+function target_on_ship_move (x, y)
+	t = astro.targets.get (3)
+	
+	q = astro.ship.x + 72;
+	if (t:getStopped () == false) then
+		t:clearPoints ()
+		t:addPoint (12, q)
+	end
+end
+
+astro.ship.on_move = "target_on_ship_move"

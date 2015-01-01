@@ -1,0 +1,72 @@
+-- Nivel 3 del paquete secreto
+astro.level.explanation = 0
+astro.level.secret_pack = 2
+astro.level.next_level = 262148
+astro.level.shoots = 6
+astro.level.hits_required = 3
+
+-- Lineas
+astro.lines.new (IMG_LINE29, 4, 44)
+astro.lines.new (IMG_LINE30, 4, 172)
+astro.lines.new (IMG_LINE29, 4, 300)
+
+-- Bloques
+astro.blocks.new (IMG_BLOCK_BIG, 20, 84)
+astro.blocks.new (IMG_BLOCK_BIG, 220, 212)
+astro.blocks.new (IMG_BLOCK_BIG, 20, 212)
+astro.blocks.new (IMG_BLOCK_BIG, 220, 84)
+
+-- Lineas
+t = astro.targets.new (IMG_TARGET_MINI_GREEN)
+t:addPoint (16, 36)
+t:traceLine (328, 36, 60)
+t:setAnimate (false)
+
+u = astro.targets.new (IMG_TARGET_EXPAND)
+u:addPoint (40, 160)
+u:traceLine (288, 160, 60)
+u:setAnimate (false)
+
+v = astro.targets.new (IMG_TARGET_NORMAL_GREEN)
+v:addPoint (16, 284)
+v:traceLine (312, 284, 40)
+v:setAnimate (false)
+
+q = math.round (((astro.ship.x + 40) / 3) - 15)
+if (q < 0) then
+	q = 0
+elseif (q > 100) then
+	q = 100
+end
+print ("Porcentaje: " .. q)
+q_40 = math.floor (q * 0.4)
+q_60 = math.floor (q * 0.6)
+print ("Q_40: " .. q_40 .. ", Q_60: " .. q_60)
+v:setPos (q_40)
+u:setPos (q_60)
+t:setPos (q_60)
+
+function target_on_ship_move (x, y)
+	t = astro.targets.get (0)
+	u = astro.targets.get (1)
+	v = astro.targets.get (2)
+	
+	q = math.round (((astro.ship.x + 40) / 3) - 15)
+	if (q < 0) then
+		q = 0
+	elseif (q > 100) then
+		q = 100
+	end
+	print ("Ship.x = "..x)
+	print ("Porcentaje: " .. q)
+	q_40 = math.floor (q * 0.4)
+	q_60 = math.floor (q * 0.6)
+	print ("Q_40: " .. q_40 .. ", Q_60: " .. q_60)
+	
+	if (v:getStopped () == false) then v:setPos (q_40) end
+	if (u:getStopped () == false) then u:setPos (q_60) end
+	if (t:getStopped () == false) then t:setPos (q_60) end
+end
+
+-- Instalar el callback
+astro.ship.on_move = "target_on_ship_move"

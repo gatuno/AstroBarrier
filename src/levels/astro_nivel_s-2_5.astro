@@ -1,0 +1,29 @@
+-- Nivel 5 del paquete secreto
+astro.level.explanation = 0
+astro.level.secret_pack = 2
+astro.level.next_level = 262150
+astro.level.shoots = 7
+astro.level.hits_required = 2
+
+-- Lineas
+astro.lines.new (IMG_LINE1, 4, 320)
+
+-- Targets
+t = astro.targets.new (IMG_TARGET_MINI_YELLOW)
+t:addPoint (16, 312)
+t:traceLine (328, 312, 40)
+t:closeLine (40)
+
+t = astro.targets.new (IMG_TURRET_2)
+t:addPoint (astro.ship.x - 4, 16)
+
+function target_on_ship_move (x, y)
+	t = astro.targets.get (1)
+	
+	if (t:getStopped () == false) then
+		t:clearPoints ()
+		t:addPoint (astro.ship.x - 4, 16)
+	end
+end
+
+astro.ship.on_move = "target_on_ship_move"

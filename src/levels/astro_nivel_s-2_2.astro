@@ -1,0 +1,82 @@
+-- Nivel 2 del paquete secreto
+astro.level.explanation = 0
+astro.level.secret_pack = 2
+astro.level.next_level = 262147
+astro.level.shoots = 10
+astro.level.hits_required = 6
+
+-- Lineas
+astro.lines.new (IMG_LINE9, 40, 56)
+astro.lines.new (IMG_LINE7, 4, 180)
+astro.lines.new (IMG_LINE28, 4, 256)
+astro.lines.new (IMG_LINE1, 4, 332)
+astro.lines.new (IMG_LINE24, 180, 4)
+astro.lines.new (IMG_LINE10, 256, 4)
+
+-- Bloques
+astro.blocks.new (IMG_BLOCK_MINI, 76, 100)
+astro.blocks.new (IMG_BLOCK_NORMAL, 156, 156)
+astro.blocks.new (IMG_BLOCK_NORMAL, 232, 232)
+
+-- Targets
+t = astro.targets.new (IMG_TARGET_MINI_GREEN)
+t:addPoint (36, 100)
+t:traceLine (28, 100, 2)
+t:traceLine (28, 44, 14)
+t:traceLine (124, 44, 24)
+t:traceLine (124, 100, 14)
+t:traceLine (116, 100, 2)
+t:traceLine (124, 100, 2)
+t:traceLine (124, 44, 14)
+t:traceLine (28, 44, 24)
+t:traceLine (28, 100, 14)
+t:closeLine (2)
+
+t = astro.targets.new (IMG_TARGET_NORMAL_GREEN)
+t:addPoint (100, 164)
+t:traceLine (16, 164, 15)
+t:closeLine (15)
+
+t = astro.targets.new (IMG_TARGET_BIG_GREEN)
+t:addPoint (16, 240)
+t:traceLine (152, 240, 100)
+t:setAnimate (false)
+
+-- Precalcular su posición inicial
+q = math.round (((astro.ship.x + 40) / 3) - 18)
+if (q < 0) then
+	q = 0
+end
+t:setPos (q);
+
+function target_on_ship_move (x, y)
+	t = astro.targets.get (2)
+	if (t:getStopped () == false) then
+		q = math.round (((astro.ship.x + 40) / 3) - 18)
+		if (q < 0) then
+			q = 0
+		end
+		t:setPos (q);
+	end
+end
+
+-- Instalar el callback
+astro.ship.on_move = "target_on_ship_move"
+
+t = astro.targets.new (IMG_TARGET_MINI_GREEN)
+t:addPoint (16, 324)
+t:traceLine (328, 324, 60)
+t:closeLine (60)
+
+t = astro.targets.new (IMG_TARGET_NORMAL_GREEN)
+t:addPoint (164, 100)
+t:traceLine (164, 16, 15)
+t:closeLine (15)
+
+t = astro.targets.new (IMG_TARGET_NORMAL_GREEN)
+t:addPoint (240, 16)
+t:traceLine (240, 176, 25)
+t:closeLine (25)
+
+t = astro.targets.new (IMG_TURRET_3)
+t:addPoint (312, 56)

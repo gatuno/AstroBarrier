@@ -386,6 +386,14 @@ int lua_astro_target_get_stop (lua_State *L) {
 	return 1;
 }
 
+int lua_astro_target_clear_points (lua_State *L) {
+	Target *t = luaL_checkudata (L, 1, "astro.target");
+	
+	t->total_vel = 0;
+	
+	return 0;
+}
+
 int lua_astro_lines_new_line (lua_State *L) {
 	int image = luaL_checkint (L, 1);
 	int x = luaL_checkint (L, 2);
@@ -696,6 +704,10 @@ int leer_nivel (int level, AstroStatus *astro) {
 	
 	lua_pushstring (L, "getStopped");
 	lua_pushcfunction (L, lua_astro_target_get_stop);
+	lua_rawset (L, -3);
+	
+	lua_pushstring (L, "clearPoints");
+	lua_pushcfunction (L, lua_astro_target_clear_points);
 	lua_rawset (L, -3);
 	
 	lua_pop (L, 1);
