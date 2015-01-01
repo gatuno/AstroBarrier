@@ -26,12 +26,16 @@ nobase_dist_gamedata_DATA = images/arcade.png \
 	images/target_normal_green.png \
 	images/target_normal_red.png \
 	images/target_normal_yellow.png \
+	images/target_mini_lightgreen.png \
+	images/target_mini_orange.png \
 	images/target_expand1.png \
 	images/target_expand2.png \
 	images/target_expand3.png \
 	images/target_expand4.png \
 	images/target_expand5.png \
 	images/target_expand_red.png \
+	images/target_500_green.png \
+	images/target_500_red.png \
 	images/line1.png \
 	images/line2a.png \
 	images/line2b.png \
@@ -71,13 +75,15 @@ nobase_dist_gamedata_DATA = images/arcade.png \
 	images/line23a.png \
 	images/line23b.png \
 	images/line24.png \
-	images/line25.png \
+	images/line25a.png \
+	images/line25b.png \
 	images/line26a.png \
 	images/line26b.png \
 	images/line27.png \
 	images/line28.png \
 	images/line29.png \
 	images/line30.png \
+	images/line31.png \
 	images/switch_orange.png \
 	images/switch_orange_hit.png \
 	images/turret1.png \

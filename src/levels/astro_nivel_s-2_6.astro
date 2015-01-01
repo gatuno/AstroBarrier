@@ -1,0 +1,69 @@
+-- Nivel 6 del paquete secreto
+astro.level.explanation = 0
+astro.level.secret_pack = 2
+astro.level.next_level = 262151
+astro.level.shoots = 7
+astro.level.hits_required = 5
+
+-- Lineas
+astro.lines.new (IMG_LINE18_B, 4, 32)
+astro.lines.new (IMG_LINE31, 8, 8)
+astro.lines.new (IMG_LINE7, 4, 200)
+astro.lines.new (IMG_LINE25_B, 96, 216)
+
+-- Bloques
+astro.blocks.new (IMG_BLOCK_MINI, 84, 24)
+astro.blocks.new (IMG_BLOCK_BIG, 12, 276)
+astro.blocks.new (IMG_BLOCK_ORANGE_MINI, 156, 192)
+
+-- Targets
+t = astro.targets.new (IMG_TARGET_MINI_GREEN)
+t:addPoint (32, 24)
+t:traceLine (44, 24, 2)
+t:traceLine (32, 24, 2)
+t:traceLine (32, 96, 16)
+t:traceLine (16, 96, 2)
+t:traceLine (32, 96, 2)
+t:closeLine (16)
+
+t = astro.targets.new (IMG_TARGET_NORMAL_YELLOW)
+t:addPoint (44, 136)
+t:traceLine (16, 136, 6)
+t:traceLine (44, 136, 6)
+t:traceLine (144, 36, 24)
+t:traceLine (144, 16, 6)
+t:traceLine (144, 36, 6)
+t:closeLine (16)
+
+t = astro.targets.new (IMG_TARGET_MINI_BLUE)
+t:addPoint (16, 192)
+t:traceLine (116, 192, 35)
+t:closeLine (35)
+
+t = astro.targets.new (IMG_TARGET_MINI_GREEN)
+t:addPoint (104, 244)
+t:traceLine (128, 220, 6)
+t:closeLine (6)
+
+t = astro.targets.new (IMG_SWITCH_ORANGE)
+t:addPoint (156, 292)
+
+t = astro.targets.new (IMG_TURRET_3)
+q = (astro.ship.x + 40) / 40
+x = 256 - math.sin(q) * 35;
+y = 112 + math.cos(q) * 100;
+t:addPoint (x, y)
+
+function target_on_ship_move (x, y)
+	t = astro.targets.get (5)
+	
+	if (t:getStopped () == false) then
+		t:clearPoints ()
+		q = (astro.ship.x + 40) / 40
+		x = 256 - math.sin(q) * 35;
+		y = 112 + math.cos(q) * 100;
+		t:addPoint (x, y)
+	end
+end
+
+astro.ship.on_move = "target_on_ship_move"

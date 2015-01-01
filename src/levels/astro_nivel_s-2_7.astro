@@ -1,0 +1,74 @@
+-- Nivel 7 del paquete secreto
+astro.level.explanation = 0
+astro.level.secret_pack = 2
+astro.level.next_level = 262152
+astro.level.shoots = 5
+astro.level.hits_required = 4
+
+-- Lineas
+astro.lines.new (IMG_LINE29, 4, 72)
+astro.lines.new (IMG_LINE29, 4, 128)
+astro.lines.new (IMG_LINE7, 216, 184)
+
+-- Bloques
+astro.blocks.new (IMG_BLOCK_ORANGE_MINI, 188, 176)
+astro.blocks.new (IMG_BLOCK_ORANGE, 16, 228)
+astro.blocks.new (IMG_BLOCK_BIG, 84, 228)
+astro.blocks.new (IMG_BLOCK_BIG, 224, 228)
+
+-- Targets
+q = (astro.ship.x + 40) / 3 - 15
+if (q < 0) then
+	q = 0
+elseif (q > 100) then
+	q = 100
+end
+q_40 = q * 0.4
+q_60 = q * 0.6
+
+t = astro.targets.new (IMG_TARGET_MINI_GREEN)
+t:addPoint (16, 64)
+t:traceLine (328, 64, 60)
+t:setAnimate (false)
+t:setPos (q_60)
+
+t = astro.targets.new (IMG_TARGET_MINI_GREEN)
+t:addPoint (16, 120)
+t:traceLine (328, 120, 60)
+t:setAnimate (false)
+t:setPos (q_40)
+
+t = astro.targets.new (IMG_TARGET_BIG_YELLOW)
+t:addPoint (288, 168)
+t:traceLine (228, 168, 20)
+t:closeLine (20)
+
+t = astro.targets.new (IMG_SWITCH_ORANGE)
+t:addPoint (328, 300)
+
+t = astro.targets.new (IMG_TURRET_1)
+t:addPoint (16, 160)
+
+function target_on_ship_move (x, y)
+	t = astro.targets.get (0)
+	u = astro.targets.get (1)
+	
+	q = (astro.ship.x + 40) / 3 - 15
+	if (q < 0) then
+		q = 0
+	elseif (q > 100) then
+		q = 100
+	end
+	
+	if (t:getStopped () == false) then
+		q_60 = q * 0.6
+		t:setPos (q_60)
+	end
+	
+	if (u:getStopped () == false) then
+		q_40 = q * 0.4
+		u:setPos (q_40)
+	end
+end
+
+astro.ship.on_move = "target_on_ship_move"

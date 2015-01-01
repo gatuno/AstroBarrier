@@ -87,12 +87,18 @@ const char *images_names[NUM_IMAGES] = {
 	GAMEDATA_DIR "images/target_big_yellow.png",
 	GAMEDATA_DIR "images/target_big_red.png",
 	
+	GAMEDATA_DIR "images/target_mini_lightgreen.png",
+	GAMEDATA_DIR "images/target_mini_orange.png",
+	
 	GAMEDATA_DIR "images/target_expand1.png",
 	GAMEDATA_DIR "images/target_expand2.png",
 	GAMEDATA_DIR "images/target_expand3.png",
 	GAMEDATA_DIR "images/target_expand4.png",
 	GAMEDATA_DIR "images/target_expand5.png",
 	GAMEDATA_DIR "images/target_expand_red.png",
+	
+	GAMEDATA_DIR "images/target_500_green.png",
+	GAMEDATA_DIR "images/target_500_red.png",
 	
 	GAMEDATA_DIR "images/block_normal.png",
 	GAMEDATA_DIR "images/block_mini.png",
@@ -141,13 +147,15 @@ const char *images_names[NUM_IMAGES] = {
 	GAMEDATA_DIR "images/line23a.png",
 	GAMEDATA_DIR "images/line23b.png",
 	GAMEDATA_DIR "images/line24.png",
-	GAMEDATA_DIR "images/line25.png",
+	GAMEDATA_DIR "images/line25a.png",
+	GAMEDATA_DIR "images/line25b.png",
 	GAMEDATA_DIR "images/line26a.png",
 	GAMEDATA_DIR "images/line26b.png",
 	GAMEDATA_DIR "images/line27.png",
 	GAMEDATA_DIR "images/line28.png",
 	GAMEDATA_DIR "images/line29.png",
 	GAMEDATA_DIR "images/line30.png",
+	GAMEDATA_DIR "images/line31.png",
 	
 	GAMEDATA_DIR "images/turret1.png",
 	GAMEDATA_DIR "images/turret2.png",
@@ -317,7 +325,6 @@ int game_loop (void) {
 			astro.tiros--;
 			refresh_tiros = TRUE;
 		}
-		
 		/* Que el turret también tire */
 		if (*has_turret != -1 && space_toggle && !turret_shooting && !pantalla_abierta) {
 			if (targets[*has_turret].image != IMG_TURRET_DESTROYED) {
@@ -393,6 +400,9 @@ int game_loop (void) {
 								contador_hits++;
 								/* Para los verdes, sumar 10 puntos de score */
 								/* TODO: Reproducir sonido */
+								if (targets[g].on_hit != NULL) {
+									lua_astro_call_target_hit (&targets[g]);
+								}
 								break;
 							case IMG_TARGET_NORMAL_BLUE:
 							case IMG_TARGET_MINI_BLUE:
@@ -417,6 +427,9 @@ int game_loop (void) {
 								targets[g].golpeado = TRUE;
 								targets[g].animar = FALSE;
 								targets[g].image += 3; /* Cambiar a rojo */
+								if (targets[g].on_hit != NULL) {
+									lua_astro_call_target_hit (&targets[g]);
+								}
 								break;
 							case IMG_SWITCH_ORANGE:
 								/* Golpearon el switch naranja, desaparecer los bloques lentamente */
@@ -429,7 +442,7 @@ int game_loop (void) {
 							case IMG_TARGET_NORMAL_YELLOW:
 							case IMG_TARGET_MINI_YELLOW:
 							case IMG_TARGET_BIG_YELLOW:
-								targets[g].image -= 1; /* Cambiar a verde */
+								targets[g].image--; /* Cambiar a verde */
 								contador_hits++;
 								/* Para los amarillos, sumar 25 puntos de score */
 								/* TODO: Reproducir sonido */
@@ -440,6 +453,29 @@ int game_loop (void) {
 								contador_hits++;
 								/* El cambio de color ocurre abajo */
 								/* Sumar 25 de score */
+								/* TODO: Reproducir sonido */
+								if (targets[g].on_hit != NULL) {
+									lua_astro_call_target_hit (&targets[g]);
+								}
+								break;
+							case IMG_TARGET_MINI_LIGHTGREEN:
+								targets[g].golpeado = TRUE;
+								targets[g].animar = FALSE;
+								targets[g].image++; /* Cambiar a naranja */
+								contador_hits++;
+								/* Para los verdes, sumar 10 puntos de score */
+								/* TODO: Reproducir sonido */
+								if (targets[g].on_hit != NULL) {
+									lua_astro_call_target_hit (&targets[g]);
+								}
+								break;
+							case IMG_TARGET_500_GREEN:
+								targets[g].golpeado = TRUE;
+								targets[g].animar = FALSE;
+								targets[g].image++; /* Cambiar a rojo */
+								contador_hits++;
+								
+								/* Sumar 500 puntos */
 								/* TODO: Reproducir sonido */
 								break;
 						}
@@ -481,6 +517,9 @@ int game_loop (void) {
 								contador_hits++;
 								/* Para los verdes, sumar 10 puntos de score */
 								/* TODO: Reproducir sonido */
+								if (targets[g].on_hit != NULL) {
+									lua_astro_call_target_hit (&targets[g]);
+								}
 								break;
 							case IMG_TARGET_NORMAL_BLUE:
 							case IMG_TARGET_MINI_BLUE:
@@ -505,6 +544,9 @@ int game_loop (void) {
 								targets[g].golpeado = TRUE;
 								targets[g].animar = FALSE;
 								targets[g].image += 3; /* Cambiar a rojo */
+								if (targets[g].on_hit != NULL) {
+									lua_astro_call_target_hit (&targets[g]);
+								}
 								break;
 							case IMG_SWITCH_ORANGE:
 								/* Golpearon el switch naranja, desaparecer los bloques lentamente */
@@ -529,6 +571,9 @@ int game_loop (void) {
 								/* El cambio de color ocurre abajo */
 								/* Sumar 25 de score */
 								/* TODO: Reproducir sonido */
+								if (targets[g].on_hit != NULL) {
+									lua_astro_call_target_hit (&targets[g]);
+								}
 								break;
 						}
 					} /* Cierro if de detenido */

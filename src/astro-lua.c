@@ -56,8 +56,11 @@ const char *lua_consts[NUM_IMAGES] = {
 	"IMG_TARGET_BIG_GREEN",
 	"IMG_TARGET_BIG_YELLOW",
 	"",
+	"IMG_TARGET_MINI_LIGHTGREEN",
+	"",
 	"IMG_TARGET_EXPAND",
 	"", "", "", "", "",
+	"IMG_TARGET_500", "",
 	"IMG_BLOCK_NORMAL",
 	"IMG_BLOCK_MINI",
 	"IMG_BLOCK_BIG",
@@ -105,13 +108,15 @@ const char *lua_consts[NUM_IMAGES] = {
 	"IMG_LINE23_A",
 	"IMG_LINE23_B",
 	"IMG_LINE24",
-	"IMG_LINE25",
+	"IMG_LINE25_A",
+	"IMG_LINE25_B",
 	"IMG_LINE26_A",
 	"IMG_LINE26_B",
 	"IMG_LINE27",
 	"IMG_LINE28",
 	"IMG_LINE29",
 	"IMG_LINE30",
+	"IMG_LINE31",
 	
 	"IMG_TURRET_1",
 	"IMG_TURRET_2",
@@ -132,6 +137,18 @@ void lua_astro_call_ship_move (void) {
 	lua_pushinteger (L, lua_astro_game->astro_rect.x);
 	lua_pushinteger (L, lua_astro_game->astro_rect.y);
 	lua_pcall (L, 2, 0, 0);
+	lua_pop (L, 1);
+}
+
+void lua_astro_call_target_hit (Target *t) {
+	if (t->on_hit == NULL) return;
+	
+	/* Empujar las globales */
+	lua_pushvalue (L, LUA_GLOBALSINDEX);
+	lua_pushstring (L, t->on_hit);
+	lua_rawget (L, -2);
+	lua_pushlightuserdata (L, (void *)t);
+	lua_pcall (L, 1, 0, 0);
 	lua_pop (L, 1);
 }
 

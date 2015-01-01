@@ -55,6 +55,9 @@ enum {
 	IMG_TARGET_BIG_YELLOW,
 	IMG_TARGET_BIG_RED,
 	
+	IMG_TARGET_MINI_LIGHTGREEN,
+	IMG_TARGET_MINI_ORANGE,
+	
 	IMG_TARGET_EXPAND_1,
 	IMG_TARGET_EXPAND_2,
 	IMG_TARGET_EXPAND_3,
@@ -62,6 +65,9 @@ enum {
 	IMG_TARGET_EXPAND_5,
 	
 	IMG_TARGET_EXPAND_RED,
+	
+	IMG_TARGET_500_GREEN,
+	IMG_TARGET_500_RED,
 	
 	IMG_BLOCK_NORMAL,
 	IMG_BLOCK_MINI,
@@ -110,13 +116,15 @@ enum {
 	IMG_LINE23_A,
 	IMG_LINE23_B,
 	IMG_LINE24,
-	IMG_LINE25,
+	IMG_LINE25_A,
+	IMG_LINE25_B,
 	IMG_LINE26_A,
 	IMG_LINE26_B,
 	IMG_LINE27,
 	IMG_LINE28,
 	IMG_LINE29,
 	IMG_LINE30,
+	IMG_LINE31,
 	
 	IMG_TURRET_1,
 	IMG_TURRET_2,
@@ -148,7 +156,7 @@ typedef struct {
 	struct SDL_Rect rect;
 	int image;
 	int total_vel;
-	Punto puntos[350];
+	Punto puntos[400];
 	int pos;
 	int animar;
 	int golpeado;
