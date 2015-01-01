@@ -6,32 +6,26 @@ astro.level.shoots = 5
 astro.level.hits_required = 3
 
 -- Hay que dibujar 3 lineas
-l = astro.lines.new (	IMG_LINE24
-, 320, 4)
-l = astro.lines.new (	IMG_LINE7
-, 4, 40)
-l = astro.lines.new (	IMG_LINE6_A
-, 8, 152)
+astro.lines.new (IMG_LINE24, 320, 4)
+astro.lines.new (IMG_LINE7, 4, 40)
+astro.lines.new (IMG_LINE6_A, 8, 152)
 
 -- Hay que dibujar 2 bloques
-b = astro.blocks.new (	IMG_BLOCK_MINI
-, 156, 32)
-b = astro.blocks.new (	IMG_BLOCK_NORMAL
-, 296, 156)
+astro.blocks.new (IMG_BLOCK_MINI, 156, 32)
+astro.blocks.new (IMG_BLOCK_NORMAL, 296, 156)
 
 -- Hay que dibujar 4 targets
-t = astro.targets.new (	IMG_TARGET_BIG_GREEN
-)
+t = astro.targets.new (IMG_TARGET_BIG_GREEN)
 t:addPoint (16, 24)
 t:traceLine (76, 24, 20)
 t:closeLine (20)
-t = astro.targets.new (	IMG_TARGET_NORMAL_GREEN
-)
+
+t = astro.targets.new (IMG_TARGET_NORMAL_GREEN)
 t:addPoint (304, 100)
 t:traceLine (304, 16, 15)
 t:closeLine (15)
-t = astro.targets.new (	IMG_TARGET_NORMAL_GREEN
-)
+
+t = astro.targets.new (IMG_TARGET_NORMAL_GREEN)
 t:addPoint (44, 136)
 t:traceLine (16, 136, 6)
 t:traceLine (44, 136, 6)
@@ -39,7 +33,6 @@ t:traceLine (144, 236, 24)
 t:traceLine (312, 236, 30)
 t:traceLine (144, 236, 30)
 t:closeLine (24)
-t = astro.targets.new (	IMG_TURRET_1
-)
+
+t = astro.targets.new (IMG_TURRET_1)
 t:addPoint (16, 64)
-t:closeLine (1)

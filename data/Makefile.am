@@ -3,6 +3,7 @@ gamedatadir = $(pkgdatadir)/data
 nobase_dist_gamedata_DATA = images/arcade.png \
 	images/astro.png \
 	images/astro_destroyed.png \
+	images/astro_blue.png \
 	images/block_normal.png \
 	images/block_mini.png \
 	images/block_big.png \
@@ -52,7 +53,8 @@ nobase_dist_gamedata_DATA = images/arcade.png \
 	images/line13.png \
 	images/line14.png \
 	images/line15.png \
-	images/line16.png \
+	images/line16a.png \
+	images/line16b.png \
 	images/line17.png \
 	images/line18a.png \
 	images/line18b.png \
@@ -73,6 +75,9 @@ nobase_dist_gamedata_DATA = images/arcade.png \
 	images/line26a.png \
 	images/line26b.png \
 	images/line27.png \
+	images/line28.png \
+	images/line29.png \
+	images/line30.png \
 	images/switch_orange.png \
 	images/switch_orange_hit.png \
 	images/turret1.png \

@@ -32,6 +32,8 @@ enum {
 	IMG_ASTRO,
 	IMG_ASTRO_DESTROYED,
 	
+	IMG_ASTRO_BLUE,
+	
 	IMG_FRAME,
 	IMG_GAMEAREA,
 	IMG_GAMEINTRO,
@@ -90,7 +92,8 @@ enum {
 	IMG_LINE13,
 	IMG_LINE14,
 	IMG_LINE15,
-	IMG_LINE16,
+	IMG_LINE16_A,
+	IMG_LINE16_B,
 	IMG_LINE17,
 	IMG_LINE18_A,
 	IMG_LINE18_B,
@@ -111,6 +114,9 @@ enum {
 	IMG_LINE26_A,
 	IMG_LINE26_B,
 	IMG_LINE27,
+	IMG_LINE28,
+	IMG_LINE29,
+	IMG_LINE30,
 	
 	IMG_TURRET_1,
 	IMG_TURRET_2,
@@ -157,6 +163,13 @@ typedef struct {
 } Bloque;
 
 typedef struct {
+	SDL_Rect rect;
+	
+	int pack;
+	int timer;
+} SecretAstro;
+
+typedef struct {
 	SDL_Rect astro_rect;
 	
 	int next_level, explicacion, secret_pack;
@@ -167,6 +180,8 @@ typedef struct {
 	Linea lineas[10];
 	Target targets[10];
 	Bloque bloques[10];
+	
+	SecretAstro blue;
 	
 	/* Eventos lua */
 	const char *on_ship_move;

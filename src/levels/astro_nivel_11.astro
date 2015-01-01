@@ -6,29 +6,23 @@ astro.level.shoots = 5
 astro.level.hits_required = 2
 
 -- Hay que dibujar 2 lineas
-l = astro.lines.new (	IMG_LINE10
-, 128, 4)
-l = astro.lines.new (	IMG_LINE10
-, 232, 4)
+astro.lines.new (IMG_LINE10, 128, 4)
+astro.lines.new (IMG_LINE10, 232, 4)
 
 -- Hay que dibujar 2 bloques
-b = astro.blocks.new (	IMG_BLOCK_ORANGE
-, 104, 232)
-b = astro.blocks.new (	IMG_BLOCK_ORANGE
-, 208, 232)
+astro.blocks.new (IMG_BLOCK_ORANGE, 104, 232)
+astro.blocks.new (IMG_BLOCK_ORANGE, 208, 232)
 
 -- Hay que dibujar 3 targets
-t = astro.targets.new (	IMG_TARGET_NORMAL_GREEN
-)
+t = astro.targets.new (IMG_TARGET_NORMAL_GREEN)
 t:addPoint (112, 16)
 t:traceLine (112, 176, 25)
 t:closeLine (25)
-t = astro.targets.new (	IMG_TARGET_NORMAL_GREEN
-)
+
+t = astro.targets.new (IMG_TARGET_NORMAL_GREEN)
 t:addPoint (216, 16)
 t:traceLine (216, 176, 25)
 t:closeLine (25)
-t = astro.targets.new (	IMG_SWITCH_ORANGE
-)
+
+t = astro.targets.new (IMG_SWITCH_ORANGE)
 t:addPoint (172, 44)
-t:closeLine (1)

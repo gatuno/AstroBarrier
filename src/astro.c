@@ -64,6 +64,7 @@ const char *images_names[NUM_IMAGES] = {
 	
 	GAMEDATA_DIR "images/astro.png",
 	GAMEDATA_DIR "images/astro_destroyed.png",
+	GAMEDATA_DIR "images/astro_blue.png",
 	
 	GAMEDATA_DIR "images/frame.png",
 	GAMEDATA_DIR "images/gamearea.png",
@@ -122,7 +123,8 @@ const char *images_names[NUM_IMAGES] = {
 	GAMEDATA_DIR "images/line13.png",
 	GAMEDATA_DIR "images/line14.png",
 	GAMEDATA_DIR "images/line15.png",
-	GAMEDATA_DIR "images/line16.png",
+	GAMEDATA_DIR "images/line16a.png",
+	GAMEDATA_DIR "images/line16b.png",
 	GAMEDATA_DIR "images/line17.png",
 	GAMEDATA_DIR "images/line18a.png",
 	GAMEDATA_DIR "images/line18b.png",
@@ -143,6 +145,9 @@ const char *images_names[NUM_IMAGES] = {
 	GAMEDATA_DIR "images/line26a.png",
 	GAMEDATA_DIR "images/line26b.png",
 	GAMEDATA_DIR "images/line27.png",
+	GAMEDATA_DIR "images/line28.png",
+	GAMEDATA_DIR "images/line29.png",
+	GAMEDATA_DIR "images/line30.png",
 	
 	GAMEDATA_DIR "images/turret1.png",
 	GAMEDATA_DIR "images/turret2.png",
@@ -230,7 +235,6 @@ int game_loop (void) {
 	Bloque *bloques = astro.bloques;
 	
 	astro_destroyed = shooting = space_toggle = enter_toggle = switch_toggle = turret_shooting = FALSE;
-	*has_turret = -1;
 	
 	nivel_actual = 1;
 	
@@ -443,6 +447,14 @@ int game_loop (void) {
 					shooting = FALSE;
 				} /* Cierro if de intersección */
 			} /* Cierro for contra los targets */
+			
+			/* Colisión contra la nave azul, si existe */
+			if (astro.blue.pack != 0 && astro.blue.timer > 607 && astro.blue.timer < 700) {
+				if (SDL_HasIntersection (&shoot_rect, (SDL_Rect *)&astro.blue.rect)) {
+					astro.blue.timer = 700;
+					shooting = FALSE;
+				}
+			}
 		} /* Si está tirando */
 		
 		/* Si el turret está tirando */
@@ -524,6 +536,14 @@ int game_loop (void) {
 				} /* Cierro if de intersección */
 			} /* Cierro for contra los targets */
 			
+			/* Colisión contra la nave azul, si existe */
+			if (astro.blue.pack != 0 && astro.blue.timer > 607 && astro.blue.timer < 700) {
+				if (SDL_HasIntersection (&turret_shoot_rect, (SDL_Rect *)&astro.blue.rect)) {
+					astro.blue.timer = 700;
+					turret_shooting = FALSE;
+				}
+			}
+			
 			/* Colisión contra la nave */
 			if (SDL_HasIntersection (&astro.astro_rect, &turret_shoot_rect)) {
 				/* Nave destruida */
@@ -565,6 +585,12 @@ int game_loop (void) {
 		
 		if (switch_toggle && switch_timer < 17) {
 			switch_timer++;
+		}
+		
+		if (astro.blue.pack != 0) {
+			if (astro.blue.timer <= 607 || astro.blue.timer >= 700) {
+				astro.blue.timer++;
+			}
 		}
 		
 		if (*has_turret != -1 && turret_shooting) {
@@ -634,6 +660,24 @@ int game_loop (void) {
 				}
 			} else {
 				SDL_BlitSurface (images[bloques[g].image], NULL, game_buffer, (SDL_Rect *)&bloques[g]);
+			}
+		}
+		
+		if (astro.blue.pack != 0) {
+			if (astro.blue.timer >= 600 && astro.blue.timer <= 607) {
+				/* Dibujar con alfa */
+				g = SDL_ALPHA_OPAQUE * (astro.blue.timer - 600) / 8;
+				SDL_SetAlpha (images[IMG_ASTRO_BLUE], SDL_SRCALPHA, g);
+				SDL_BlitSurface (images[IMG_ASTRO_BLUE], NULL, game_buffer, (SDL_Rect *)&astro.blue.rect);
+			} else if (astro.blue.timer > 607 && astro.blue.timer < 700) {
+				SDL_BlitSurface (images[IMG_ASTRO_BLUE], NULL, game_buffer, (SDL_Rect *)&astro.blue.rect);
+			} else if (astro.blue.timer >= 700) {
+				g = astro.blue.timer - 700;
+				if (g == 3 || g == 4) {
+					SDL_BlitSurface (images[IMG_ASTRO_BLUE], NULL, game_buffer, (SDL_Rect *)&astro.blue.rect);
+				} else {
+					SDL_BlitSurface (images[IMG_ASTRO], NULL, game_buffer, (SDL_Rect *)&astro.blue.rect);
+				}
 			}
 		}
 		
@@ -728,7 +772,20 @@ int game_loop (void) {
 		
 		SDL_Flip (screen);
 		
-		if (pantalla_abierta && timer_pantalla > 56) {
+		if (astro.blue.pack != 0 && astro.blue.timer >= 706) {
+			nivel_actual = 1 | (astro.blue.pack << 17);
+			
+			if (!leer_nivel (nivel_actual, &astro)) {
+				/* Falló al cargar el nivel */
+				return GAME_QUIT;
+			}
+			switch_toggle = FALSE;
+			contador_hits = 0;
+			refresh_tiros = TRUE;
+			timer_pantalla = 0;
+		}
+		
+		if (pantalla_abierta && (timer_pantalla > 56 || enter_toggle)) {
 			if (pantalla_abierta == SCREEN_RESTART) {
 				/* Ocultar y reiniciar el nivel */
 				astro_destroyed = FALSE;

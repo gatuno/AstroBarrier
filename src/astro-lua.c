@@ -41,7 +41,9 @@ lua_State *L = NULL;
 
 const char *lua_consts[NUM_IMAGES] = {
 	/* Se omiten los primeros 7 por ser irrelevantes para los scripts */
-	"", "", "", "", "", "", "",
+	"", "", "",
+	"IMG_ASTRO_BLUE",
+	"", "", "", "",
 	"IMG_TARGET_NORMAL_BLUE",
 	"IMG_TARGET_NORMAL_GREEN",
 	"IMG_TARGET_NORMAL_YELLOW",
@@ -85,7 +87,8 @@ const char *lua_consts[NUM_IMAGES] = {
 	"IMG_LINE13",
 	"IMG_LINE14",
 	"IMG_LINE15",
-	"IMG_LINE16",
+	"IMG_LINE16_A",
+	"IMG_LINE16_B",
 	"IMG_LINE17",
 	"IMG_LINE18_A",
 	"IMG_LINE18_B",
@@ -106,6 +109,9 @@ const char *lua_consts[NUM_IMAGES] = {
 	"IMG_LINE26_A",
 	"IMG_LINE26_B",
 	"IMG_LINE27",
+	"IMG_LINE28",
+	"IMG_LINE29",
+	"IMG_LINE30",
 	
 	"IMG_TURRET_1",
 	"IMG_TURRET_2",
@@ -210,6 +216,21 @@ int lua_astro_level_set (lua_State *L) {
 			lua_astro_game->secret_pack = luaL_checkint (L, 3);
 		}
 	}
+	
+	return 0;
+}
+
+int lua_astro_new_secret (lua_State *L) {
+	int pack = luaL_checkint (L, -3);
+	int x = luaL_checkint (L, -2);
+	int y = luaL_checkint (L, -1);
+	
+	lua_astro_game->blue.pack = pack;
+	lua_astro_game->blue.timer = 0;
+	lua_astro_game->blue.rect.x = x;
+	lua_astro_game->blue.rect.y = y;
+	lua_astro_game->blue.rect.w = images[IMG_ASTRO_BLUE]->w;
+	lua_astro_game->blue.rect.h = images[IMG_ASTRO_BLUE]->h;
 	
 	return 0;
 }
@@ -473,6 +494,7 @@ int leer_nivel (int level, AstroStatus *astro) {
 	secreto = (level >> 17) & 0x07;
 	
 	astro->has_turret = -1;
+	astro->blue.pack = 0;
 	astro->on_ship_move = NULL;
 	
 	if (explicacion ){
@@ -500,8 +522,10 @@ int leer_nivel (int level, AstroStatus *astro) {
 	L = luaL_newstate ();
 	luaL_openlibs (L);
 	
+	luaL_dostring (L, "math.round = function (num, idp)\nlocal mult = 10^(idp or 0)\nreturn math.floor(num * mult + 0.5) / mult\nend");
+	
 	/* Empujar los globales */
-	lua_pushvalue (L,LUA_GLOBALSINDEX);
+	lua_pushvalue (L, LUA_GLOBALSINDEX);
 	
 	/* Una nueva tabla para "Astro" */
 	lua_pushstring (L, "astro");
@@ -523,6 +547,11 @@ int leer_nivel (int level, AstroStatus *astro) {
 	lua_setmetatable (L, -2);
 	
 	/* Empujar el espacio de nombres "ship" */
+	lua_rawset (L, -3);
+	
+	/* Stack: Table (Astro) */
+	lua_pushstring (L, "secret");
+	lua_pushcfunction (L, lua_astro_new_secret);
 	lua_rawset (L, -3);
 	
 	/* Stack: Table (Astro) */
