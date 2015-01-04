@@ -1,4 +1,4 @@
-AC_INIT([Astro Barrier], [0.1], [], [astro-barrier])
+AC_INIT([Astro Barrier], [0.7.0], [], [astro-barrier])
 
 AC_REVISION([Revision 1])
 
@@ -24,6 +24,7 @@ SDL_VERSION=1.2.14
 SDL_IMAGE_VERSION=1.2.10
 SDL_TTF_VERSION=2.0.11
 LUA_VERSION=5.1.5
+CPSTAMP_VERSION=0.9.1
 
 AC_MSG_CHECKING([if you have SDL installed on your system])
 PKG_CHECK_EXISTS([sdl >= $SDL_VERSION], [AC_MSG_RESULT([yes])], [AC_MSG_FAILURE([SDL not found in your system])])
@@ -47,6 +48,10 @@ AC_CHECK_LIB(SDL_mixer, main, [SDL_mixer_LIBS="-lSDL_mixer"], [AC_MSG_FAILURE([S
 AC_MSG_CHECKING([if you have Lua 5.1 installed on your system])
 PKG_CHECK_EXISTS([lua5.1 >= $LUA_VERSION], [AC_MSG_RESULT([yes])], [AC_MSG_FAILURE([Lua 5.1 not found in your system])])
 PKG_CHECK_MODULES(LUA, [lua5.1 >= $LUA_VERSION], [], [])
+
+AC_MSG_CHECKING([if you have Club Penguin library Stamp installed on your system])
+PKG_CHECK_EXISTS([cpstamp >= $CPSTAMP_VERSION], [AC_MSG_RESULT([yes])], [AC_MSG_FAILURE([Club Penguin library Stamp not found in your system])])
+PKG_CHECK_MODULES(CPSTAMP, [cpstamp >= $CPSTAMP_VERSION], [], [])
 
 AC_CONFIG_HEADERS([config.h])
 

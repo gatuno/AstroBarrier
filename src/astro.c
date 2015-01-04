@@ -55,8 +55,10 @@
 #include "astro-lua.h"
 
 #include "cp-button.h"
+#include "cpstamp.h"
 
 #define FPS (1000/24)
+#define MAX_RECTS 16
 
 #define RANDOM(x) ((int) (x ## .0 * rand () / (RAND_MAX + 1.0)))
 
@@ -263,13 +265,19 @@ SDL_Color azul = {0x99, 0xff, 0xff};
 int use_sound;
 Mix_Chunk * sounds[NUM_SOUNDS];
 
+SDL_Rect rects[MAX_RECTS];
+int num_rects = 0;
+
 TTF_Font *ttf24_burbank_small;
 TTF_Font *ttf20_burbank_small;
 
 int nivel_actual;
 
+Categoria *c;
+
 int main (int argc, char *argv[]) {
 	setup ();
+	iniciarCPStamp ();
 	
 	nivel_actual = 0;
 	
@@ -278,11 +286,62 @@ int main (int argc, char *argv[]) {
 	cp_registrar_boton (BUTTON_CLOSE, IMG_BUTTON_CLOSE_UP);
 	cp_button_start ();
 	
+	/* Registrar las estampas */
+	c = abrir_cat (STAMP_TYPE_GAME, "Astro Barrier", "astro-barrier");
+	
+	if (c == NULL) {
+		printf ("Falló al inicializar las estampas\n");
+	}
+	
+	if (!esta_registrada (c, 51)) {
+		registrar_estampa (c, 51, "Astro 5", "Finish 5 levels", GAMEDATA_DIR "images/stamps/51.png", STAMP_TYPE_GAME, STAMP_EASY);
+	}
+	
+	if (!esta_registrada (c, 52)) {
+		registrar_estampa (c, 52, "Astro 5 Max", "Finish 5 levels without missing a shoot", GAMEDATA_DIR "images/stamps/52.png", STAMP_TYPE_GAME, STAMP_EASY);
+	}
+	if (!esta_registrada (c, 53)) {
+		registrar_estampa (c, 53, "Astro 40", "Complete levels 1-40", GAMEDATA_DIR "images/stamps/53.png", STAMP_TYPE_GAME, STAMP_NORMAL);
+	}
+	if (!esta_registrada (c, 54)) {
+		registrar_estampa (c, 54, "Ship Blast", "Use a Blaster to shoot a ship", GAMEDATA_DIR "images/stamps/54.png", STAMP_TYPE_GAME, STAMP_NORMAL);
+	}
+	if (!esta_registrada (c, 55)) {
+		registrar_estampa (c, 55, "1-up Blast", "Use a Blaster to shoot a 1-up", GAMEDATA_DIR "images/stamps/55.png", STAMP_TYPE_GAME, STAMP_NORMAL);
+	}
+	if (!esta_registrada (c, 56)) {
+		registrar_estampa (c, 56, "Astro Secret", "Complete all Secret Levels", GAMEDATA_DIR "images/stamps/56.png", STAMP_TYPE_GAME, STAMP_NORMAL);
+	}
+	if (!esta_registrada (c, 57)) {
+		registrar_estampa (c, 57, "Astro 10 Max", "Complete levels 1-10 without missing a shoot", GAMEDATA_DIR "images/stamps/57.png", STAMP_TYPE_GAME, STAMP_NORMAL);
+	}
+	if (!esta_registrada (c, 58)) {
+		registrar_estampa (c, 58, "Astro 20 Max", "Complete levels 1-20 without missing a shoot", GAMEDATA_DIR "images/stamps/58.png", STAMP_TYPE_GAME, STAMP_NORMAL);
+	}
+	if (!esta_registrada (c, 59)) {
+		registrar_estampa (c, 59, "Astro Expert", "Complete the Expert Levels", GAMEDATA_DIR "images/stamps/59.png", STAMP_TYPE_GAME, STAMP_HARD);
+	}
+	if (!esta_registrada (c, 60)) {
+		registrar_estampa (c, 60, "Astro 30 Max", "Complete levels 1-30 without missing a shoot", GAMEDATA_DIR "images/stamps/60.png", STAMP_TYPE_GAME, STAMP_HARD);
+	}
+	if (!esta_registrada (c, 61)) {
+		registrar_estampa (c, 61, "Astro 1-up", "Collect 8 1-ups", GAMEDATA_DIR "images/stamps/61.png", STAMP_TYPE_GAME, STAMP_HARD);
+	}
+	if (!esta_registrada (c, 62)) {
+		registrar_estampa (c, 62, "Astro Master", "Complete 25 levels + Secret and Expert", GAMEDATA_DIR "images/stamps/62.png", STAMP_TYPE_GAME, STAMP_EXTREME);
+	}
+	SDL_Event event;
 	do {
 		if (game_intro () == GAME_QUIT) break;
 		if (nivel_actual == 0 && game_explain () == GAME_QUIT) break;
 		if (game_loop () == GAME_QUIT) break;
+		
+		do {
+			SDL_WaitEvent(&event);
+		} while (event.type != SDL_QUIT);
 	} while (1 == 0);
+	
+	cerrar_registro (c);
 	
 	SDL_Quit ();
 	return EXIT_SUCCESS;
@@ -465,8 +524,12 @@ int game_explain (void) {
 	
 	SDL_BlitSurface (images[IMG_GAMEINTRO], NULL, game_buffer, NULL);
 	
+	SDL_Flip (screen);
+	
 	do {
 		last_time = SDL_GetTicks ();
+		
+		num_rects = 0;
 		
 		while (SDL_PollEvent(&event) > 0) {
 			switch (event.type) {
@@ -511,17 +574,17 @@ int game_explain (void) {
 		t.rect.y = t.puntos[t.pos].y;
 		
 		/* Dibujar el boton de cierre */
-		//if (cp_button_refresh[BUTTON_CLOSE]) {
+		if (cp_button_refresh[BUTTON_CLOSE]) {
 			rect.x = 707; rect.y = 16;
 			rect.w = images[IMG_BUTTON_CLOSE_UP]->w; rect.h = images[IMG_BUTTON_CLOSE_UP]->h;
 			
 			SDL_BlitSurface (images[IMG_ARCADE], &rect, screen, &rect);
 			
 			SDL_BlitSurface (images[cp_button_frames[BUTTON_CLOSE]], NULL, screen, &rect);
-			//rects[num_rects++] = rect;
+			rects[num_rects++] = rect;
 			
-			//cp_button_refresh[BUTTON_CLOSE] = 0;
-		//}
+			cp_button_refresh[BUTTON_CLOSE] = 0;
+		}
 		
 		/* Redibujar el marco blanco por los objetos que se salen */
 		SDL_BlitSurface (images[IMG_FRAME], NULL, game_buffer, NULL);
@@ -535,8 +598,9 @@ int game_explain (void) {
 		rect.h = stretch_buffer->h;
 		
 		SDL_BlitSurface (stretch_buffer, NULL, screen, &rect);
-	
-		SDL_Flip (screen);
+		rects[num_rects++] = rect;
+		
+		SDL_UpdateRects (screen, num_rects, rects);
 		now_time = SDL_GetTicks ();
 		if (now_time < last_time + FPS) SDL_Delay(last_time + FPS - now_time);
 	} while (!done);
@@ -600,10 +664,15 @@ int game_loop (void) {
 	
 	redibujar_nivel (nivel_actual);
 	
+	SDL_UpdateRects (screen, num_rects, rects);
+	num_rects = 0;
+	
 	SDL_FillRect (game_buffer, NULL, 0); /* Transparencia total */
 	
 	do {
 		last_time = SDL_GetTicks ();
+		
+		restaurar_dibujado (screen);
 		
 		while (SDL_PollEvent(&event) > 0) {
 			switch (event.type) {
@@ -757,7 +826,7 @@ int game_loop (void) {
 									vidas++;
 									lives_collected++;
 									if (lives_collected == 8) {
-										//Enviar estampa 61
+										earn_stamp (c, 61);
 									}
 									score += 100;
 									if (use_sound) Mix_PlayChannel (-1, sounds[SND_ONE_UP], 0);
@@ -880,8 +949,9 @@ int game_loop (void) {
 									/* Golpearon la vida primero */
 									vidas++;
 									lives_collected++;
+									earn_stamp (c, 55);
 									if (lives_collected == 8) {
-										//Enviar estampa 61
+										earn_stamp (c, 61);
 									}
 									score += 100;
 									if (use_sound) Mix_PlayChannel (-1, sounds[SND_ONE_UP], 0);
@@ -941,6 +1011,7 @@ int game_loop (void) {
 				if (SDL_HasIntersection (&turret_shoot_rect, (SDL_Rect *)&astro.blue.rect)) {
 					astro.blue.timer = 700;
 					turret_shooting = FALSE;
+					earn_stamp (c, 54);
 					if (use_sound) Mix_PlayChannel (-1, sounds[SND_ORANGE_SWITCH], 0);
 				}
 			}
@@ -971,6 +1042,9 @@ int game_loop (void) {
 			refresh_score = TRUE;
 			refresh_tiros = TRUE;
 			if (astro.next_level == -1) {
+				if (((nivel_actual >> 17) & 0x07) == 2) {
+					earn_stamp (c, 59);
+				}
 				done = GAME_CONTINUE;
 				pantalla_abierta = SCREEN_NONE;
 			} else {
@@ -1122,6 +1196,7 @@ int game_loop (void) {
 			rect.w = 115;
 			rect.h = 36;
 			SDL_BlitSurface (images[IMG_ARCADE], &rect, screen, &rect);
+			rects[num_rects++] = rect;
 			
 			/* Borrar la parte de abajo de los tiros */
 			rect.x = 0;
@@ -1157,6 +1232,7 @@ int game_loop (void) {
 			rect.w = 148;
 			rect.h = 36;
 			SDL_BlitSurface (images[IMG_ARCADE], &rect, screen, &rect);
+			rects[num_rects++] = rect;
 			
 			/* Redibujar las vidas y el score */
 			sprintf (buffer, "Lives: %d", vidas);
@@ -1222,19 +1298,26 @@ int game_loop (void) {
 		rect.h = stretch_buffer->h;
 		
 		SDL_BlitSurface (stretch_buffer, NULL, screen, &rect);
+		rects[num_rects++] = rect;
 		
-		//if (cp_button_refresh[BUTTON_CLOSE]) {
+		if (cp_button_refresh[BUTTON_CLOSE]) {
 			rect.x = 707; rect.y = 16;
 			rect.w = images[IMG_BUTTON_CLOSE_UP]->w; rect.h = images[IMG_BUTTON_CLOSE_UP]->h;
 			
 			SDL_BlitSurface (images[IMG_ARCADE], &rect, screen, &rect);
 			
 			SDL_BlitSurface (images[cp_button_frames[BUTTON_CLOSE]], NULL, screen, &rect);
-			//rects[num_rects++] = rect;
-			//cp_button_refresh[BUTTON_CLOSE] = 0;
-		//}
+			rects[num_rects++] = rect;
+			cp_button_refresh[BUTTON_CLOSE] = 0;
+		}
 		
-		SDL_Flip (screen);
+		if (activar_estampa) {
+			dibujar_estampa (screen, c, TRUE);
+			rects[num_rects++] = stamp_rect;
+		}
+		
+		SDL_UpdateRects (screen, num_rects, rects);
+		num_rects = 0;
 		
 		g = FALSE; /* Bandera de cargar nivel */
 		if (astro.blue.pack != 0 && astro.blue.timer >= 710) {
@@ -1305,9 +1388,10 @@ void redibujar_nivel (int level) {
 	
 	rect.x = GAME_AREA_X;
 	rect.y = GAME_AREA_Y - 35;
-	rect.w = 280;
+	rect.w = stretch_buffer->w + 40;
 	rect.h = 35;
 	SDL_BlitSurface (images[IMG_ARCADE], &rect, screen, &rect);
+	rects[num_rects++] = rect;
 	
 	switch ((level >> 17) & 0x07) {
 		case 0:
@@ -1333,14 +1417,14 @@ void redibujar_nivel (int level) {
 	
 	texto = TTF_RenderUTF8_Blended (ttf20_burbank_small, "L", blanco);
 	
-	rect.x = GAME_AREA_X + 230;
+	rect.x = GAME_AREA_X + 220;
 	rect.w = texto->w;
 	rect.h = texto->h;
 	rect.y = GAME_AREA_Y - 4 - rect.h;
 	
 	SDL_BlitSurface (texto, NULL, screen, &rect);
 	
-	rect.x = GAME_AREA_X + 233 + texto->w;
+	rect.x = GAME_AREA_X + 223 + texto->w;
 	SDL_FreeSurface (texto);
 	
 	sprintf (buffer, "%d", (level & 0xFF));

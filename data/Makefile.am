@@ -102,6 +102,7 @@ nobase_dist_gamedata_DATA = images/arcade.png \
 	images/turret_shoot4.png \
 	images/restart.png \
 	images/next_level.png \
+	images/stamps/* \
 	levels/official/* \
 	sounds/barrier_hit.wav \
 	sounds/game_over.wav \
