@@ -1,0 +1,9 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Terminal=false
+Name=Astro Barrier
+Icon=astro-barrier
+Comment=Play Astro Barrier Game
+Exec=astro-barrier
+Categories=Game;

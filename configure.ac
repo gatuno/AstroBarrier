@@ -1,4 +1,4 @@
-AC_INIT([Astro Barrier], [0.7.0], [], [astro-barrier])
+AC_INIT([Astro Barrier], [0.7.2], [], [astro-barrier])
 
 AC_REVISION([Revision 1])
 

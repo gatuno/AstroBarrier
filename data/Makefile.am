@@ -3,6 +3,7 @@ gamedatadir = $(pkgdatadir)/data
 nobase_dist_gamedata_DATA = images/arcade.png \
 	images/astro.png \
 	images/astro_logo.png \
+	images/icon.png \
 	images/boton-close-down.png \
 	images/boton-close-over.png \
 	images/boton-close-up.png \
@@ -102,8 +103,82 @@ nobase_dist_gamedata_DATA = images/arcade.png \
 	images/turret_shoot4.png \
 	images/restart.png \
 	images/next_level.png \
-	images/stamps/* \
-	levels/official/* \
+	images/stamps/51.png \
+	images/stamps/52.png \
+	images/stamps/53.png \
+	images/stamps/54.png \
+	images/stamps/55.png \
+	images/stamps/56.png \
+	images/stamps/57.png \
+	images/stamps/58.png \
+	images/stamps/59.png \
+	images/stamps/60.png \
+	images/stamps/61.png \
+	images/stamps/62.png \
+	levels/official/astro_nivel_1.astro \
+	levels/official/astro_nivel_2.astro \
+	levels/official/astro_nivel_3.astro \
+	levels/official/astro_nivel_4.astro \
+	levels/official/astro_nivel_5.astro \
+	levels/official/astro_nivel_6.astro \
+	levels/official/astro_nivel_7.astro \
+	levels/official/astro_nivel_8.astro \
+	levels/official/astro_nivel_9.astro \
+	levels/official/astro_nivel_10.astro \
+	levels/official/astro_nivel_11.astro \
+	levels/official/astro_nivel_12.astro \
+	levels/official/astro_nivel_13.astro \
+	levels/official/astro_nivel_14.astro \
+	levels/official/astro_nivel_15.astro \
+	levels/official/astro_nivel_16.astro \
+	levels/official/astro_nivel_17.astro \
+	levels/official/astro_nivel_18.astro \
+	levels/official/astro_nivel_19.astro \
+	levels/official/astro_nivel_20.astro \
+	levels/official/astro_nivel_21.astro \
+	levels/official/astro_nivel_22.astro \
+	levels/official/astro_nivel_23.astro \
+	levels/official/astro_nivel_24.astro \
+	levels/official/astro_nivel_25.astro \
+	levels/official/astro_nivel_26.astro \
+	levels/official/astro_nivel_27.astro \
+	levels/official/astro_nivel_28.astro \
+	levels/official/astro_nivel_29.astro \
+	levels/official/astro_nivel_30.astro \
+	levels/official/astro_nivel_31.astro \
+	levels/official/astro_nivel_32.astro \
+	levels/official/astro_nivel_33.astro \
+	levels/official/astro_nivel_34.astro \
+	levels/official/astro_nivel_35.astro \
+	levels/official/astro_nivel_36.astro \
+	levels/official/astro_nivel_37.astro \
+	levels/official/astro_nivel_38.astro \
+	levels/official/astro_nivel_39.astro \
+	levels/official/astro_nivel_40.astro \
+	levels/official/astro_nivel_e-7.astro \
+	levels/official/astro_nivel_e-11.astro \
+	levels/official/astro_nivel_e-16.astro \
+	levels/official/astro_nivel_e-30.astro \
+	levels/official/astro_nivel_s-1_1.astro \
+	levels/official/astro_nivel_s-1_2.astro \
+	levels/official/astro_nivel_s-1_3.astro \
+	levels/official/astro_nivel_s-1_4.astro \
+	levels/official/astro_nivel_s-1_5.astro \
+	levels/official/astro_nivel_s-1_6.astro \
+	levels/official/astro_nivel_s-1_7.astro \
+	levels/official/astro_nivel_s-1_8.astro \
+	levels/official/astro_nivel_s-1_9.astro \
+	levels/official/astro_nivel_s-1_10.astro \
+	levels/official/astro_nivel_s-2_1.astro \
+	levels/official/astro_nivel_s-2_2.astro \
+	levels/official/astro_nivel_s-2_3.astro \
+	levels/official/astro_nivel_s-2_4.astro \
+	levels/official/astro_nivel_s-2_5.astro \
+	levels/official/astro_nivel_s-2_6.astro \
+	levels/official/astro_nivel_s-2_7.astro \
+	levels/official/astro_nivel_s-2_8.astro \
+	levels/official/astro_nivel_s-2_9.astro \
+	levels/official/astro_nivel_s-2_10.astro \
 	sounds/barrier_hit.wav \
 	sounds/game_over.wav \
 	sounds/level_done.wav \
@@ -118,3 +193,37 @@ nobase_dist_gamedata_DATA = images/arcade.png \
 	sounds/yellow_hit.wav \
 	burbanksb.ttf
 
+# Instalar los archivos .desktop e iconos
+applicationsdir = $(datadir)/applications
+applications_DATA = desktop/astro.desktop
+
+icons24dir = $(datadir)/icons/hicolor/24x24/apps
+icons24_DATA = desktop/24x24/astro-barrier.png
+
+icons32dir = $(datadir)/icons/hicolor/32x32/apps
+icons32_DATA = desktop/32x32/astro-barrier.png
+
+icons48dir = $(datadir)/icons/hicolor/48x48/apps
+icons48_DATA = desktop/48x48/astro-barrier.png
+
+icons64dir = $(datadir)/icons/hicolor/64x64/apps
+icons64_DATA = desktop/64x64/astro-barrier.png
+
+icons128dir = $(datadir)/icons/hicolor/128x128/apps
+icons128_DATA = desktop/128x128/astro-barrier.png
+
+icons256dir = $(datadir)/icons/hicolor/256x256/apps
+icons256_DATA = desktop/256x256/astro-barrier.png
+
+# touch the toplevel icon directory as required by the icon theme spec
+install-data-hook:
+	touch $(DESTDIR)$(datadir)/icons/hicolor
+
+EXTRA_DIST = \
+	desktop/astro.desktop	\
+	desktop/24x24/astro-barrier.png		\
+	desktop/32x32/astro-barrier.png		\
+	desktop/48x48/astro-barrier.png		\
+	desktop/64x64/astro-barrier.png		\
+	desktop/128x128/astro-barrier.png		\
+	desktop/256x256/astro-barrier.png
