@@ -35,6 +35,7 @@
 
 #include <SDL.h>
 #include <SDL_image.h>
+#include <SDL_mixer.h>
 #include <SDL_ttf.h>
 
 #include <stdint.h>
@@ -185,6 +186,38 @@ const char *images_names[NUM_IMAGES] = {
 	GAMEDATA_DIR "images/restart.png"
 };
 
+enum {
+	SND_START_GAME,
+	SND_GAME_OVER,
+	SND_SHOOT,
+	SND_HIT,
+	SND_ONE_UP,
+	SND_YELLOW_HIT,
+	SND_ORANGE_SWITCH,
+	SND_SLIDE,
+	SND_TURRET_SPLODE,
+	SND_LEVEL_DONE,
+	SND_GUN_SPLODE,
+	SND_WIN,
+	
+	NUM_SOUNDS
+};
+
+const char *sound_names[NUM_SOUNDS] = {
+	GAMEDATA_DIR "sounds/start_game.wav",
+	GAMEDATA_DIR "sounds/game_over.wav",
+	GAMEDATA_DIR "sounds/shoot.wav",
+	GAMEDATA_DIR "sounds/barrier_hit.wav",
+	GAMEDATA_DIR "sounds/oneup.wav",
+	GAMEDATA_DIR "sounds/yellow_hit.wav",
+	GAMEDATA_DIR "sounds/orange_switch.wav",
+	GAMEDATA_DIR "sounds/slide.wav",
+	GAMEDATA_DIR "sounds/turret_splode.wav",
+	GAMEDATA_DIR "sounds/level_done.wav",
+	GAMEDATA_DIR "sounds/gun_splode.wav",
+	GAMEDATA_DIR "sounds/win.wav"
+};
+
 /* Codigos de salida */
 enum {
 	GAME_NONE = 0, /* No usado */
@@ -226,6 +259,9 @@ SDL_Surface * images [NUM_IMAGES];
 SDL_Color amarillo = {0xff, 0xff, 0x00};
 SDL_Color blanco = {0xff, 0xff, 0xff};
 SDL_Color azul = {0x99, 0xff, 0xff};
+
+int use_sound;
+Mix_Chunk * sounds[NUM_SOUNDS];
 
 TTF_Font *ttf24_burbank_small;
 TTF_Font *ttf20_burbank_small;
@@ -329,9 +365,6 @@ int game_intro (void) {
 				case SDL_MOUSEBUTTONDOWN:
 					map = map_button_in_opening (event.button.x, event.button.y);
 					cp_button_down (map);
-					/*if (map == BUTTON_START) {
-						if (use_sound) Mix_PlayChannel (-1, sounds[SND_BUTTON], 0);
-					}*/
 					break;
 				case SDL_MOUSEBUTTONUP:
 					map = map_button_in_opening (event.button.x, event.button.y);
@@ -614,9 +647,6 @@ int game_loop (void) {
 				case SDL_MOUSEBUTTONDOWN:
 					map = map_button_in_game (event.button.x, event.button.y);
 					cp_button_down (map);
-					/*if (map == BUTTON_CLOSE) {
-						if (use_sound) Mix_PlayChannel (-1, sounds[SND_BUTTON], 0);
-					}*/
 					break;
 				case SDL_MOUSEBUTTONUP:
 					map = map_button_in_game (event.button.x, event.button.y);
@@ -635,6 +665,7 @@ int game_loop (void) {
 			shoot_rect.y = astro.astro_rect.y + 8;
 			astro.tiros--;
 			refresh_tiros = TRUE;
+			if (use_sound) Mix_PlayChannel (-1, sounds[SND_SHOOT], 0);
 		}
 		
 		/* Que el turret también tire */
@@ -698,7 +729,7 @@ int game_loop (void) {
 							shooting = FALSE;
 							score += 5;
 							refresh_score = TRUE;
-							/* TODO: Reproducir sonido */
+							if (use_sound) Mix_PlayChannel (-1, sounds[SND_TURRET_SPLODE], 0);
 						}
 					}
 				} else if (SDL_HasIntersection (&shoot_rect, (SDL_Rect *)&targets[g])) {
@@ -713,7 +744,7 @@ int game_loop (void) {
 								contador_hits++;
 								score += 10;
 								refresh_score = TRUE;
-								/* TODO: Reproducir sonido */
+								if (use_sound) Mix_PlayChannel (-1, sounds[SND_HIT], 0);
 								if (targets[g].on_hit != NULL) {
 									lua_astro_call_target_hit (&targets[g]);
 								}
@@ -729,12 +760,12 @@ int game_loop (void) {
 										//Enviar estampa 61
 									}
 									score += 100;
-									/* TODO: Reproducir sonido */
+									if (use_sound) Mix_PlayChannel (-1, sounds[SND_ONE_UP], 0);
 									/* TODO: Mostrar aviso de 1-up que se desvanece */
 								} else {
 									/* Lástima, ya no es tan importante la vida */
 									score += 25;
-									/* TODO: Reproducir sonido */
+									if (use_sound) Mix_PlayChannel (-1, sounds[SND_HIT], 0);
 								}
 								refresh_score = TRUE;
 								contador_hits++;
@@ -752,6 +783,7 @@ int game_loop (void) {
 								targets[g].image++; /* Switch golpeado */
 								targets[g].golpeado = TRUE;
 								targets[g].animar = FALSE;
+								if (use_sound) Mix_PlayChannel (-1, sounds[SND_ORANGE_SWITCH], 0);
 								break;
 							case IMG_TARGET_NORMAL_YELLOW:
 							case IMG_TARGET_MINI_YELLOW:
@@ -760,7 +792,7 @@ int game_loop (void) {
 								contador_hits++;
 								score += 25;
 								refresh_score = TRUE;
-								/* TODO: Reproducir sonido */
+								if (use_sound) Mix_PlayChannel (-1, sounds[SND_YELLOW_HIT], 0);
 								break;
 							case IMG_TARGET_EXPAND_1:
 								targets[g].golpeado = TRUE;
@@ -769,7 +801,7 @@ int game_loop (void) {
 								/* El cambio de color ocurre abajo */
 								score += 25;
 								refresh_score = TRUE;
-								/* TODO: Reproducir sonido */
+								if (use_sound) Mix_PlayChannel (-1, sounds[SND_SLIDE], 0);
 								if (targets[g].on_hit != NULL) {
 									lua_astro_call_target_hit (&targets[g]);
 								}
@@ -781,7 +813,7 @@ int game_loop (void) {
 								contador_hits++;
 								score += 10;
 								refresh_score = TRUE;
-								/* TODO: Reproducir sonido */
+								if (use_sound) Mix_PlayChannel (-1, sounds[SND_HIT], 0);
 								if (targets[g].on_hit != NULL) {
 									lua_astro_call_target_hit (&targets[g]);
 								}
@@ -794,7 +826,7 @@ int game_loop (void) {
 								
 								score += 500;
 								refresh_score = TRUE;
-								/* TODO: Reproducir sonido */
+								if (use_sound) Mix_PlayChannel (-1, sounds[SND_START_GAME], 0);
 								break;
 						}
 					} /* Cierro if de detenido */
@@ -807,6 +839,7 @@ int game_loop (void) {
 				if (SDL_HasIntersection (&shoot_rect, (SDL_Rect *)&astro.blue.rect)) {
 					astro.blue.timer = 700;
 					shooting = FALSE;
+					if (use_sound) Mix_PlayChannel (-1, sounds[SND_ORANGE_SWITCH], 0);
 				}
 			}
 		} /* Si está tirando */
@@ -835,7 +868,7 @@ int game_loop (void) {
 								contador_hits++;
 								score += 10;
 								refresh_score = TRUE;
-								/* TODO: Reproducir sonido */
+								if (use_sound) Mix_PlayChannel (-1, sounds[SND_HIT], 0);
 								if (targets[g].on_hit != NULL) {
 									lua_astro_call_target_hit (&targets[g]);
 								}
@@ -851,12 +884,12 @@ int game_loop (void) {
 										//Enviar estampa 61
 									}
 									score += 100;
-									/* TODO: Reproducir sonido */
+									if (use_sound) Mix_PlayChannel (-1, sounds[SND_ONE_UP], 0);
 									/* TODO: Mostrar aviso de 1-up que se desvanece */
 								} else {
 									/* Lástima, ya no es tan importante la vida */
 									score += 25;
-									/* TODO: Reproducir sonido */
+									if (use_sound) Mix_PlayChannel (-1, sounds[SND_HIT], 0);
 								}
 								refresh_score = TRUE;
 								contador_hits++;
@@ -874,6 +907,7 @@ int game_loop (void) {
 								targets[g].image++; /* Switch golpeado */
 								targets[g].golpeado = TRUE;
 								targets[g].animar = FALSE;
+								if (use_sound) Mix_PlayChannel (-1, sounds[SND_ORANGE_SWITCH], 0);
 								break;
 							case IMG_TARGET_NORMAL_YELLOW:
 							case IMG_TARGET_MINI_YELLOW:
@@ -882,7 +916,7 @@ int game_loop (void) {
 								contador_hits++;
 								score += 25;
 								refresh_score = TRUE;
-								/* TODO: Reproducir sonido */
+								if (use_sound) Mix_PlayChannel (-1, sounds[SND_YELLOW_HIT], 0);
 								break;
 							case IMG_TARGET_EXPAND_1:
 								targets[g].golpeado = TRUE;
@@ -891,7 +925,7 @@ int game_loop (void) {
 								/* El cambio de color ocurre abajo */
 								score += 25;
 								refresh_score = TRUE;
-								/* TODO: Reproducir sonido */
+								if (use_sound) Mix_PlayChannel (-1, sounds[SND_SLIDE], 0);
 								if (targets[g].on_hit != NULL) {
 									lua_astro_call_target_hit (&targets[g]);
 								}
@@ -907,20 +941,25 @@ int game_loop (void) {
 				if (SDL_HasIntersection (&turret_shoot_rect, (SDL_Rect *)&astro.blue.rect)) {
 					astro.blue.timer = 700;
 					turret_shooting = FALSE;
+					if (use_sound) Mix_PlayChannel (-1, sounds[SND_ORANGE_SWITCH], 0);
 				}
 			}
 			
 			/* Colisión contra la nave */
 			if (SDL_HasIntersection (&astro.astro_rect, &turret_shoot_rect)) {
 				/* Nave destruida */
-				if (vidas == 0) {
-					/* Game Over */
-					return GAME_QUIT;
-				}
 				pantalla_abierta = SCREEN_RESTART;
 				shooting = FALSE;
 				turret_shooting = FALSE;
 				astro_destroyed = TRUE;
+				if (vidas == 0) {
+					/* Game Over */
+					done = GAME_CONTINUE;
+					pantalla_abierta = SCREEN_NONE;
+					if (use_sound) Mix_PlayChannel (-1, sounds[SND_GAME_OVER], 0);
+				} else {
+					if (use_sound) Mix_PlayChannel (-1, sounds[SND_GUN_SPLODE], 0);
+				}
 			}
 		} /* Si está tirando el turret*/
 		
@@ -931,9 +970,20 @@ int game_loop (void) {
 			astro.tiros = 0;
 			refresh_score = TRUE;
 			refresh_tiros = TRUE;
+			if (astro.next_level == -1) {
+				done = GAME_CONTINUE;
+				pantalla_abierta = SCREEN_NONE;
+			} else {
+				if (use_sound) Mix_PlayChannel (-1, sounds[SND_LEVEL_DONE], 0);
+			}
 		} else if (!pantalla_abierta && astro.tiros == 0 && !shooting) {
 			/* Se acabaron los tiros, reiniciar el nivel */
 			pantalla_abierta = SCREEN_RESTART;
+			if (vidas == 0) {
+				done = GAME_CONTINUE;
+				pantalla_abierta = SCREEN_NONE;
+				if (use_sound) Mix_PlayChannel (-1, sounds[SND_GAME_OVER], 0);
+			}
 		}
 		
 		/* Mover la nave a su nueva posición */
@@ -1214,6 +1264,7 @@ int game_loop (void) {
 		if (g == TRUE) {
 			if (nivel_actual == -1) {
 				/* Si llegó al final, puntos extras por las vidas */
+				if (use_sound) Mix_PlayChannel (-1, sounds[SND_WIN], 0);
 				score = score + vidas * 50;
 				done = GAME_CONTINUE;
 			} else {
@@ -1254,7 +1305,7 @@ void redibujar_nivel (int level) {
 	
 	rect.x = GAME_AREA_X;
 	rect.y = GAME_AREA_Y - 35;
-	rect.w = 264;
+	rect.w = 280;
 	rect.h = 35;
 	SDL_BlitSurface (images[IMG_ARCADE], &rect, screen, &rect);
 	
@@ -1347,6 +1398,25 @@ void setup (void) {
 		exit (1);
 	}
 	
+	use_sound = 1;
+	if (SDL_InitSubSystem (SDL_INIT_AUDIO) < 0) {
+		fprintf (stdout,
+			"Warning: Can't initialize the audio subsystem\n"
+			"Continuing...\n");
+		use_sound = 0;
+	}
+	
+	if (use_sound) {
+		/* Inicializar el sonido */
+		if (Mix_OpenAudio (22050, AUDIO_S16, 2, 4096) < 0) {
+			fprintf (stdout,
+				"Warning: Can't initialize the SDL Mixer library\n");
+			use_sound = 0;
+		} else {
+			Mix_AllocateChannels (3);
+		}
+	}
+	
 	for (g = 0; g < NUM_IMAGES; g++) {
 		image = IMG_Load (images_names[g]);
 		
@@ -1364,6 +1434,22 @@ void setup (void) {
 		/* TODO: Mostrar la carga de porcentaje */
 	}
 	
+	if (use_sound) {
+		for (g = 0; g < NUM_SOUNDS; g++) {
+			sounds[g] = Mix_LoadWAV (sound_names [g]);
+			
+			if (sounds[g] == NULL) {
+				fprintf (stderr,
+					"Failed to load data file:\n"
+					"%s\n"
+					"The error returned by SDL is:\n"
+					"%s\n", sound_names [g], SDL_GetError ());
+				SDL_Quit ();
+				exit (1);
+			}
+			Mix_VolumeChunk (sounds[g], MIX_MAX_VOLUME / 2);
+		}
+	}
 	if (TTF_Init () < 0) {
 		fprintf (stderr,
 			"Error: Can't initialize the SDL TTF library\n"

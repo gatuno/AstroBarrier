@@ -103,5 +103,17 @@ nobase_dist_gamedata_DATA = images/arcade.png \
 	images/restart.png \
 	images/next_level.png \
 	levels/official/* \
+	sounds/barrier_hit.wav \
+	sounds/game_over.wav \
+	sounds/level_done.wav \
+	sounds/oneup.wav \
+	sounds/orange_switch.wav \
+	sounds/shoot.wav \
+	sounds/slide.wav \
+	sounds/start_game.wav \
+	sounds/turret_splode.wav \
+	sounds/gun_splode.wav \
+	sounds/win.wav \
+	sounds/yellow_hit.wav \
 	burbanksb.ttf
 
