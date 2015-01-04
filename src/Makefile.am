@@ -3,7 +3,7 @@
 gamedatadir = $(pkgdatadir)/data
 
 bin_PROGRAMS = astro-barrier
-astro_barrier_SOURCES = astro.c util-bresenham.c sdlstretchcode.c astro-lua.c
+astro_barrier_SOURCES = astro.c util-bresenham.c sdlstretchcode.c astro-lua.c cp-button.c
 EXTRA_DIST = util-bresenham.h SDL_stretchasm.h SDL_stretchcode.h astro-lua.h astro-types.h
 
 astro_barrier_CPPFLAGS = -DGAMEDATA_DIR=\"$(gamedatadir)/\" -DLOCALEDIR=\"$(localedir)\" $(AM_CPPFLAGS)

@@ -2,6 +2,11 @@ gamedatadir = $(pkgdatadir)/data
 
 nobase_dist_gamedata_DATA = images/arcade.png \
 	images/astro.png \
+	images/astro_logo.png \
+	images/boton-close-down.png \
+	images/boton-close-over.png \
+	images/boton-close-up.png \
+	images/button-start.png \
 	images/astro_destroyed.png \
 	images/astro_blue.png \
 	images/block_normal.png \
@@ -96,5 +101,7 @@ nobase_dist_gamedata_DATA = images/arcade.png \
 	images/turret_shoot3.png \
 	images/turret_shoot4.png \
 	images/restart.png \
-	images/next_level.png
+	images/next_level.png \
+	levels/official/* \
+	burbanksb.ttf
 

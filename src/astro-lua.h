@@ -26,8 +26,7 @@
 void lua_astro_call_ship_move (void);
 void lua_astro_call_target_hit (Target *);
 
-int leer_nivel (int, AstroStatus *);
-void leer_pack (const char *, int *, int *);
+int leer_nivel (const char *, int, AstroStatus *);
 
 #endif /* __ASTRO_LUA_H__ */
 

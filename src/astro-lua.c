@@ -41,7 +41,7 @@ lua_State *L = NULL;
 
 const char *lua_consts[NUM_IMAGES] = {
 	/* Se omiten los primeros 7 por ser irrelevantes para los scripts */
-	"", "", "",
+	"", "", "", "", "", "", "", "",
 	"IMG_ASTRO_BLUE",
 	"", "", "", "",
 	"IMG_TARGET_NORMAL_BLUE",
@@ -508,8 +508,8 @@ void lua_astro_set_constantes (lua_State *L) {
 	}
 }
 
-int leer_nivel (int level, AstroStatus *astro) {
-	char archivo[256]; /* Hacer máx de esto */
+int leer_nivel (const char *pack, int level, AstroStatus *astro) {
+	char archivo[2048]; /* Hacer máx de esto */
 	int g;
 	
 	int explicacion, secreto, numero;
@@ -520,19 +520,20 @@ int leer_nivel (int level, AstroStatus *astro) {
 	
 	astro->has_turret = -1;
 	astro->blue.pack = 0;
+	astro->blue.timer = 0;
 	astro->on_ship_move = NULL;
 	
 	if (explicacion ){
 		if (secreto != 0) {
-			sprintf (archivo, "levels/astro_nivel_s-%i_e-%i.astro", secreto, numero);
+			sprintf (archivo, "%s/astro_nivel_s-%i_e-%i.astro", pack, secreto, numero);
 		} else {
-			sprintf (archivo, "levels/astro_nivel_e-%i.astro", numero);
+			sprintf (archivo, "%s/astro_nivel_e-%i.astro", pack, numero);
 		}
 	} else {
 		if (secreto != 0) {
-			sprintf (archivo, "levels/astro_nivel_s-%i_%i.astro", secreto, numero);
+			sprintf (archivo, "%s/astro_nivel_s-%i_%i.astro", pack, secreto, numero);
 		} else {
-			sprintf (archivo, "levels/astro_nivel_%i.astro", numero);
+			sprintf (archivo, "%s/astro_nivel_%i.astro", pack, numero);
 		}
 	}
 	
@@ -756,7 +757,6 @@ int leer_nivel (int level, AstroStatus *astro) {
 	
 	lua_astro_set_constantes (L);
 	
-	printf ("Ambiente listo, corre el archivo\n");
 	/* Una vez listo el ambiente, intentar cargar el archivo */
 	if (luaL_loadfile (L, archivo)) {
 		/* Falló */
@@ -771,69 +771,5 @@ int leer_nivel (int level, AstroStatus *astro) {
 	lua_pop (L, 1);
 	
 	return TRUE;
-}
-
-void leer_pack (const char *base, int *total, int *primero) {
-	/* Quiero un ambiente limpio */
-	if (L != NULL) {
-		lua_close (L);
-	}
-	
-	L = luaL_newstate ();
-	luaL_openlibs (L);
-	
-	/* Empujar los globales */
-	lua_pushvalue (L,LUA_GLOBALSINDEX);
-	
-	/* Una nueva tabla para "Astro" */
-	lua_pushstring (L, "astro");
-	lua_newtable (L);
-	
-	lua_pushstring (L, "levels");
-	lua_newtable (L);
-	
-	lua_rawset (L, -3);
-	
-	lua_rawset (L, -3);
-	
-	luaL_dostring (L, "astro.levels.total = 0");
-	luaL_dostring (L, "astro.levels.start = 0");
-	
-	lua_pop (L, 1);
-	
-	printf ("Ambiente listo, corre el archivo de pack\n");
-	/* Una vez listo el ambiente, intentar cargar el archivo */
-	if (luaL_loadfile (L, base)) {
-		/* Falló */
-		fprintf(stderr, "\nFATAL ERROR:\n  %s: %s\n\n", "luaL_loadfile() failed", lua_tostring(L, -1));
-		return;
-	}
-	if (lua_pcall (L, 0, 0, 0)) {
-		fprintf(stderr, "\nFATAL ERROR:\n  %s: %s\n\n", "lua_pcall() failed", lua_tostring(L, -1));
-		return;
-	}
-	
-	/* TODO: Calcular el directorio base conforme al base pack */
-	
-	lua_pushvalue (L,LUA_GLOBALSINDEX);
-	lua_pushstring (L, "astro");
-	lua_rawget (L, -2);
-	
-	lua_pushstring (L, "levels");
-	lua_rawget (L, -2);
-	
-	lua_pushstring (L, "total");
-	lua_rawget (L, -2);
-	
-	*total = luaL_checkint (L, -1);
-	
-	lua_pop (L, 1);
-	
-	lua_pushstring (L, "start");
-	lua_rawget (L, -2);
-	
-	*primero = luaL_checkint (L, -1);
-	
-	lua_pop (L, 4); /* Quitar el número, tabla levels, tabla astro, tabla de las globales */
 }
 

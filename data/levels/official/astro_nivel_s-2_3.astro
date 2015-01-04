@@ -38,10 +38,8 @@ if (q < 0) then
 elseif (q > 100) then
 	q = 100
 end
-print ("Porcentaje: " .. q)
 q_40 = math.floor (q * 0.4)
 q_60 = math.floor (q * 0.6)
-print ("Q_40: " .. q_40 .. ", Q_60: " .. q_60)
 v:setPos (q_40)
 u:setPos (q_60)
 t:setPos (q_60)
@@ -57,11 +55,8 @@ function target_on_ship_move (x, y)
 	elseif (q > 100) then
 		q = 100
 	end
-	print ("Ship.x = "..x)
-	print ("Porcentaje: " .. q)
 	q_40 = math.floor (q * 0.4)
 	q_60 = math.floor (q * 0.6)
-	print ("Q_40: " .. q_40 .. ", Q_60: " .. q_60)
 	
 	if (v:getStopped () == false) then v:setPos (q_40) end
 	if (u:getStopped () == false) then u:setPos (q_60) end

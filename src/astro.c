@@ -35,6 +35,7 @@
 
 #include <SDL.h>
 #include <SDL_image.h>
+#include <SDL_ttf.h>
 
 #include <stdint.h>
 #include <string.h>
@@ -52,6 +53,8 @@
 #include "astro-types.h"
 #include "astro-lua.h"
 
+#include "cp-button.h"
+
 #define FPS (1000/24)
 
 #define RANDOM(x) ((int) (x ## .0 * rand () / (RAND_MAX + 1.0)))
@@ -62,7 +65,14 @@
 const char *images_names[NUM_IMAGES] = {
 	GAMEDATA_DIR "images/arcade.png",
 	
+	GAMEDATA_DIR "images/boton-close-up.png",
+	GAMEDATA_DIR "images/boton-close-over.png",
+	GAMEDATA_DIR "images/boton-close-down.png",
+	
+	GAMEDATA_DIR "images/button-start.png",
+	
 	GAMEDATA_DIR "images/astro.png",
+	GAMEDATA_DIR "images/astro_logo.png",
 	GAMEDATA_DIR "images/astro_destroyed.png",
 	GAMEDATA_DIR "images/astro_blue.png",
 	
@@ -189,28 +199,52 @@ enum {
 	SCREEN_RESTART
 };
 
-#define BASE_LEVEL_PACK GAMEDATA_DIR "levels/astro_nivel.astro"
+enum {
+	BUTTON_NONE = 0,
+	BUTTON_START,
+	BUTTON_CLOSE,
+	
+	NUM_BUTTONS
+};
+
+#define OFFICIAL_LEVEL_PACK GAMEDATA_DIR "levels/official"
 
 /* Prototipos de función */
+int game_intro (void);
+int game_explain (void);
 int game_loop (void);
+void redibujar_nivel (int);
 void setup (void);
-SDL_Surface * set_video_mode(unsigned);
+SDL_Surface * set_video_mode (unsigned);
+int map_button_in_opening (int, int);
+int map_button_in_game (int, int);
 
 /* Variables globales */
-SDL_Surface * screen;
+SDL_Surface * screen, *game_buffer, *stretch_buffer;
 SDL_Surface * images [NUM_IMAGES];
 
-int total_niveles;
+SDL_Color amarillo = {0xff, 0xff, 0x00};
+SDL_Color blanco = {0xff, 0xff, 0xff};
+SDL_Color azul = {0x99, 0xff, 0xff};
+
+TTF_Font *ttf24_burbank_small;
+TTF_Font *ttf20_burbank_small;
+
 int nivel_actual;
 
 int main (int argc, char *argv[]) {
-	
 	setup ();
 	
-	/* TODO: Seleccionar un paquete de niveles */
-	leer_pack ("levels/astro_pack.astro", &total_niveles, &nivel_actual);
+	nivel_actual = 0;
+	
+	/* Registrar botones */
+	cp_registrar_botones (NUM_BUTTONS);
+	cp_registrar_boton (BUTTON_CLOSE, IMG_BUTTON_CLOSE_UP);
+	cp_button_start ();
 	
 	do {
+		if (game_intro () == GAME_QUIT) break;
+		if (nivel_actual == 0 && game_explain () == GAME_QUIT) break;
 		if (game_loop () == GAME_QUIT) break;
 	} while (1 == 0);
 	
@@ -218,24 +252,286 @@ int main (int argc, char *argv[]) {
 	return EXIT_SUCCESS;
 }
 
-int game_loop (void) {
+int game_intro (void) {
 	int done = 0;
+	SDL_Event event;
+	Uint32 last_time, now_time;
+	SDL_Rect rect;
+	int map;
+	SDL_Surface *texto;
+	SDLKey key;
+	
+	SDL_BlitSurface (images[IMG_ARCADE], NULL, screen, NULL);
+	
+	texto = TTF_RenderUTF8_Blended (ttf24_burbank_small, "Astro Barrier", blanco);
+	
+	rect.x = GAME_AREA_X + ((stretch_buffer->w - texto->w) / 2) + 1;
+	rect.w = texto->w;
+	rect.h = texto->h;
+	rect.y = GAME_AREA_Y - 3 - rect.h;
+	
+	SDL_BlitSurface (texto, NULL, screen, &rect);
+	SDL_FreeSurface (texto);
+	
+	SDL_FillRect (game_buffer, NULL, 0); /* Transparencia total */
+	
+	SDL_BlitSurface (images[IMG_GAMEINTRO], NULL, game_buffer, NULL);
+	
+	rect.w = images[IMG_BUTTON_START]->w;
+	rect.x = (game_buffer->w - rect.w) / 2;
+	rect.y = 360;
+	rect.h = images[IMG_BUTTON_START]->h;
+	
+	SDL_BlitSurface (images[IMG_BUTTON_START], NULL, game_buffer, &rect);
+	
+	texto = TTF_RenderUTF8_Blended (ttf24_burbank_small, "START", amarillo);
+	
+	rect.x = rect.x + (images[IMG_BUTTON_START]->w - texto->w) / 2;
+	rect.y = 360 + (images[IMG_BUTTON_START]->h - texto->h) / 2 + 2;
+	rect.w = texto->w;
+	rect.h = texto->h;
+	
+	SDL_BlitSurface (texto, NULL, game_buffer, &rect);
+	SDL_FreeSurface (texto);
+	
+	rect.x = 37;
+	rect.y = 16;
+	rect.w = images[IMG_ASTRO_LOGO]->w;
+	rect.h = images[IMG_ASTRO_LOGO]->h;
+	
+	SDL_BlitSurface (images[IMG_ASTRO_LOGO], NULL, game_buffer, &rect);
+	
+	/* Escalar el area de juego antes de copiarla a la pantalla */
+	SDL_StretchSurfaceBlit (game_buffer, NULL, stretch_buffer, NULL);
+	
+	rect.x = GAME_AREA_X;
+	rect.y = GAME_AREA_Y;
+	rect.w = stretch_buffer->w;
+	rect.h = stretch_buffer->h;
+	
+	SDL_BlitSurface (stretch_buffer, NULL, screen, &rect);
+	
+	SDL_Flip (screen);
+	
+	do {
+		last_time = SDL_GetTicks ();
+		
+		while (SDL_PollEvent(&event) > 0) {
+			switch (event.type) {
+				case SDL_QUIT:
+					/* Vamos a cerrar la aplicación */
+					done = GAME_QUIT;
+					break;
+				case SDL_MOUSEMOTION:
+					map = map_button_in_opening (event.motion.x, event.motion.y);
+					cp_button_motion (map);
+					break;
+				case SDL_MOUSEBUTTONDOWN:
+					map = map_button_in_opening (event.button.x, event.button.y);
+					cp_button_down (map);
+					/*if (map == BUTTON_START) {
+						if (use_sound) Mix_PlayChannel (-1, sounds[SND_BUTTON], 0);
+					}*/
+					break;
+				case SDL_MOUSEBUTTONUP:
+					map = map_button_in_opening (event.button.x, event.button.y);
+					map = cp_button_up (map);
+					
+					switch (map) {
+						case BUTTON_START:
+							done = GAME_CONTINUE;
+							break;
+						case BUTTON_CLOSE:
+							done = GAME_QUIT;
+							break;
+					}
+					break;
+				case SDL_KEYDOWN:
+					key = event.key.keysym.sym;
+					
+					if (key == SDLK_RETURN) {
+						nivel_actual = 1;
+						done = GAME_CONTINUE;
+					} else if (key == SDLK_1) {
+						nivel_actual = 10;
+						done = GAME_CONTINUE;
+					} else if (key == SDLK_2) {
+						nivel_actual = 20;
+						done = GAME_CONTINUE;
+					} else if (key == SDLK_3) {
+						nivel_actual = 30;
+						done = GAME_CONTINUE;
+					}
+					break;
+			}
+		}
+		
+		//if (cp_button_refresh[BUTTON_CLOSE]) {
+			rect.x = 707; rect.y = 16;
+			rect.w = images[IMG_BUTTON_CLOSE_UP]->w; rect.h = images[IMG_BUTTON_CLOSE_UP]->h;
+			
+			SDL_BlitSurface (images[IMG_ARCADE], &rect, screen, &rect);
+			
+			SDL_BlitSurface (images[cp_button_frames[BUTTON_CLOSE]], NULL, screen, &rect);
+			//rects[num_rects++] = rect;
+			SDL_UpdateRects (screen, 1, &rect);
+			//cp_button_refresh[BUTTON_CLOSE] = 0;
+		//}
+		
+		now_time = SDL_GetTicks ();
+		if (now_time < last_time + FPS) SDL_Delay(last_time + FPS - now_time);
+	} while (!done);
+	
+	return done;
+}
+
+int game_explain (void) {
+	int done = 0;
+	SDL_Event event;
+	Uint32 last_time, now_time;
+	SDL_Rect rect;
+	int map;
+	SDL_Surface *texto;
+	SDLKey key;
+	Linea l;
+	Target t;
+	
+	nivel_actual = 1;
+	
+	/* Preparar el target y linea de prueba */
+	l.image = IMG_LINE1;
+	l.rect.x = 4;
+	l.rect.y = 108;
+	l.rect.w = images[IMG_LINE1]->w;
+	l.rect.h = images[IMG_LINE1]->h;
+	
+	t.image = IMG_TARGET_NORMAL_GREEN;
+	t.rect.w = images[IMG_TARGET_NORMAL_GREEN]->w;
+	t.rect.h = images[IMG_TARGET_NORMAL_GREEN]->h;
+	
+	t.puntos[0].x = t.rect.x = 16;
+	t.puntos[0].y = t.rect.y = 94;
+	line (16, 92, 312, 92, &t.puntos[0], 40);
+	line (312, 92, 16, 92, &t.puntos[40], 40);
+	t.total_vel = 80;
+	t.pos = 0;
+	
+	SDL_BlitSurface (images[IMG_ARCADE], NULL, screen, NULL);
+	
+	texto = TTF_RenderUTF8_Blended (ttf24_burbank_small, "Astro Barrier", blanco);
+	
+	rect.x = GAME_AREA_X + ((stretch_buffer->w - texto->w) / 2) + 1;
+	rect.w = texto->w;
+	rect.h = texto->h;
+	rect.y = GAME_AREA_Y - 3 - rect.h;
+	
+	SDL_BlitSurface (texto, NULL, screen, &rect);
+	SDL_FreeSurface (texto);
+	
+	SDL_FillRect (game_buffer, NULL, 0); /* Transparencia total */
+	
+	SDL_BlitSurface (images[IMG_GAMEINTRO], NULL, game_buffer, NULL);
+	
+	do {
+		last_time = SDL_GetTicks ();
+		
+		while (SDL_PollEvent(&event) > 0) {
+			switch (event.type) {
+				case SDL_QUIT:
+					/* Vamos a cerrar la aplicación */
+					done = GAME_QUIT;
+					break;
+				case SDL_MOUSEMOTION:
+					map = map_button_in_opening (event.motion.x, event.motion.y);
+					cp_button_motion (map);
+					break;
+				case SDL_MOUSEBUTTONDOWN:
+					map = map_button_in_opening (event.button.x, event.button.y);
+					cp_button_down (map);
+					break;
+				case SDL_MOUSEBUTTONUP:
+					map = map_button_in_opening (event.button.x, event.button.y);
+					map = cp_button_up (map);
+					
+					if (map == BUTTON_CLOSE) done = GAME_QUIT;
+					break;
+				case SDL_KEYDOWN:
+					key = event.key.keysym.sym;
+					
+					if (key == SDLK_RETURN || key == SDLK_SPACE) {
+						done = GAME_CONTINUE;
+					}
+					break;
+			}
+		}
+		
+		SDL_BlitSurface (images[IMG_GAMEINTRO], NULL, game_buffer, NULL);
+		
+		/* Dibujar la linea de fondo */
+		SDL_BlitSurface (images[l.image], NULL, game_buffer, (SDL_Rect *)&l);
+		
+		/* Dibujar el target */
+		SDL_BlitSurface (images[t.image], NULL, game_buffer, (SDL_Rect *)&t);
+		t.pos++;
+		if (t.pos >= t.total_vel) t.pos = 0;
+		t.rect.x = t.puntos[t.pos].x;
+		t.rect.y = t.puntos[t.pos].y;
+		
+		/* Dibujar el boton de cierre */
+		//if (cp_button_refresh[BUTTON_CLOSE]) {
+			rect.x = 707; rect.y = 16;
+			rect.w = images[IMG_BUTTON_CLOSE_UP]->w; rect.h = images[IMG_BUTTON_CLOSE_UP]->h;
+			
+			SDL_BlitSurface (images[IMG_ARCADE], &rect, screen, &rect);
+			
+			SDL_BlitSurface (images[cp_button_frames[BUTTON_CLOSE]], NULL, screen, &rect);
+			//rects[num_rects++] = rect;
+			
+			//cp_button_refresh[BUTTON_CLOSE] = 0;
+		//}
+		
+		/* Redibujar el marco blanco por los objetos que se salen */
+		SDL_BlitSurface (images[IMG_FRAME], NULL, game_buffer, NULL);
+		
+		/* Escalar el area de juego antes de copiarla a la pantalla */
+		SDL_StretchSurfaceBlit (game_buffer, NULL, stretch_buffer, NULL);
+		
+		rect.x = GAME_AREA_X;
+		rect.y = GAME_AREA_Y;
+		rect.w = stretch_buffer->w;
+		rect.h = stretch_buffer->h;
+		
+		SDL_BlitSurface (stretch_buffer, NULL, screen, &rect);
+	
+		SDL_Flip (screen);
+		now_time = SDL_GetTicks ();
+		if (now_time < last_time + FPS) SDL_Delay(last_time + FPS - now_time);
+	} while (!done);
+	
+	return done;
+}
+
+int game_loop (void) {
+	int done = 0, map;
 	SDL_Event event;
 	SDLKey key;
 	Uint32 last_time, now_time;
 	SDL_Rect rect;
+	char buffer[20];
 	int g, *h;
 	AstroStatus astro;
 	
 	int astro_dir = 0;
-	SDL_Surface *game_buffer, *stretch_buffer;
+	SDL_Surface *texto;
 	int shooting, space_toggle, enter_toggle, switch_toggle, astro_destroyed;
 	int turret_shooting, turret_dir;
 	int switch_timer;
 	SDL_Rect shoot_rect, turret_shoot_rect;
 	
-	int contador_hits, refresh_tiros;
+	int contador_hits, refresh_tiros, refresh_score;
+	int score, save_score;
 	int pantalla_abierta = 0, timer_pantalla = 0;
+	int lives_collected, vidas;
 	
 	int *has_turret = &(astro.has_turret);
 	Target *targets = astro.targets;
@@ -244,14 +540,15 @@ int game_loop (void) {
 	
 	astro_destroyed = shooting = space_toggle = enter_toggle = switch_toggle = turret_shooting = FALSE;
 	
-	nivel_actual = 1;
+	vidas = 2;
+	lives_collected = score = save_score = 0;
 	
 	astro.astro_rect.w = images[IMG_ASTRO]->w;
 	astro.astro_rect.h = images[IMG_ASTRO]->h;
 	astro.astro_rect.x = 160;
 	astro.astro_rect.y = 396;
 	
-	if (!leer_nivel (nivel_actual, &astro)) {
+	if (!leer_nivel (OFFICIAL_LEVEL_PACK, nivel_actual, &astro)) {
 		return GAME_QUIT;
 	}
 	
@@ -262,22 +559,15 @@ int game_loop (void) {
 	}
 	
 	contador_hits = 0;
-	refresh_tiros = TRUE;
+	refresh_score = refresh_tiros = TRUE;
 	shoot_rect.w = images[IMG_SHOOT]->w;
 	shoot_rect.h = images[IMG_SHOOT]->h;
 	
 	SDL_BlitSurface (images[IMG_ARCADE], NULL, screen, NULL);
 	
-	/* En esta situación tan especial, necesito varios buffers intermedios */
-	game_buffer = SDL_AllocSurface (SDL_SWSURFACE, images[IMG_GAMEAREA]->w, images[IMG_GAMEAREA]->h + 52, 32, 0x00FF0000, 0x0000FF00, 0x000000FF, 0xFF000000);
+	redibujar_nivel (nivel_actual);
+	
 	SDL_FillRect (game_buffer, NULL, 0); /* Transparencia total */
-	
-	/* Quitarle el alpha, para que cuando se copie a la superficie no tenga problemas */
-	SDL_SetAlpha (images[IMG_GAMEAREA], 0, 0);
-	
-	stretch_buffer = SDL_AllocSurface (SDL_SWSURFACE, 263, 305 + 36, 32, 0x00FF0000, 0x0000FF00, 0x000000FF, 0xFF000000);
-	
-	SDL_EventState (SDL_MOUSEMOTION, SDL_IGNORE);
 	
 	do {
 		last_time = SDL_GetTicks ();
@@ -299,6 +589,8 @@ int game_loop (void) {
 						space_toggle = TRUE;
 					} else if (key == SDLK_RETURN) {
 						enter_toggle = TRUE;
+					} else if (key == SDLK_ESCAPE) {
+						done = GAME_QUIT;
 					}
 					break;
 				case SDL_KEYUP:
@@ -315,6 +607,25 @@ int game_loop (void) {
 					}
 					
 					break;
+				case SDL_MOUSEMOTION:
+					map = map_button_in_game (event.motion.x, event.motion.y);
+					cp_button_motion (map);
+					break;
+				case SDL_MOUSEBUTTONDOWN:
+					map = map_button_in_game (event.button.x, event.button.y);
+					cp_button_down (map);
+					/*if (map == BUTTON_CLOSE) {
+						if (use_sound) Mix_PlayChannel (-1, sounds[SND_BUTTON], 0);
+					}*/
+					break;
+				case SDL_MOUSEBUTTONUP:
+					map = map_button_in_game (event.button.x, event.button.y);
+					map = cp_button_up (map);
+					
+					if (map == BUTTON_CLOSE) {
+						done = GAME_QUIT;
+					}
+					break;
 			}
 		}
 		
@@ -325,6 +636,7 @@ int game_loop (void) {
 			astro.tiros--;
 			refresh_tiros = TRUE;
 		}
+		
 		/* Que el turret también tire */
 		if (*has_turret != -1 && space_toggle && !turret_shooting && !pantalla_abierta) {
 			if (targets[*has_turret].image != IMG_TURRET_DESTROYED) {
@@ -384,7 +696,8 @@ int game_loop (void) {
 							targets[g].image = IMG_TURRET_DESTROYED;
 							
 							shooting = FALSE;
-							/* Sumar 5  de score */
+							score += 5;
+							refresh_score = TRUE;
 							/* TODO: Reproducir sonido */
 						}
 					}
@@ -398,7 +711,8 @@ int game_loop (void) {
 								targets[g].animar = FALSE;
 								targets[g].image += 2; /* Cambiar a rojo */
 								contador_hits++;
-								/* Para los verdes, sumar 10 puntos de score */
+								score += 10;
+								refresh_score = TRUE;
 								/* TODO: Reproducir sonido */
 								if (targets[g].on_hit != NULL) {
 									lua_astro_call_target_hit (&targets[g]);
@@ -409,20 +723,20 @@ int game_loop (void) {
 							case IMG_TARGET_BIG_BLUE:
 								if (contador_hits == 0) {
 									/* Golpearon la vida primero */
-									printf ("Ganaste 1 vida\n");
-									/* Aumentar las vidas por 1 */
-									/* Aumentar las vidas recogidas por 1 */
-									/* if (lives_collected == 8) {
-										Enviar estampa 61
-									} */
-									/* Para las vidas en el primer golpe, sumar 100 puntos al score */
+									vidas++;
+									lives_collected++;
+									if (lives_collected == 8) {
+										//Enviar estampa 61
+									}
+									score += 100;
 									/* TODO: Reproducir sonido */
 									/* TODO: Mostrar aviso de 1-up que se desvanece */
 								} else {
 									/* Lástima, ya no es tan importante la vida */
-									/* Para las vidas, sumar 25 puntos al score */
+									score += 25;
 									/* TODO: Reproducir sonido */
 								}
+								refresh_score = TRUE;
 								contador_hits++;
 								targets[g].golpeado = TRUE;
 								targets[g].animar = FALSE;
@@ -444,7 +758,8 @@ int game_loop (void) {
 							case IMG_TARGET_BIG_YELLOW:
 								targets[g].image--; /* Cambiar a verde */
 								contador_hits++;
-								/* Para los amarillos, sumar 25 puntos de score */
+								score += 25;
+								refresh_score = TRUE;
 								/* TODO: Reproducir sonido */
 								break;
 							case IMG_TARGET_EXPAND_1:
@@ -452,7 +767,8 @@ int game_loop (void) {
 								targets[g].animar = FALSE;
 								contador_hits++;
 								/* El cambio de color ocurre abajo */
-								/* Sumar 25 de score */
+								score += 25;
+								refresh_score = TRUE;
 								/* TODO: Reproducir sonido */
 								if (targets[g].on_hit != NULL) {
 									lua_astro_call_target_hit (&targets[g]);
@@ -463,7 +779,8 @@ int game_loop (void) {
 								targets[g].animar = FALSE;
 								targets[g].image++; /* Cambiar a naranja */
 								contador_hits++;
-								/* Para los verdes, sumar 10 puntos de score */
+								score += 10;
+								refresh_score = TRUE;
 								/* TODO: Reproducir sonido */
 								if (targets[g].on_hit != NULL) {
 									lua_astro_call_target_hit (&targets[g]);
@@ -475,7 +792,8 @@ int game_loop (void) {
 								targets[g].image++; /* Cambiar a rojo */
 								contador_hits++;
 								
-								/* Sumar 500 puntos */
+								score += 500;
+								refresh_score = TRUE;
 								/* TODO: Reproducir sonido */
 								break;
 						}
@@ -515,7 +833,8 @@ int game_loop (void) {
 								targets[g].animar = FALSE;
 								targets[g].image += 2; /* Cambiar a rojo */
 								contador_hits++;
-								/* Para los verdes, sumar 10 puntos de score */
+								score += 10;
+								refresh_score = TRUE;
 								/* TODO: Reproducir sonido */
 								if (targets[g].on_hit != NULL) {
 									lua_astro_call_target_hit (&targets[g]);
@@ -526,20 +845,20 @@ int game_loop (void) {
 							case IMG_TARGET_BIG_BLUE:
 								if (contador_hits == 0) {
 									/* Golpearon la vida primero */
-									printf ("Ganaste 1 vida por turret\n");
-									/* Aumentar las vidas por 1 */
-									/* Aumentar las vidas recogidas por 1 */
-									/* if (lives_collected == 8) {
-										Enviar estampa 61
-									} */
-									/* Para las vidas en el primer golpe, sumar 100 puntos al score */
+									vidas++;
+									lives_collected++;
+									if (lives_collected == 8) {
+										//Enviar estampa 61
+									}
+									score += 100;
 									/* TODO: Reproducir sonido */
 									/* TODO: Mostrar aviso de 1-up que se desvanece */
 								} else {
 									/* Lástima, ya no es tan importante la vida */
-									/* Para las vidas, sumar 25 puntos al score */
+									score += 25;
 									/* TODO: Reproducir sonido */
 								}
+								refresh_score = TRUE;
 								contador_hits++;
 								targets[g].golpeado = TRUE;
 								targets[g].animar = FALSE;
@@ -561,7 +880,8 @@ int game_loop (void) {
 							case IMG_TARGET_BIG_YELLOW:
 								targets[g].image -= 1; /* Cambiar a verde */
 								contador_hits++;
-								/* Para los amarillos, sumar 25 puntos de score */
+								score += 25;
+								refresh_score = TRUE;
 								/* TODO: Reproducir sonido */
 								break;
 							case IMG_TARGET_EXPAND_1:
@@ -569,7 +889,8 @@ int game_loop (void) {
 								targets[g].animar = FALSE;
 								contador_hits++;
 								/* El cambio de color ocurre abajo */
-								/* Sumar 25 de score */
+								score += 25;
+								refresh_score = TRUE;
 								/* TODO: Reproducir sonido */
 								if (targets[g].on_hit != NULL) {
 									lua_astro_call_target_hit (&targets[g]);
@@ -592,6 +913,10 @@ int game_loop (void) {
 			/* Colisión contra la nave */
 			if (SDL_HasIntersection (&astro.astro_rect, &turret_shoot_rect)) {
 				/* Nave destruida */
+				if (vidas == 0) {
+					/* Game Over */
+					return GAME_QUIT;
+				}
 				pantalla_abierta = SCREEN_RESTART;
 				shooting = FALSE;
 				turret_shooting = FALSE;
@@ -602,13 +927,13 @@ int game_loop (void) {
 		if (!pantalla_abierta && contador_hits >= astro.hits_requeridos) {
 			/* Nivel terminado, hay que abrir la pantalla de siguiente nivel */
 			pantalla_abierta = SCREEN_NEXT_LEVEL;
+			score += (astro.tiros * 10);
 			astro.tiros = 0;
+			refresh_score = TRUE;
 			refresh_tiros = TRUE;
-			printf ("Debug: Ganaste, siguiente nivel\n");
 		} else if (!pantalla_abierta && astro.tiros == 0 && !shooting) {
 			/* Se acabaron los tiros, reiniciar el nivel */
 			pantalla_abierta = SCREEN_RESTART;
-			printf ("Debug: Tiros acabados, reiniciando nivel\n");
 		}
 		
 		/* Mover la nave a su nueva posición */
@@ -644,7 +969,6 @@ int game_loop (void) {
 			turret_shoot_rect.h = images[g]->h;
 			
 			SDL_BlitSurface (images[g], NULL, game_buffer, &turret_shoot_rect);
-			
 			
 			switch (turret_dir) {
 				case 0:
@@ -745,14 +1069,14 @@ int game_loop (void) {
 			/* Borrar el area debajo de la zona de juego */
 			rect.x = GAME_AREA_X;
 			rect.y = GAME_AREA_Y + 305;
-			rect.w = 144;
+			rect.w = 115;
 			rect.h = 36;
 			SDL_BlitSurface (images[IMG_ARCADE], &rect, screen, &rect);
 			
 			/* Borrar la parte de abajo de los tiros */
 			rect.x = 0;
 			rect.y = 436;
-			rect.w = 205;
+			rect.w = 376;
 			rect.h = 52;
 			SDL_FillRect (game_buffer, &rect, 0); /* Transparencia total */
 			
@@ -772,7 +1096,40 @@ int game_loop (void) {
 				}
 			}
 			SDL_SetAlpha (images[IMG_SHOOT], SDL_SRCALPHA, 0);
+			
 			refresh_tiros = FALSE;
+		}
+		
+		if (refresh_score) {
+			/* Borrar el area debajo de la zona de juego */
+			rect.x = GAME_AREA_X + 130;
+			rect.y = GAME_AREA_Y + 305;
+			rect.w = 148;
+			rect.h = 36;
+			SDL_BlitSurface (images[IMG_ARCADE], &rect, screen, &rect);
+			
+			/* Redibujar las vidas y el score */
+			sprintf (buffer, "Lives: %d", vidas);
+			texto = TTF_RenderUTF8_Blended (ttf20_burbank_small, buffer, amarillo);
+			rect.x = GAME_AREA_X + 115;
+			rect.y = GAME_AREA_Y + 320;
+			rect.w = texto->w;
+			rect.h = texto->h;
+			
+			SDL_BlitSurface (texto, NULL, screen, &rect);
+			SDL_FreeSurface (texto);
+			
+			sprintf (buffer, "%d", score);
+			texto = TTF_RenderUTF8_Blended (ttf20_burbank_small, buffer, amarillo);
+			rect.x = GAME_AREA_X + stretch_buffer->w - 5 - texto->w;
+			rect.y = GAME_AREA_Y + 320;
+			rect.w = texto->w;
+			rect.h = texto->h;
+			
+			SDL_BlitSurface (texto, NULL, screen, &rect);
+			SDL_FreeSurface (texto);
+			
+			refresh_score = FALSE;
 		}
 		
 		/* Si es que hay, redibujar la pantalla de reiniciar o de siguiente nivel */
@@ -784,7 +1141,6 @@ int game_loop (void) {
 			
 			SDL_BlitSurface (images[IMG_NEXT_LEVEL], NULL, game_buffer, &rect);
 			
-			/* TODO: Dibujar la cantidad de puntos */
 			timer_pantalla++;
 		} else if (pantalla_abierta == SCREEN_RESTART) {
 			rect.x = 65;
@@ -817,87 +1173,70 @@ int game_loop (void) {
 		
 		SDL_BlitSurface (stretch_buffer, NULL, screen, &rect);
 		
+		//if (cp_button_refresh[BUTTON_CLOSE]) {
+			rect.x = 707; rect.y = 16;
+			rect.w = images[IMG_BUTTON_CLOSE_UP]->w; rect.h = images[IMG_BUTTON_CLOSE_UP]->h;
+			
+			SDL_BlitSurface (images[IMG_ARCADE], &rect, screen, &rect);
+			
+			SDL_BlitSurface (images[cp_button_frames[BUTTON_CLOSE]], NULL, screen, &rect);
+			//rects[num_rects++] = rect;
+			//cp_button_refresh[BUTTON_CLOSE] = 0;
+		//}
+		
 		SDL_Flip (screen);
 		
+		g = FALSE; /* Bandera de cargar nivel */
 		if (astro.blue.pack != 0 && astro.blue.timer >= 710) {
+			g = TRUE;
 			nivel_actual = 1 | (astro.blue.pack << 17);
-			
-			if (!leer_nivel (nivel_actual, &astro)) {
-				/* Falló al cargar el nivel */
-				return GAME_QUIT;
-			}
-			switch_toggle = FALSE;
-			contador_hits = 0;
-			refresh_tiros = TRUE;
-			timer_pantalla = 0;
 		}
 		
 		if (pantalla_abierta && (timer_pantalla > 56 || enter_toggle)) {
+			g = TRUE;
 			if (pantalla_abierta == SCREEN_RESTART) {
 				/* Ocultar y reiniciar el nivel */
-				astro_destroyed = FALSE;
-				if (!leer_nivel (nivel_actual, &astro)) {
-					/* Falló al cargar el nivel */
-					return GAME_QUIT;
-				}
-				if (*has_turret != -1) {
-					turret_dir = targets[*has_turret].image - IMG_TURRET_1;
-					turret_shoot_rect.w = images[IMG_TURRET_SHOOT_1 + turret_dir]->w;
-					turret_shoot_rect.h = images[IMG_TURRET_SHOOT_1 + turret_dir]->h;
-				}
-				switch_toggle = FALSE;
-				contador_hits = 0;
-				refresh_tiros = TRUE;
+				vidas--;
+				refresh_score = TRUE;
 				/* TODO: nivel_reiniciado = TRUE */
-				pantalla_abierta = SCREEN_NONE;
-				/* TODO: reiniciar el score */
+				score = save_score;
 			} else if (pantalla_abierta == SCREEN_NEXT_LEVEL) {
 				/* Pasar al siguiente nivel */
-				if (astro.next_level != -1) {
-					nivel_actual = astro.next_level;
-					if (!leer_nivel (nivel_actual, &astro)) {
-						return GAME_QUIT;
-					}
+				nivel_actual = astro.next_level;
+			}
+		}
+		
+		if (nivel_actual & (1 << 16) && timer_pantalla > 20 && enter_toggle && (astro.blue.pack == 0 || astro.blue.timer < 700)) {
+			g = TRUE;
+			nivel_actual = astro.next_level;
+		}
+		
+		if (g == TRUE) {
+			if (nivel_actual == -1) {
+				/* Si llegó al final, puntos extras por las vidas */
+				score = score + vidas * 50;
+				done = GAME_CONTINUE;
+			} else {
+				if (!leer_nivel (OFFICIAL_LEVEL_PACK, nivel_actual, &astro)) {
+					/* Falló al cargar el nivel */
+					done = GAME_QUIT;
+				} else {
+					redibujar_nivel (nivel_actual);
 					if (*has_turret != -1) {
 						turret_dir = targets[*has_turret].image - IMG_TURRET_1;
 						turret_shoot_rect.w = images[IMG_TURRET_SHOOT_1 + turret_dir]->w;
 						turret_shoot_rect.h = images[IMG_TURRET_SHOOT_1 + turret_dir]->h;
 					}
-					switch_toggle = FALSE;
-					if (nivel_actual & (1 << 16)) {
-						printf ("Estoy cargando un nivel de explicación\n");
-					}
-					contador_hits = 0;
-					refresh_tiros = TRUE;
-				} else {
-					done = GAME_CONTINUE;
 				}
-				pantalla_abierta = SCREEN_NONE;
 			}
+			save_score = score;
+			shooting = turret_shooting = FALSE;
+			astro_destroyed = FALSE;
+			switch_toggle = FALSE;
+			contador_hits = 0;
+			refresh_tiros = TRUE;
+			pantalla_abierta = SCREEN_NONE;
 			timer_pantalla = 0;
-		}
-		
-		if (nivel_actual & (1 << 16) && timer_pantalla > 20 && enter_toggle) {
-			/* Cargar el siguiente nivel, porque presionó enter */
-			if (astro.next_level != -1) {
-				nivel_actual = astro.next_level;
-				if (!leer_nivel (nivel_actual, &astro)) {
-					return GAME_QUIT;
-				}
-				if (*has_turret != -1) {
-					turret_dir = targets[*has_turret].image - IMG_TURRET_1;
-					turret_shoot_rect.w = images[IMG_TURRET_SHOOT_1 + turret_dir]->w;
-					turret_shoot_rect.h = images[IMG_TURRET_SHOOT_1 + turret_dir]->h;
-				}
-				
-				shooting = turret_shooting = FALSE;
-				switch_toggle = FALSE;
-				timer_pantalla = 0;
-				contador_hits = 0;
-				refresh_tiros = TRUE;
-			} else {
-				done = GAME_CONTINUE;
-			}
 		}
 		
 		now_time = SDL_GetTicks ();
@@ -906,6 +1245,71 @@ int game_loop (void) {
 	} while (!done);
 	
 	return done;
+}
+
+void redibujar_nivel (int level) {
+	SDL_Surface *texto;
+	SDL_Rect rect;
+	char buffer[10];
+	
+	rect.x = GAME_AREA_X;
+	rect.y = GAME_AREA_Y - 35;
+	rect.w = 264;
+	rect.h = 35;
+	SDL_BlitSurface (images[IMG_ARCADE], &rect, screen, &rect);
+	
+	switch ((level >> 17) & 0x07) {
+		case 0:
+			texto = TTF_RenderUTF8_Blended (ttf24_burbank_small, "Astro Barrier", blanco);
+			break;
+		case 1:
+			texto = TTF_RenderUTF8_Blended (ttf24_burbank_small, "Secret Levels", amarillo);
+			break;
+		case 2:
+			texto = TTF_RenderUTF8_Blended (ttf24_burbank_small, "Secret Levels", azul);
+			break;
+		default:
+			texto = TTF_RenderUTF8_Blended (ttf24_burbank_small, "Secret Levels", blanco);
+			break;
+	}
+	rect.x = GAME_AREA_X + 12;
+	rect.w = texto->w;
+	rect.h = texto->h;
+	rect.y = GAME_AREA_Y - 3 - rect.h;
+	
+	SDL_BlitSurface (texto, NULL, screen, &rect);
+	SDL_FreeSurface (texto);
+	
+	texto = TTF_RenderUTF8_Blended (ttf20_burbank_small, "L", blanco);
+	
+	rect.x = GAME_AREA_X + 230;
+	rect.w = texto->w;
+	rect.h = texto->h;
+	rect.y = GAME_AREA_Y - 4 - rect.h;
+	
+	SDL_BlitSurface (texto, NULL, screen, &rect);
+	
+	rect.x = GAME_AREA_X + 233 + texto->w;
+	SDL_FreeSurface (texto);
+	
+	sprintf (buffer, "%d", (level & 0xFF));
+	switch ((level >> 17) & 0x07) {
+		case 1:
+			texto = TTF_RenderUTF8_Blended (ttf20_burbank_small, buffer, amarillo);
+			break;
+		case 2:
+			texto = TTF_RenderUTF8_Blended (ttf20_burbank_small, buffer, azul);
+			break;
+		default:
+			texto = TTF_RenderUTF8_Blended (ttf20_burbank_small, buffer, blanco);
+	}
+	
+	rect.w = texto->w;
+	rect.h = texto->h;
+	rect.y = GAME_AREA_Y - 4 - rect.h;
+	
+	SDL_BlitSurface (texto, NULL, screen, &rect);
+	SDL_FreeSurface (texto);
 }
 
 /* Set video mode: */
@@ -960,9 +1364,59 @@ void setup (void) {
 		/* TODO: Mostrar la carga de porcentaje */
 	}
 	
+	if (TTF_Init () < 0) {
+		fprintf (stderr,
+			"Error: Can't initialize the SDL TTF library\n"
+			"%s\n", TTF_GetError ());
+		SDL_Quit ();
+		exit (1);
+	}
+	
+	ttf24_burbank_small = TTF_OpenFont (GAMEDATA_DIR "burbanksb.ttf", 24);
+	
+	if (!ttf24_burbank_small) {
+		fprintf (stderr,
+			"Failed to load font file 'Burbank Small Bold'\n"
+			"The error returned by SDL is:\n"
+			"%s\n", TTF_GetError ());
+		SDL_Quit ();
+		exit (1);
+	}
+	//TTF_SetFontStyle (ttf24_burbank_small, TTF_STYLE_BOLD);
+	
+	ttf20_burbank_small = TTF_OpenFont (GAMEDATA_DIR "burbanksb.ttf", 20);
+	
+	if (!ttf20_burbank_small) {
+		fprintf (stderr,
+			"Failed to load font file 'Burbank Small Bold'\n"
+			"The error returned by SDL is:\n"
+			"%s\n", TTF_GetError ());
+		SDL_Quit ();
+		exit (1);
+	}
+	TTF_SetFontHinting (ttf20_burbank_small, TTF_HINTING_LIGHT);
+	
 	/* La nave color azul tiene transparencia especial */
 	SDL_SetColorKey (images[IMG_ASTRO_BLUE], SDL_SRCCOLORKEY, SDL_MapRGB (images[IMG_ASTRO_BLUE]->format, 0xFF, 0, 0xFF));
+	
+	/* En esta situación tan especial, necesito varios buffers intermedios */
+	game_buffer = SDL_AllocSurface (SDL_SWSURFACE, images[IMG_GAMEAREA]->w, images[IMG_GAMEAREA]->h + 52, 32, 0x00FF0000, 0x0000FF00, 0x000000FF, 0xFF000000);
+	stretch_buffer = SDL_AllocSurface (SDL_SWSURFACE, 263, 305 + 36, 32, 0x00FF0000, 0x0000FF00, 0x000000FF, 0xFF000000);
+	
+	/* Quitarle el alpha, para que cuando se copie a la superficie no tenga problemas */
+	SDL_SetAlpha (images[IMG_GAMEAREA], 0, 0);
+	SDL_SetAlpha (images[IMG_GAMEINTRO], 0, 0);
 	
 	srand (SDL_GetTicks ());
 }
 
+int map_button_in_game (int x, int y) {
+	if (x >= 707 && x < 736 && y >= 16 && y < 45) return BUTTON_CLOSE;
+	return BUTTON_NONE;
+}
+
+int map_button_in_opening (int x, int y) {
+	if (x >= 321 && x < 461 && y >= 331 && y < 367) return BUTTON_START;
+	if (x >= 707 && x < 736 && y >= 16 && y < 45) return BUTTON_CLOSE;
+	return BUTTON_NONE;
+}
