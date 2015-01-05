@@ -65,6 +65,10 @@
 #define GAME_AREA_X 250
 #define GAME_AREA_Y 79
 
+#ifdef __MINGW32__
+#	define GAMEDATA_DIR "./"
+#endif
+
 const char *images_names[NUM_IMAGES] = {
 	GAMEDATA_DIR "images/arcade.png",
 	

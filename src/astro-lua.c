@@ -131,7 +131,11 @@ const char *lua_consts[NUM_IMAGES] = {
 void lua_astro_call_ship_move (void) {
 	if (lua_astro_game->on_ship_move == NULL) return;
 	/* Empujar los globales */
+#if LUA_VERSION_NUM == 501
 	lua_pushvalue (L, LUA_GLOBALSINDEX);
+#elif LUA_VERSION_NUM == 502
+	lua_rawgeti(L, LUA_REGISTRYINDEX, LUA_RIDX_GLOBALS);
+#endif
 	lua_pushstring (L, lua_astro_game->on_ship_move);
 	lua_rawget (L, -2);
 	lua_pushinteger (L, lua_astro_game->astro_rect.x);
@@ -144,7 +148,11 @@ void lua_astro_call_target_hit (Target *t) {
 	if (t->on_hit == NULL) return;
 	
 	/* Empujar las globales */
+#if LUA_VERSION_NUM == 501
 	lua_pushvalue (L, LUA_GLOBALSINDEX);
+#elif LUA_VERSION_NUM == 502
+	lua_rawgeti(L, LUA_REGISTRYINDEX, LUA_RIDX_GLOBALS);
+#endif
 	lua_pushstring (L, t->on_hit);
 	lua_rawget (L, -2);
 	lua_pushlightuserdata (L, (void *)t);
@@ -551,8 +559,11 @@ int leer_nivel (const char *pack, int level, AstroStatus *astro) {
 	luaL_dostring (L, "math.round = function (num, idp)\nlocal mult = 10^(idp or 0)\nreturn math.floor(num * mult + 0.5) / mult\nend");
 	
 	/* Empujar los globales */
+#if LUA_VERSION_NUM == 501
 	lua_pushvalue (L, LUA_GLOBALSINDEX);
-	
+#elif LUA_VERSION_NUM == 502
+	lua_rawgeti(L, LUA_REGISTRYINDEX, LUA_RIDX_GLOBALS);
+#endif
 	/* Una nueva tabla para "Astro" */
 	lua_pushstring (L, "astro");
 	lua_newtable (L);

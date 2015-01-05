@@ -1,4 +1,4 @@
-AC_INIT([Astro Barrier], [0.7.2], [], [astro-barrier])
+AC_INIT([Astro Barrier], [0.7.3], [], [astro-barrier])
 
 AC_REVISION([Revision 1])
 
@@ -23,6 +23,7 @@ PKG_PROG_PKG_CONFIG
 SDL_VERSION=1.2.14
 SDL_IMAGE_VERSION=1.2.10
 SDL_TTF_VERSION=2.0.11
+SDL_MIXER_VERSION=1.2.12
 LUA_VERSION=5.1.5
 CPSTAMP_VERSION=0.9.1
 
@@ -35,19 +36,12 @@ PKG_CHECK_EXISTS([SDL_image >= $SDL_IMAGE_VERSION], [AC_MSG_RESULT([yes])], [AC_
 PKG_CHECK_MODULES(SDL_image, [SDL_image >= $SDL_IMAGE_VERSION], [], [])
 
 AC_MSG_CHECKING([if you have SDL_ttf installed on your system])
-PKG_CHECK_EXISTS([SDL_image >= $SDL_IMAGE_VERSION], [AC_MSG_RESULT([yes])], [AC_MSG_FAILURE([SDL_ttf not found in your system])])
+PKG_CHECK_EXISTS([SDL_ttf >= $SDL_TTF_VERSION], [AC_MSG_RESULT([yes])], [AC_MSG_FAILURE([SDL_ttf not found in your system])])
 PKG_CHECK_MODULES(SDL_ttf, [SDL_ttf >= $SDL_TTF_VERSION], [], [])
 
-# SDL_Mixer doesn't have pkg-config
-SDL_mixer_LIBS=""
-AC_ARG_VAR(SDL_mixer_LIBS, [linker flags for SDL_mixer])
-# AC_MSG_CHECKING([if you have SDL_mixer installed on your system])
-AC_CHECK_HEADERS(SDL/SDL_mixer.h, [], [AC_MSG_FAILURE([SDL_mixer not found in your system])])
-AC_CHECK_LIB(SDL_mixer, main, [SDL_mixer_LIBS="-lSDL_mixer"], [AC_MSG_FAILURE([SDL_mixer not found in your system])])
-
-AC_MSG_CHECKING([if you have Lua 5.1 installed on your system])
-PKG_CHECK_EXISTS([lua5.1 >= $LUA_VERSION], [AC_MSG_RESULT([yes])], [AC_MSG_FAILURE([Lua 5.1 not found in your system])])
-PKG_CHECK_MODULES(LUA, [lua5.1 >= $LUA_VERSION], [], [])
+AC_MSG_CHECKING([if you have SDL_mixer installed on your system])
+PKG_CHECK_EXISTS([SDL_mixer >= $SDL_MIXER_VERSION], [AC_MSG_RESULT([yes])], [AC_MSG_FAILURE([SDL_mixer not found in your system])])
+PKG_CHECK_MODULES(SDL_mixer, [SDL_mixer >= $SDL_MIXER_VERSION], [], [])
 
 AC_MSG_CHECKING([if you have Club Penguin library Stamp installed on your system])
 PKG_CHECK_EXISTS([cpstamp >= $CPSTAMP_VERSION], [AC_MSG_RESULT([yes])], [AC_MSG_FAILURE([Club Penguin library Stamp not found in your system])])
@@ -55,7 +49,37 @@ PKG_CHECK_MODULES(CPSTAMP, [cpstamp >= $CPSTAMP_VERSION], [], [])
 
 AC_CONFIG_HEADERS([config.h])
 
+# Revisar el host
 AC_CANONICAL_HOST
+
+case $host_os in
+  *mingw32* ) MINGW32=yes;;
+          * ) MINGW32=no;;
+esac
+case $host_os in
+  *cygwin* ) CYGWIN=yes;;
+         * ) CYGWIN=no;;
+esac
+case $host_os in
+  *linux* ) LINUX=yes;;
+        * ) LINUX=no;;
+esac
+case $host_os in
+ *darwin* ) MACOSX=yes;;
+       * ) MACOSX=no;;
+esac
+
+if test "$MINGW32" = "yes"; then
+	# En win32, sólo hay lua, sin version.
+	AC_MSG_CHECKING([if you have Lua installed on your system])
+	PKG_CHECK_EXISTS([lua >= $LUA_VERSION], [AC_MSG_RESULT([yes])], [AC_MSG_FAILURE([Lua not found in your system])])
+	PKG_CHECK_MODULES(LUA, [lua >= $LUA_VERSION], [], [])
+else
+	# Para Linux, buscar la lua5.1
+	AC_MSG_CHECKING([if you have Lua 5.1 installed on your system])
+	PKG_CHECK_EXISTS([lua5.1 >= $LUA_VERSION], [AC_MSG_RESULT([yes])], [AC_MSG_FAILURE([Lua 5.1 not found in your system])])
+	PKG_CHECK_MODULES(LUA, [lua5.1 >= $LUA_VERSION], [], [])
+fi
 
 AC_CONFIG_FILES([
                  Makefile
