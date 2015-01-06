@@ -1,4 +1,4 @@
-AC_INIT([Astro Barrier], [0.7.3], [], [astro-barrier])
+AC_INIT([Astro Barrier], [0.7.4], [], [astro-barrier])
 
 AC_REVISION([Revision 1])
 
@@ -49,6 +49,8 @@ PKG_CHECK_MODULES(CPSTAMP, [cpstamp >= $CPSTAMP_VERSION], [], [])
 
 AC_CONFIG_HEADERS([config.h])
 
+AC_CHECK_TOOL(WINDRES, windres)
+
 # Revisar el host
 AC_CANONICAL_HOST
 
@@ -68,6 +70,9 @@ case $host_os in
  *darwin* ) MACOSX=yes;;
        * ) MACOSX=no;;
 esac
+
+AM_CONDITIONAL(MINGW32, test x$MINGW32 = xyes)
+AM_CONDITIONAL(LINUX, test x$LINUX = xyes)
 
 if test "$MINGW32" = "yes"; then
 	# En win32, sólo hay lua, sin version.

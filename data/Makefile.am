@@ -220,10 +220,11 @@ install-data-hook:
 	touch $(DESTDIR)$(datadir)/icons/hicolor
 
 EXTRA_DIST = \
-	desktop/astro.desktop	\
-	desktop/24x24/astro-barrier.png		\
-	desktop/32x32/astro-barrier.png		\
-	desktop/48x48/astro-barrier.png		\
-	desktop/64x64/astro-barrier.png		\
-	desktop/128x128/astro-barrier.png		\
-	desktop/256x256/astro-barrier.png
+	desktop/astro.desktop \
+	desktop/24x24/astro-barrier.png \
+	desktop/32x32/astro-barrier.png	\
+	desktop/48x48/astro-barrier.png	\
+	desktop/64x64/astro-barrier.png \
+	desktop/128x128/astro-barrier.png \
+	desktop/256x256/astro-barrier.png \
+	astro.ico
