@@ -57,6 +57,8 @@
 #include "cp-button.h"
 #include "cpstamp.h"
 
+#include "draw-text.h"
+
 #define FPS (1000/24)
 #define MAX_RECTS 16
 
@@ -66,6 +68,7 @@
 #define GAME_AREA_Y 79
 
 #ifdef __MINGW32__
+#	undef GAMEDATA_DIR
 #	define GAMEDATA_DIR "./"
 #endif
 
@@ -623,7 +626,7 @@ int game_loop (void) {
 	AstroStatus astro;
 	
 	int astro_dir = 0;
-	SDL_Surface *texto;
+	SDL_Surface *texto, *pantalla_texto;
 	int shooting, space_toggle, enter_toggle, switch_toggle, astro_destroyed;
 	int turret_shooting, turret_dir;
 	int switch_timer;
@@ -677,6 +680,62 @@ int game_loop (void) {
 		last_time = SDL_GetTicks ();
 		
 		restaurar_dibujado (screen);
+		
+		g = FALSE; /* Bandera de cargar nivel */
+		if (astro.blue.pack != 0 && astro.blue.timer >= 710) {
+			g = TRUE;
+			nivel_actual = 1 | (astro.blue.pack << 17);
+		}
+		
+		if (pantalla_abierta && (timer_pantalla > 56 || enter_toggle)) {
+			g = TRUE;
+			if (pantalla_abierta == SCREEN_RESTART) {
+				/* Ocultar y reiniciar el nivel */
+				vidas--;
+				refresh_score = TRUE;
+				/* TODO: nivel_reiniciado = TRUE */
+				score = save_score;
+			} else if (pantalla_abierta == SCREEN_NEXT_LEVEL) {
+				/* Pasar al siguiente nivel */
+				nivel_actual = astro.next_level;
+			}
+			SDL_FreeSurface (pantalla_texto);
+			pantalla_texto = NULL;
+		}
+		
+		if (nivel_actual & (1 << 16) && timer_pantalla > 20 && enter_toggle && (astro.blue.pack == 0 || astro.blue.timer < 700)) {
+			g = TRUE;
+			nivel_actual = astro.next_level;
+		}
+		
+		if (g == TRUE) {
+			if (nivel_actual == -1) {
+				/* Si llegó al final, puntos extras por las vidas */
+				if (use_sound) Mix_PlayChannel (-1, sounds[SND_WIN], 0);
+				score = score + vidas * 50;
+				done = GAME_CONTINUE;
+			} else {
+				if (!leer_nivel (OFFICIAL_LEVEL_PACK, nivel_actual, &astro)) {
+					/* Falló al cargar el nivel */
+					done = GAME_QUIT;
+				} else {
+					redibujar_nivel (nivel_actual);
+					if (*has_turret != -1) {
+						turret_dir = targets[*has_turret].image - IMG_TURRET_1;
+						turret_shoot_rect.w = images[IMG_TURRET_SHOOT_1 + turret_dir]->w;
+						turret_shoot_rect.h = images[IMG_TURRET_SHOOT_1 + turret_dir]->h;
+					}
+				}
+			}
+			save_score = score;
+			shooting = turret_shooting = FALSE;
+			astro_destroyed = FALSE;
+			switch_toggle = FALSE;
+			contador_hits = 0;
+			refresh_tiros = TRUE;
+			pantalla_abierta = SCREEN_NONE;
+			timer_pantalla = 0;
+		}
 		
 		while (SDL_PollEvent(&event) > 0) {
 			switch (event.type) {
@@ -1034,6 +1093,7 @@ int game_loop (void) {
 					if (use_sound) Mix_PlayChannel (-1, sounds[SND_GAME_OVER], 0);
 				} else {
 					if (use_sound) Mix_PlayChannel (-1, sounds[SND_GUN_SPLODE], 0);
+					pantalla_texto = draw_text (ttf24_burbank_small, "Ship destroyed.\n\nRestarting level...", blanco, ALIGN_LEFT, 0);
 				}
 			}
 		} /* Si está tirando el turret*/
@@ -1053,6 +1113,35 @@ int game_loop (void) {
 				pantalla_abierta = SCREEN_NONE;
 			} else {
 				if (use_sound) Mix_PlayChannel (-1, sounds[SND_LEVEL_DONE], 0);
+				/* Generar los textos del score */
+				pantalla_texto = SDL_CreateRGBSurface (SDL_SWSURFACE, images[IMG_NEXT_LEVEL]->w, images[IMG_NEXT_LEVEL]->h, 32, RMASK, GMASK, BMASK, AMASK);
+				texto = TTF_RenderUTF8_Blended (ttf20_burbank_small, "Current Score", blanco);
+				SDL_SetAlpha (texto, 0, SDL_ALPHA_OPAQUE);
+				rect.x = 22;
+				rect.y = 19;
+				rect.w = texto->w; rect.h = texto->h;
+				
+				SDL_BlitSurface (texto, NULL, pantalla_texto, &rect);
+				SDL_FreeSurface (texto);
+				
+				sprintf (buffer, "%i", score);
+				texto = TTF_RenderUTF8_Blended (ttf20_burbank_small, buffer, amarillo);
+				SDL_SetAlpha (texto, 0, SDL_ALPHA_OPAQUE);
+				rect.x = 22;
+				rect.y = 49;
+				rect.w = texto->w; rect.h = texto->h;
+				
+				SDL_BlitSurface (texto, NULL, pantalla_texto, &rect);
+				SDL_FreeSurface (texto);
+				
+				texto = TTF_RenderUTF8_Blended (ttf20_burbank_small, "Loading Next Level", blanco);
+				SDL_SetAlpha (texto, 0, SDL_ALPHA_OPAQUE);
+				rect.x = 16;
+				rect.y = 92;
+				rect.w = texto->w; rect.h = texto->h;
+				
+				SDL_BlitSurface (texto, NULL, pantalla_texto, &rect);
+				SDL_FreeSurface (texto);
 			}
 		} else if (!pantalla_abierta && astro.tiros == 0 && !shooting) {
 			/* Se acabaron los tiros, reiniciar el nivel */
@@ -1061,6 +1150,8 @@ int game_loop (void) {
 				done = GAME_CONTINUE;
 				pantalla_abierta = SCREEN_NONE;
 				if (use_sound) Mix_PlayChannel (-1, sounds[SND_GAME_OVER], 0);
+			} else {
+				pantalla_texto = draw_text (ttf24_burbank_small, "No shots left.\n\nRestarting level...", blanco, ALIGN_LEFT, 0);
 			}
 		}
 		
@@ -1270,6 +1361,7 @@ int game_loop (void) {
 			rect.w = images[IMG_NEXT_LEVEL]->w;
 			
 			SDL_BlitSurface (images[IMG_NEXT_LEVEL], NULL, game_buffer, &rect);
+			SDL_BlitSurface (pantalla_texto, NULL, game_buffer, &rect);
 			
 			timer_pantalla++;
 		} else if (pantalla_abierta == SCREEN_RESTART) {
@@ -1279,6 +1371,13 @@ int game_loop (void) {
 			rect.w = images[IMG_RESTART]->w;
 			
 			SDL_BlitSurface (images[IMG_RESTART], NULL, game_buffer, &rect);
+			
+			rect.x = 80;
+			rect.y = 114;
+			rect.w = pantalla_texto->w;
+			rect.h = pantalla_texto->h;
+			SDL_BlitSurface (pantalla_texto, NULL, game_buffer, &rect);
+			
 			timer_pantalla++;
 		} else if (nivel_actual & (1 << 16)) {
 			timer_pantalla++;
@@ -1323,63 +1422,8 @@ int game_loop (void) {
 		SDL_UpdateRects (screen, num_rects, rects);
 		num_rects = 0;
 		
-		g = FALSE; /* Bandera de cargar nivel */
-		if (astro.blue.pack != 0 && astro.blue.timer >= 710) {
-			g = TRUE;
-			nivel_actual = 1 | (astro.blue.pack << 17);
-		}
-		
-		if (pantalla_abierta && (timer_pantalla > 56 || enter_toggle)) {
-			g = TRUE;
-			if (pantalla_abierta == SCREEN_RESTART) {
-				/* Ocultar y reiniciar el nivel */
-				vidas--;
-				refresh_score = TRUE;
-				/* TODO: nivel_reiniciado = TRUE */
-				score = save_score;
-			} else if (pantalla_abierta == SCREEN_NEXT_LEVEL) {
-				/* Pasar al siguiente nivel */
-				nivel_actual = astro.next_level;
-			}
-		}
-		
-		if (nivel_actual & (1 << 16) && timer_pantalla > 20 && enter_toggle && (astro.blue.pack == 0 || astro.blue.timer < 700)) {
-			g = TRUE;
-			nivel_actual = astro.next_level;
-		}
-		
-		if (g == TRUE) {
-			if (nivel_actual == -1) {
-				/* Si llegó al final, puntos extras por las vidas */
-				if (use_sound) Mix_PlayChannel (-1, sounds[SND_WIN], 0);
-				score = score + vidas * 50;
-				done = GAME_CONTINUE;
-			} else {
-				if (!leer_nivel (OFFICIAL_LEVEL_PACK, nivel_actual, &astro)) {
-					/* Falló al cargar el nivel */
-					done = GAME_QUIT;
-				} else {
-					redibujar_nivel (nivel_actual);
-					if (*has_turret != -1) {
-						turret_dir = targets[*has_turret].image - IMG_TURRET_1;
-						turret_shoot_rect.w = images[IMG_TURRET_SHOOT_1 + turret_dir]->w;
-						turret_shoot_rect.h = images[IMG_TURRET_SHOOT_1 + turret_dir]->h;
-					}
-				}
-			}
-			save_score = score;
-			shooting = turret_shooting = FALSE;
-			astro_destroyed = FALSE;
-			switch_toggle = FALSE;
-			contador_hits = 0;
-			refresh_tiros = TRUE;
-			pantalla_abierta = SCREEN_NONE;
-			timer_pantalla = 0;
-		}
-		
 		now_time = SDL_GetTicks ();
 		if (now_time < last_time + FPS) SDL_Delay(last_time + FPS - now_time);
-		
 	} while (!done);
 	
 	return done;

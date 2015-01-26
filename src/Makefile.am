@@ -3,8 +3,8 @@
 gamedatadir = $(pkgdatadir)/data
 
 bin_PROGRAMS = astro-barrier
-astro_barrier_SOURCES = astro.c util-bresenham.c sdlstretchcode.c astro-lua.c cp-button.c
-EXTRA_DIST = util-bresenham.h SDL_stretchasm.h SDL_stretchcode.h astro-lua.h astro-types.h cp-button.h
+astro_barrier_SOURCES = astro.c util-bresenham.c sdlstretchcode.c astro-lua.c cp-button.c draw-text.c
+EXTRA_DIST = util-bresenham.h SDL_stretchasm.h SDL_stretchcode.h astro-lua.h astro-types.h cp-button.h draw-text.h
 
 if MINGW32
 astro_ico.o: astro.rc ../data/astro.ico
