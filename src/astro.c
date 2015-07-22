@@ -2,7 +2,7 @@
  * astro.c
  * This file is part of Astro Barrier
  *
- * Copyright (C) 2013, 2014 - Félix Arreola Rodríguez
+ * Copyright (C) 2013, 2014, 2015 - Félix Arreola Rodríguez
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -643,6 +643,8 @@ int game_loop (void) {
 	int score, save_score;
 	int pantalla_abierta = 0, timer_pantalla = 0;
 	int lives_collected, vidas;
+	int levels_started = 1, level_restarted = FALSE;
+	int total_shots = 0;
 	
 	int *has_turret = &(astro.has_turret);
 	Target *targets = astro.targets;
@@ -711,6 +713,7 @@ int game_loop (void) {
 			} else if (pantalla_abierta == SCREEN_NEXT_LEVEL) {
 				/* Pasar al siguiente nivel */
 				nivel_actual = astro.next_level;
+				levels_started++;
 			}
 			SDL_FreeSurface (pantalla_texto);
 			pantalla_texto = NULL;
@@ -809,6 +812,10 @@ int game_loop (void) {
 			shoot_rect.x = astro.astro_rect.x + 22;
 			shoot_rect.y = astro.astro_rect.y + 8;
 			astro.tiros--;
+			/* Si no es nivel de explicación, sumar tiros */
+			if ((nivel_actual & (1 << 16)) == 0) {
+				total_shots++;
+			}
 			refresh_tiros = TRUE;
 			if (use_sound) Mix_PlayChannel (-1, sounds[SND_SHOOT], 0);
 		}
@@ -929,6 +936,8 @@ int game_loop (void) {
 								targets[g].golpeado = TRUE;
 								targets[g].animar = FALSE;
 								if (use_sound) Mix_PlayChannel (-1, sounds[SND_ORANGE_SWITCH], 0);
+								/* Los switches naranjas no cuentan para los tiros totales */
+								if ((nivel_actual & (1 << 16)) == 0) total_shots--;
 								break;
 							case IMG_TARGET_NORMAL_YELLOW:
 							case IMG_TARGET_MINI_YELLOW:
@@ -1054,6 +1063,8 @@ int game_loop (void) {
 								targets[g].golpeado = TRUE;
 								targets[g].animar = FALSE;
 								if (use_sound) Mix_PlayChannel (-1, sounds[SND_ORANGE_SWITCH], 0);
+								/* Los switches naranjas no cuentan para los tiros totales */
+								if ((nivel_actual & (1 << 16)) == 0) total_shots--;
 								break;
 							case IMG_TARGET_NORMAL_YELLOW:
 							case IMG_TARGET_MINI_YELLOW:
@@ -1119,12 +1130,26 @@ int game_loop (void) {
 			refresh_score = TRUE;
 			refresh_tiros = TRUE;
 			if (astro.next_level == -1) {
+				/* Cambiar esto por 5 golpes a 500 hits */
 				if (((nivel_actual >> 17) & 0x07) == 2) {
 					earn_stamp (c, 59);
 				}
 				done = GAME_CONTINUE;
 				pantalla_abierta = SCREEN_NONE;
 			} else {
+				if (nivel_actual == 5 && levels_started == 5) {
+					earn_stamp (c, 51);
+					
+					if (total_shots <= 15 && !level_restarted) {
+						earn_stamp (c, 52);
+					}
+				} else if (nivel_actual == 10 && levels_started == 10 && total_shots <= 32 && !level_restarted) {
+					earn_stamp (c, 57);
+				} else if (nivel_actual == 20 && levels_started == 20 && total_shots <= 71 && !level_restarted) {
+					earn_stamp (c, 58);
+				} else if (nivel_actual == 30 && levels_started == 30 && total_shots <= 112 && !level_restarted) {
+					earn_stamp (c, 60);
+				}
 				if (use_sound) Mix_PlayChannel (-1, sounds[SND_LEVEL_DONE], 0);
 				/* Generar los textos del score */
 				pantalla_texto = SDL_CreateRGBSurface (SDL_SWSURFACE, images[IMG_NEXT_LEVEL]->w, images[IMG_NEXT_LEVEL]->h, 32, RMASK, GMASK, BMASK, AMASK);
@@ -1159,6 +1184,7 @@ int game_loop (void) {
 		} else if (!pantalla_abierta && astro.tiros == 0 && !shooting) {
 			/* Se acabaron los tiros, reiniciar el nivel */
 			pantalla_abierta = SCREEN_RESTART;
+			level_restarted = TRUE;
 			if (vidas == 0) {
 				done = GAME_CONTINUE;
 				pantalla_abierta = SCREEN_NONE;
