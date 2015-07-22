@@ -474,6 +474,7 @@ int game_intro (void) {
 			SDL_BlitSurface (images[cp_button_frames[BUTTON_CLOSE]], NULL, screen, &rect);
 			//rects[num_rects++] = rect;
 			SDL_UpdateRects (screen, 1, &rect);
+			
 			//cp_button_refresh[BUTTON_CLOSE] = 0;
 		//}
 		
@@ -530,6 +531,11 @@ int game_explain (void) {
 	SDL_FillRect (game_buffer, NULL, 0); /* Transparencia total */
 	
 	SDL_BlitSurface (images[IMG_GAMEINTRO], NULL, game_buffer, NULL);
+	
+	rect.x = 707; rect.y = 16;
+	rect.w = images[IMG_BUTTON_CLOSE_UP]->w; rect.h = images[IMG_BUTTON_CLOSE_UP]->h;
+	
+	SDL_BlitSurface (images[cp_button_frames[BUTTON_CLOSE]], NULL, screen, &rect);
 	
 	SDL_Flip (screen);
 	
@@ -608,6 +614,7 @@ int game_explain (void) {
 		rects[num_rects++] = rect;
 		
 		SDL_UpdateRects (screen, num_rects, rects);
+		
 		now_time = SDL_GetTicks ();
 		if (now_time < last_time + FPS) SDL_Delay(last_time + FPS - now_time);
 	} while (!done);
@@ -671,7 +678,13 @@ int game_loop (void) {
 	
 	redibujar_nivel (nivel_actual);
 	
+	rect.x = 707; rect.y = 16;
+	rect.w = images[IMG_BUTTON_CLOSE_UP]->w; rect.h = images[IMG_BUTTON_CLOSE_UP]->h;
+	
+	SDL_BlitSurface (images[cp_button_frames[BUTTON_CLOSE]], NULL, screen, &rect);
+	
 	SDL_UpdateRects (screen, num_rects, rects);
+	
 	num_rects = 0;
 	
 	SDL_FillRect (game_buffer, NULL, 0); /* Transparencia total */
@@ -1420,6 +1433,7 @@ int game_loop (void) {
 		}
 		
 		SDL_UpdateRects (screen, num_rects, rects);
+		
 		num_rects = 0;
 		
 		now_time = SDL_GetTicks ();
