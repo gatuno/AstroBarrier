@@ -59,6 +59,8 @@
 
 #include "draw-text.h"
 
+#include "savepng.h"
+
 #define FPS (1000/24)
 #define MAX_RECTS 16
 
@@ -650,6 +652,9 @@ int game_loop (void) {
 	int total_shots = 0;
 	
 	int *has_turret = &(astro.has_turret);
+	
+	int save = 0;
+	int save_n = 0;
 	Target *targets = astro.targets;
 	Linea *lineas = astro.lineas;
 	Bloque *bloques = astro.bloques;
@@ -775,6 +780,8 @@ int game_loop (void) {
 						enter_toggle = TRUE;
 					} else if (key == SDLK_ESCAPE) {
 						done = GAME_QUIT;
+					} else if (key == SDLK_s) {
+						save = 1;
 					}
 					break;
 				case SDL_KEYUP:
@@ -1434,6 +1441,14 @@ int game_loop (void) {
 		/* Redibujar el marco blanco por los objetos que se salen */
 		SDL_BlitSurface (images[IMG_FRAME], NULL, game_buffer, NULL);
 		
+		if (save != 0) {
+			char archivo[30];
+			sprintf (archivo, "imagen_%i.png", save_n);
+			SDL_SavePNG (game_buffer, archivo);
+			printf ("Game Buffer guardado como: %s\n", archivo);
+			save = 0;
+			save_n++;
+		}
 		/* Escalar el area de juego antes de copiarla a la pantalla */
 		SDL_StretchSurfaceBlit (game_buffer, NULL, stretch_buffer, NULL);
 		
