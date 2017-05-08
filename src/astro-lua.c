@@ -31,9 +31,11 @@
 #include "astro-types.h"
 
 #include "util-bresenham.h"
+#include "draw-text.h"
 
 /* Variables externas */
 extern SDL_Surface * images[];
+extern TTF_Font *ttf20_burbank_small;
 
 /* Variables privadas */
 AstroStatus *lua_astro_game;
@@ -505,6 +507,34 @@ int lua_astro_block_move (lua_State *L) {
 	return 0;
 }
 
+int lua_astro_text_new_label (lua_State *L) {
+	const char *label = luaL_checkstring (L, 1);
+	int x = luaL_checkint (L, 2);
+	int y = luaL_checkint (L, 3);
+	
+	int p = lua_astro_game->n_lineas;
+	SDL_Color blanco = {.r = 255, .g = 255, .b = 255};
+	
+	lua_astro_game->lineas[p].image = -1;
+	lua_astro_game->lineas[p].rect.x = x;
+	lua_astro_game->lineas[p].rect.y = y;
+	
+	/* Generar el texto en pantalla */
+	lua_astro_game->lineas[p].texto = draw_text (ttf20_burbank_small, label, blanco, ALIGN_LEFT, 4);
+	
+	lua_astro_game->lineas[p].rect.w = lua_astro_game->lineas[p].texto->w;
+	lua_astro_game->lineas[p].rect.h = lua_astro_game->lineas[p].texto->h;
+	
+	lua_astro_game->n_lineas++;
+	
+	/* Nosotros no empujamos metatable para el texto */
+	//lua_pushlightuserdata (L, (void *)&lua_astro_game->lineas[p]);
+	//luaL_getmetatable (L, "astro.text");
+	//lua_setmetatable (L, -2);
+	
+	return 0;
+}
+
 void lua_astro_set_constantes (lua_State *L) {
 	char bufferconst [256];
 	int g;
@@ -761,6 +791,17 @@ int leer_nivel (const char *pack, int level, AstroStatus *astro) {
 	lua_setmetatable (L, -2);
 	
 	/* Empujar el espacio de nombres "targets" */
+	lua_rawset (L, -3);
+	
+	/* Empujar el espacio de nombres text */
+	lua_pushstring (L, "text");
+	lua_newtable (L);
+	
+	lua_pushstring (L, "new");
+	lua_pushcfunction (L, lua_astro_text_new_label);
+	lua_rawset (L, -3);
+	
+	/* Empujar el espacio de nombres "text" */
 	lua_rawset (L, -3);
 	
 	/* Empujar el espacio de nombres "astro" */

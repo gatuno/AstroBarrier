@@ -157,6 +157,8 @@ enum {
 typedef struct {
 	struct SDL_Rect rect;
 	int image;
+	
+	SDL_Surface *texto;
 } Linea;
 
 typedef struct {

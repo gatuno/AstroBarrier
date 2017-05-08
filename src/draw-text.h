@@ -26,6 +26,7 @@
 #define OUTLINE_TEXT 2
 
 #include <SDL.h>
+#include <SDL_ttf.h>
 
 #if SDL_BYTEORDER == SDL_BIG_ENDIAN
 #define RMASK 0xff000000

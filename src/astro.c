@@ -634,11 +634,12 @@ int game_loop (void) {
 	Uint32 last_time, now_time;
 	SDL_Rect rect;
 	char buffer[20];
-	int g, *h;
+	int g, *h, i;
 	AstroStatus astro;
 	
 	int astro_dir = 0;
 	SDL_Surface *texto, *pantalla_texto, *texto_0_shots;
+	SDL_Surface *texto_current_score, *texto_next_level;
 	int shooting, space_toggle, enter_toggle, switch_toggle, astro_destroyed;
 	int turret_shooting, turret_dir;
 	int switch_timer, tiros_timer;
@@ -653,12 +654,16 @@ int game_loop (void) {
 	
 	int *has_turret = &(astro.has_turret);
 	
+	/* Para guardar las fotos */
 	int save = 0;
 	int save_n = 0;
+	
+	/* Nuestros objetos */
 	Target *targets = astro.targets;
 	Linea *lineas = astro.lineas;
 	Bloque *bloques = astro.bloques;
 	
+	/* Banderas */
 	astro_destroyed = shooting = space_toggle = enter_toggle = switch_toggle = turret_shooting = FALSE;
 	
 	vidas = 2;
@@ -694,10 +699,14 @@ int game_loop (void) {
 	SDL_BlitSurface (images[cp_button_frames[BUTTON_CLOSE]], NULL, screen, &rect);
 	
 	SDL_UpdateRects (screen, num_rects, rects);
-	
-	texto_0_shots = TTF_RenderUTF8_Blended (ttf20_burbank_small, "0 Shots", amarillo);
-	
 	num_rects = 0;
+	
+	/* Pre-renderizar los textos */
+	texto_0_shots = TTF_RenderUTF8_Blended (ttf20_burbank_small, "0 Shots", amarillo);
+	texto_current_score = TTF_RenderUTF8_Blended (ttf20_burbank_small, "Current Score", blanco);
+	texto_next_level = TTF_RenderUTF8_Blended (ttf20_burbank_small, "Loading Next Level", blanco);
+	SDL_SetAlpha (texto_current_score, 0, SDL_ALPHA_OPAQUE);
+	SDL_SetAlpha (texto_next_level, 0, SDL_ALPHA_OPAQUE);
 	
 	SDL_FillRect (game_buffer, NULL, 0); /* Transparencia total */
 	
@@ -741,6 +750,12 @@ int game_loop (void) {
 				score = score + vidas * 50;
 				done = GAME_CONTINUE;
 			} else {
+				/* Previo a leer el siguiente nivel, destruir las labels */
+				for (i = 0; i < astro.n_lineas; i++) {
+					if (lineas[i].image == -1) {
+						SDL_FreeSurface (lineas[i].texto);
+					}
+				}
 				if (!leer_nivel (OFFICIAL_LEVEL_PACK, nivel_actual, &astro)) {
 					/* Falló al cargar el nivel */
 					done = GAME_QUIT;
@@ -1166,17 +1181,17 @@ int game_loop (void) {
 					CPStamp_Earn (stamp_handle, c, 60);
 				}
 				if (use_sound) Mix_PlayChannel (-1, sounds[SND_LEVEL_DONE], 0);
-				/* Generar los textos del score */
+				
 				pantalla_texto = SDL_CreateRGBSurface (SDL_SWSURFACE, images[IMG_NEXT_LEVEL]->w, images[IMG_NEXT_LEVEL]->h, 32, RMASK, GMASK, BMASK, AMASK);
-				texto = TTF_RenderUTF8_Blended (ttf20_burbank_small, "Current Score", blanco);
-				SDL_SetAlpha (texto, 0, SDL_ALPHA_OPAQUE);
+				
+				/* Copiar el texto del score actual */
 				rect.x = 22;
 				rect.y = 19;
-				rect.w = texto->w; rect.h = texto->h;
+				rect.w = texto_current_score->w; rect.h = texto_current_score->h;
 				
-				SDL_BlitSurface (texto, NULL, pantalla_texto, &rect);
-				SDL_FreeSurface (texto);
+				SDL_BlitSurface (texto_current_score, NULL, pantalla_texto, &rect);
 				
+				/* Renderizar el score */
 				sprintf (buffer, "%i", score);
 				texto = TTF_RenderUTF8_Blended (ttf20_burbank_small, buffer, amarillo);
 				SDL_SetAlpha (texto, 0, SDL_ALPHA_OPAQUE);
@@ -1187,14 +1202,12 @@ int game_loop (void) {
 				SDL_BlitSurface (texto, NULL, pantalla_texto, &rect);
 				SDL_FreeSurface (texto);
 				
-				texto = TTF_RenderUTF8_Blended (ttf20_burbank_small, "Loading Next Level", blanco);
-				SDL_SetAlpha (texto, 0, SDL_ALPHA_OPAQUE);
+				/* Copiar el texto del siguiente nivel */
 				rect.x = 16;
 				rect.y = 92;
-				rect.w = texto->w; rect.h = texto->h;
+				rect.w = texto_next_level->w; rect.h = texto_next_level->h;
 				
-				SDL_BlitSurface (texto, NULL, pantalla_texto, &rect);
-				SDL_FreeSurface (texto);
+				SDL_BlitSurface (texto_next_level, NULL, pantalla_texto, &rect);
 			}
 		} else if (!pantalla_abierta && astro.tiros == 0 && !shooting) {
 			/* Se acabaron los tiros, reiniciar el nivel */
@@ -1223,7 +1236,12 @@ int game_loop (void) {
 		
 		/* Dibujar las lineas de fondo */
 		for (g = 0; g < astro.n_lineas; g++) {
-			SDL_BlitSurface (images[lineas[g].image], NULL, game_buffer, (SDL_Rect *)&lineas[g]);
+			if (lineas[g].image == -1) {
+				/* Realmente es un texto en pantalla */
+				SDL_BlitSurface (lineas[g].texto, NULL, game_buffer, (SDL_Rect *)&lineas[g]);
+			} else {
+				SDL_BlitSurface (images[lineas[g].image], NULL, game_buffer, (SDL_Rect *)&lineas[g]);
+			}
 		}
 		
 		if (switch_toggle && switch_timer < 17) {
@@ -1514,7 +1532,8 @@ int game_loop (void) {
 	} while (!done);
 	
 	SDL_FreeSurface (texto_0_shots);
-	
+	SDL_FreeSurface (texto_current_score);
+	SDL_FreeSurface (texto_next_level);
 	return done;
 }
 

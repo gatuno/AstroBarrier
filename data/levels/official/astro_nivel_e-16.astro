@@ -5,6 +5,10 @@ astro.level.next_level = 16
 astro.level.shoots = -1
 astro.level.hits_required = 5
 
+-- Dibujar los textos de explicación
+astro.text.new ("A yellow barrier, when hit, turns\ninto a green barrier.", 22, 26);
+astro.text.new ("Press ENTER to continue.", 22, 254);
+
 -- Hay que dibujar 1 targets
 t = astro.targets.new (IMG_TARGET_NORMAL_YELLOW)
 t:addPoint (164, 150)

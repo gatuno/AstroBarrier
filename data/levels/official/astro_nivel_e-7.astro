@@ -5,6 +5,10 @@ astro.level.next_level = 7
 astro.level.shoots = -1
 astro.level.hits_required = 5
 
+-- Dibujar los textos de explicación
+astro.text.new ("If you hit a blue target before\nhitting any other targets, you\nrecieve an extra life.", 22, 26);
+astro.text.new ("Press ENTER to continue.", 22, 308);
+
 -- Hay que dibujar 2 targets
 t = astro.targets.new (IMG_TARGET_NORMAL_GREEN)
 t:addPoint (124, 206)
