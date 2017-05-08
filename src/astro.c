@@ -638,10 +638,10 @@ int game_loop (void) {
 	AstroStatus astro;
 	
 	int astro_dir = 0;
-	SDL_Surface *texto, *pantalla_texto;
+	SDL_Surface *texto, *pantalla_texto, *texto_0_shots;
 	int shooting, space_toggle, enter_toggle, switch_toggle, astro_destroyed;
 	int turret_shooting, turret_dir;
-	int switch_timer;
+	int switch_timer, tiros_timer;
 	SDL_Rect shoot_rect, turret_shoot_rect;
 	
 	int contador_hits, refresh_tiros, refresh_score;
@@ -694,6 +694,8 @@ int game_loop (void) {
 	SDL_BlitSurface (images[cp_button_frames[BUTTON_CLOSE]], NULL, screen, &rect);
 	
 	SDL_UpdateRects (screen, num_rects, rects);
+	
+	texto_0_shots = TTF_RenderUTF8_Blended (ttf20_burbank_small, "0 Shots", amarillo);
 	
 	num_rects = 0;
 	
@@ -818,10 +820,12 @@ int game_loop (void) {
 		}
 		
 		if (space_toggle && !shooting && !pantalla_abierta) {
+			/* Disparar una bala */
 			shooting = TRUE;
 			shoot_rect.x = astro.astro_rect.x + 22;
 			shoot_rect.y = astro.astro_rect.y + 8;
 			astro.tiros--;
+			if (astro.tiros == 0) tiros_timer = 0;
 			/* Si no es nivel de explicación, sumar tiros */
 			if ((nivel_actual & (1 << 16)) == 0) {
 				total_shots++;
@@ -1136,6 +1140,7 @@ int game_loop (void) {
 			/* Nivel terminado, hay que abrir la pantalla de siguiente nivel */
 			pantalla_abierta = SCREEN_NEXT_LEVEL;
 			score += (astro.tiros * 10);
+			if (astro.tiros != 0) tiros_timer = 0;
 			astro.tiros = 0;
 			refresh_score = TRUE;
 			refresh_tiros = TRUE;
@@ -1349,12 +1354,10 @@ int game_loop (void) {
 			rect.h = 52;
 			SDL_FillRect (game_buffer, &rect, 0); /* Transparencia total */
 			
-			SDL_SetAlpha (images[IMG_SHOOT], 0, 0);
 			/* Y de los tiros disponibles: 456 */
 			/* X 3, espaciado de: 4 pixeles */
-			if (astro.tiros == 0) {
-				/* Dibujar la palabra "0 shoots" */
-			} else if (astro.tiros > 0) {
+			if (astro.tiros > 0) {
+				SDL_SetAlpha (images[IMG_SHOOT], 0, 0);
 				rect.x = 3;
 				rect.y = 456;
 				rect.w = images[IMG_SHOOT]->w;
@@ -1363,9 +1366,9 @@ int game_loop (void) {
 					SDL_BlitSurface (images[IMG_SHOOT], NULL, game_buffer, &rect);
 					rect.x += (4 + rect.w);
 				}
+				
+				SDL_SetAlpha (images[IMG_SHOOT], SDL_SRCALPHA, 0);
 			}
-			SDL_SetAlpha (images[IMG_SHOOT], SDL_SRCALPHA, 0);
-			
 			refresh_tiros = FALSE;
 		}
 		
@@ -1460,6 +1463,32 @@ int game_loop (void) {
 		SDL_BlitSurface (stretch_buffer, NULL, screen, &rect);
 		rects[num_rects++] = rect;
 		
+		/* Si los tiros marcan 0, dibujar el texto correspondiente */
+		if (astro.tiros == 0) {
+			if ((tiros_timer % 24) == 0) {
+				
+				/* Dibujar la palabra "0 shoots" */
+				rect.x = GAME_AREA_X + 1;
+				rect.y = GAME_AREA_Y + 320;
+				rect.w = texto_0_shots->w;
+				rect.h = texto_0_shots->h;
+				
+				SDL_BlitSurface (texto_0_shots, NULL, screen, &rect);
+				rects[num_rects++] = rect;
+			} else if ((tiros_timer % 24) == 12) {
+				/* Borrar el texto "0 shoots" */
+				rect.x = GAME_AREA_X + 1;
+				rect.y = GAME_AREA_Y + 320;
+				rect.w = texto_0_shots->w;
+				rect.h = texto_0_shots->h;
+				
+				SDL_BlitSurface (images[IMG_ARCADE], &rect, screen, &rect);
+				rects[num_rects++] = rect;
+			}
+			
+			tiros_timer++;
+		}
+		
 		if (cp_button_refresh[BUTTON_CLOSE]) {
 			rect.x = 707; rect.y = 16;
 			rect.w = images[IMG_BUTTON_CLOSE_UP]->w; rect.h = images[IMG_BUTTON_CLOSE_UP]->h;
@@ -1483,6 +1512,8 @@ int game_loop (void) {
 		now_time = SDL_GetTicks ();
 		if (now_time < last_time + FPS) SDL_Delay(last_time + FPS - now_time);
 	} while (!done);
+	
+	SDL_FreeSurface (texto_0_shots);
 	
 	return done;
 }
