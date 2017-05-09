@@ -15,6 +15,10 @@ AC_PROG_CC
 # and automake
 AM_INIT_AUTOMAKE([-Wall -Werror])
 
+# Translate this program
+AM_GNU_GETTEXT_VERSION([0.19.3])
+AM_GNU_GETTEXT([external])
+
 AM_PROG_CC_C_O
 
 # Check for pkg-config
@@ -90,6 +94,7 @@ AC_CONFIG_FILES([
                  Makefile
                  src/Makefile
                  data/Makefile
+                 po/Makefile.in
 ])
 
 AC_OUTPUT

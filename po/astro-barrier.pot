@@ -1,0 +1,180 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR Free Software Foundation, Inc.
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: astro-barrier 0.7.4\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2017-05-09 14:11-0500\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=CHARSET\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: src/astro.c:315
+#, c-format
+msgid "Failed to init the substamp system\n"
+msgstr ""
+
+#: src/astro.c:383 src/astro.c:536 src/astro.c:1564
+msgid "Astro Barrier"
+msgstr ""
+
+#: src/astro.c:404
+msgid "START"
+msgstr ""
+
+#: src/astro.c:715
+msgid "0 Shots"
+msgstr ""
+
+#: src/astro.c:716
+msgid "Current Score"
+msgstr ""
+
+#: src/astro.c:717
+msgid "Loading Next Level"
+msgstr ""
+
+#: src/astro.c:1159
+msgid ""
+"Ship destroyed.\n"
+"\n"
+"Restarting level..."
+msgstr ""
+
+#: src/astro.c:1231
+msgid ""
+"No shots left.\n"
+"\n"
+"Restarting level..."
+msgstr ""
+
+#: src/astro.c:1413
+#, c-format
+msgid "Lives: %d"
+msgstr ""
+
+#: src/astro.c:1567 src/astro.c:1570 src/astro.c:1573
+msgid "Secret Levels"
+msgstr ""
+
+#: src/astro.c:1584
+msgid "Level"
+msgstr ""
+
+#: src/astro.c:1634
+#, c-format
+msgid ""
+"Error: Can't initialize the video subsystem\n"
+"The error returned by SDL is:\n"
+"%s\n"
+msgstr ""
+
+#: src/astro.c:1652
+#, c-format
+msgid ""
+"Error: Can't setup 760x480 video mode.\n"
+"The error returned by SDL is:\n"
+"%s\n"
+msgstr ""
+
+#: src/astro.c:1661
+#, c-format
+msgid ""
+"Warning: Can't initialize the audio subsystem\n"
+"Continuing...\n"
+msgstr ""
+
+#: src/astro.c:1670
+#, c-format
+msgid "Warning: Can't initialize the SDL Mixer library\n"
+msgstr ""
+
+#: src/astro.c:1682 src/astro.c:1700
+#, c-format
+msgid ""
+"Failed to load data file:\n"
+"%s\n"
+"The error returned by SDL is:\n"
+"%s\n"
+msgstr ""
+
+#: src/astro.c:1712
+#, c-format
+msgid ""
+"Error: Can't initialize the SDL TTF library\n"
+"%s\n"
+msgstr ""
+
+#: src/astro.c:1722 src/astro.c:1734
+#, c-format
+msgid ""
+"Failed to load font file 'Burbank Small Bold'\n"
+"The error returned by SDL is:\n"
+"%s\n"
+msgstr ""
+
+#: data/levels/official/astro_nivel_s-2_10.astro:9
+msgid ""
+"Wow! You are an awesome player!\n"
+"\n"
+"Here's a special tip. In the\n"
+"opening screen, press the 1, 2, or 3\n"
+"key on your keyboard."
+msgstr ""
+
+#: data/levels/official/astro_nivel_e-11.astro:9
+msgid "Hit an orange switch..."
+msgstr ""
+
+#: data/levels/official/astro_nivel_e-11.astro:10
+msgid ""
+"... and any orange\n"
+"wall block will\n"
+"disappear."
+msgstr ""
+
+#: data/levels/official/astro_nivel_e-11.astro:11
+#: data/levels/official/astro_nivel_e-16.astro:10
+#: data/levels/official/astro_nivel_e-7.astro:10
+#: data/levels/official/astro_nivel_e-30.astro:14
+msgid "Press ENTER to continue."
+msgstr ""
+
+#: data/levels/official/astro_nivel_s-2_1.astro:12
+msgid "Expert Levels"
+msgstr ""
+
+#: data/levels/official/astro_nivel_e-16.astro:9
+msgid ""
+"A yellow barrier, when hit, turns\n"
+"into a green barrier."
+msgstr ""
+
+#: data/levels/official/astro_nivel_e-7.astro:9
+msgid ""
+"If you hit a blue target before\n"
+"hitting any other targets, you\n"
+"recieve an extra life."
+msgstr ""
+
+#: data/levels/official/astro_nivel_e-30.astro:12
+msgid ""
+"A turret shoots at the same time you\n"
+"do. Be careful, though... a\n"
+"turret's bullets can hurt you!"
+msgstr ""
+
+#: data/levels/official/astro_nivel_e-30.astro:13
+msgid ""
+"You do not have to\n"
+"destroy a turret to\n"
+"pass a level."
+msgstr ""

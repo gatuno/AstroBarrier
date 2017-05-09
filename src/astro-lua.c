@@ -27,11 +27,19 @@
 
 #include <SDL.h>
 
+#ifdef HAVE_CONFIG_H
+#	include "config.h"
+#endif
+
 #include "astro-lua.h"
 #include "astro-types.h"
 
 #include "util-bresenham.h"
 #include "draw-text.h"
+
+#include <locale.h>
+#include "gettext.h"
+#define _(string) gettext (string)
 
 /* Variables externas */
 extern SDL_Surface * images[];
@@ -520,7 +528,7 @@ int lua_astro_text_new_label (lua_State *L) {
 	lua_astro_game->lineas[p].rect.y = y;
 	
 	/* Generar el texto en pantalla */
-	lua_astro_game->lineas[p].texto = draw_text (ttf20_burbank_small, label, blanco, ALIGN_LEFT, 4);
+	lua_astro_game->lineas[p].texto = draw_text (ttf20_burbank_small, _(label), blanco, ALIGN_LEFT, 4);
 	
 	lua_astro_game->lineas[p].rect.w = lua_astro_game->lineas[p].texto->w;
 	lua_astro_game->lineas[p].rect.h = lua_astro_game->lineas[p].texto->h;

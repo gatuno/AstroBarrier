@@ -49,6 +49,10 @@
 #	include "config.h"
 #endif
 
+#include <locale.h>
+#include "gettext.h"
+#define _(string) gettext (string)
+
 #include "util-bresenham.h"
 
 #include "astro-types.h"
@@ -286,6 +290,11 @@ CPStampCategory *c;
 CPStampHandle *stamp_handle;
 
 int main (int argc, char *argv[]) {
+	/* Inicializar l18n */
+	setlocale (LC_ALL, "");
+	bindtextdomain (PACKAGE, LOCALEDIR);
+	
+	textdomain (PACKAGE);
 	setup ();
 	stamp_handle = CPStamp_Init (argc, argv);
 	
@@ -302,7 +311,7 @@ int main (int argc, char *argv[]) {
 	c = CPStamp_Open (stamp_handle, STAMP_TYPE_GAME, "Astro Barrier", "astro-barrier");
 	
 	if (c == NULL) {
-		printf ("Falló al inicializar las estampas\n");
+		printf (_("Failed to init the substamp system\n"));
 	}
 	
 	if (!CPStamp_IsRegistered (c, 51)) {
@@ -370,7 +379,7 @@ int game_intro (void) {
 	
 	SDL_BlitSurface (images[IMG_ARCADE], NULL, screen, NULL);
 	
-	texto = TTF_RenderUTF8_Blended (ttf24_burbank_small, "Astro Barrier", blanco);
+	texto = TTF_RenderUTF8_Blended (ttf24_burbank_small, _("Astro Barrier"), blanco);
 	
 	rect.x = GAME_AREA_X + ((stretch_buffer->w - texto->w) / 2) + 1;
 	rect.w = texto->w;
@@ -391,7 +400,7 @@ int game_intro (void) {
 	
 	SDL_BlitSurface (images[IMG_BUTTON_START], NULL, game_buffer, &rect);
 	
-	texto = TTF_RenderUTF8_Blended (ttf24_burbank_small, "START", amarillo);
+	texto = TTF_RenderUTF8_Blended (ttf24_burbank_small, _("START"), amarillo);
 	
 	rect.x = rect.x + (images[IMG_BUTTON_START]->w - texto->w) / 2;
 	rect.y = 360 + (images[IMG_BUTTON_START]->h - texto->h) / 2 + 2;
@@ -523,7 +532,7 @@ int game_explain (void) {
 	
 	SDL_BlitSurface (images[IMG_ARCADE], NULL, screen, NULL);
 	
-	texto = TTF_RenderUTF8_Blended (ttf24_burbank_small, "Astro Barrier", blanco);
+	texto = TTF_RenderUTF8_Blended (ttf24_burbank_small, _("Astro Barrier"), blanco);
 	
 	rect.x = GAME_AREA_X + ((stretch_buffer->w - texto->w) / 2) + 1;
 	rect.w = texto->w;
@@ -702,9 +711,9 @@ int game_loop (void) {
 	num_rects = 0;
 	
 	/* Pre-renderizar los textos */
-	texto_0_shots = TTF_RenderUTF8_Blended (ttf20_burbank_small, "0 Shots", amarillo);
-	texto_current_score = TTF_RenderUTF8_Blended (ttf20_burbank_small, "Current Score", blanco);
-	texto_next_level = TTF_RenderUTF8_Blended (ttf20_burbank_small, "Loading Next Level", blanco);
+	texto_0_shots = TTF_RenderUTF8_Blended (ttf20_burbank_small, _("0 Shots"), amarillo);
+	texto_current_score = TTF_RenderUTF8_Blended (ttf20_burbank_small, _("Current Score"), blanco);
+	texto_next_level = TTF_RenderUTF8_Blended (ttf20_burbank_small, _("Loading Next Level"), blanco);
 	SDL_SetAlpha (texto_current_score, 0, SDL_ALPHA_OPAQUE);
 	SDL_SetAlpha (texto_next_level, 0, SDL_ALPHA_OPAQUE);
 	
@@ -1146,7 +1155,7 @@ int game_loop (void) {
 					if (use_sound) Mix_PlayChannel (-1, sounds[SND_GAME_OVER], 0);
 				} else {
 					if (use_sound) Mix_PlayChannel (-1, sounds[SND_GUN_SPLODE], 0);
-					pantalla_texto = draw_text (ttf24_burbank_small, "Ship destroyed.\n\nRestarting level...", blanco, ALIGN_LEFT, 0);
+					pantalla_texto = draw_text (ttf24_burbank_small, _("Ship destroyed.\n\nRestarting level..."), blanco, ALIGN_LEFT, 0);
 				}
 			}
 		} /* Si está tirando el turret*/
@@ -1218,7 +1227,7 @@ int game_loop (void) {
 				pantalla_abierta = SCREEN_NONE;
 				if (use_sound) Mix_PlayChannel (-1, sounds[SND_GAME_OVER], 0);
 			} else {
-				pantalla_texto = draw_text (ttf24_burbank_small, "No shots left.\n\nRestarting level...", blanco, ALIGN_LEFT, 0);
+				pantalla_texto = draw_text (ttf24_burbank_small, _("No shots left.\n\nRestarting level..."), blanco, ALIGN_LEFT, 0);
 			}
 		}
 		
@@ -1400,7 +1409,7 @@ int game_loop (void) {
 			rects[num_rects++] = rect;
 			
 			/* Redibujar las vidas y el score */
-			sprintf (buffer, "Lives: %d", vidas);
+			sprintf (buffer, _("Lives: %d"), vidas);
 			texto = TTF_RenderUTF8_Blended (ttf20_burbank_small, buffer, amarillo);
 			rect.x = GAME_AREA_X + 115;
 			rect.y = GAME_AREA_Y + 320;
@@ -1551,16 +1560,16 @@ void redibujar_nivel (int level) {
 	
 	switch ((level >> 17) & 0x07) {
 		case 0:
-			texto = TTF_RenderUTF8_Blended (ttf24_burbank_small, "Astro Barrier", blanco);
+			texto = TTF_RenderUTF8_Blended (ttf24_burbank_small, _("Astro Barrier"), blanco);
 			break;
 		case 1:
-			texto = TTF_RenderUTF8_Blended (ttf24_burbank_small, "Secret Levels", amarillo);
+			texto = TTF_RenderUTF8_Blended (ttf24_burbank_small, _("Secret Levels"), amarillo);
 			break;
 		case 2:
-			texto = TTF_RenderUTF8_Blended (ttf24_burbank_small, "Secret Levels", azul);
+			texto = TTF_RenderUTF8_Blended (ttf24_burbank_small, _("Secret Levels"), azul);
 			break;
 		default:
-			texto = TTF_RenderUTF8_Blended (ttf24_burbank_small, "Secret Levels", blanco);
+			texto = TTF_RenderUTF8_Blended (ttf24_burbank_small, _("Secret Levels"), blanco);
 			break;
 	}
 	rect.x = GAME_AREA_X + 12;
@@ -1571,16 +1580,16 @@ void redibujar_nivel (int level) {
 	SDL_BlitSurface (texto, NULL, screen, &rect);
 	SDL_FreeSurface (texto);
 	
-	texto = TTF_RenderUTF8_Blended (ttf20_burbank_small, "L", blanco);
+	texto = TTF_RenderUTF8_Blended (ttf20_burbank_small, _("Level"), blanco);
 	
-	rect.x = GAME_AREA_X + 220;
+	rect.x = GAME_AREA_X + 190;
 	rect.w = texto->w;
 	rect.h = texto->h;
 	rect.y = GAME_AREA_Y - 4 - rect.h;
 	
 	SDL_BlitSurface (texto, NULL, screen, &rect);
 	
-	rect.x = GAME_AREA_X + 223 + texto->w;
+	rect.x = GAME_AREA_X + 198 + texto->w;
 	SDL_FreeSurface (texto);
 	
 	sprintf (buffer, "%d", (level & 0xFF));
@@ -1621,9 +1630,9 @@ void setup (void) {
 	/* Inicializar el Video SDL */
 	if (SDL_Init(SDL_INIT_VIDEO) < 0) {
 		fprintf (stderr,
-			"Error: Can't initialize the video subsystem\n"
+			_("Error: Can't initialize the video subsystem\n"
 			"The error returned by SDL is:\n"
-			"%s\n", SDL_GetError());
+			"%s\n"), SDL_GetError());
 		exit (1);
 	}
 	
@@ -1639,17 +1648,17 @@ void setup (void) {
 	
 	if (screen == NULL) {
 		fprintf (stderr,
-			"Error: Can't setup 760x480 video mode.\n"
+			_("Error: Can't setup 760x480 video mode.\n"
 			"The error returned by SDL is:\n"
-			"%s\n", SDL_GetError());
+			"%s\n"), SDL_GetError());
 		exit (1);
 	}
 	
 	use_sound = 1;
 	if (SDL_InitSubSystem (SDL_INIT_AUDIO) < 0) {
 		fprintf (stdout,
-			"Warning: Can't initialize the audio subsystem\n"
-			"Continuing...\n");
+			_("Warning: Can't initialize the audio subsystem\n"
+			"Continuing...\n"));
 		use_sound = 0;
 	}
 	
@@ -1657,7 +1666,7 @@ void setup (void) {
 		/* Inicializar el sonido */
 		if (Mix_OpenAudio (22050, AUDIO_S16, 2, 4096) < 0) {
 			fprintf (stdout,
-				"Warning: Can't initialize the SDL Mixer library\n");
+				_("Warning: Can't initialize the SDL Mixer library\n"));
 			use_sound = 0;
 		} else {
 			Mix_AllocateChannels (3);
@@ -1669,10 +1678,10 @@ void setup (void) {
 		
 		if (image == NULL) {
 			fprintf (stderr,
-				"Failed to load data file:\n"
+				_("Failed to load data file:\n"
 				"%s\n"
 				"The error returned by SDL is:\n"
-				"%s\n", images_names[g], SDL_GetError());
+				"%s\n"), images_names[g], SDL_GetError());
 			SDL_Quit ();
 			exit (1);
 		}
@@ -1687,10 +1696,10 @@ void setup (void) {
 			
 			if (sounds[g] == NULL) {
 				fprintf (stderr,
-					"Failed to load data file:\n"
+					_("Failed to load data file:\n"
 					"%s\n"
 					"The error returned by SDL is:\n"
-					"%s\n", sound_names [g], SDL_GetError ());
+					"%s\n"), sound_names [g], SDL_GetError ());
 				SDL_Quit ();
 				exit (1);
 			}
@@ -1699,8 +1708,8 @@ void setup (void) {
 	}
 	if (TTF_Init () < 0) {
 		fprintf (stderr,
-			"Error: Can't initialize the SDL TTF library\n"
-			"%s\n", TTF_GetError ());
+			_("Error: Can't initialize the SDL TTF library\n"
+			"%s\n"), TTF_GetError ());
 		SDL_Quit ();
 		exit (1);
 	}
@@ -1709,9 +1718,9 @@ void setup (void) {
 	
 	if (!ttf24_burbank_small) {
 		fprintf (stderr,
-			"Failed to load font file 'Burbank Small Bold'\n"
+			_("Failed to load font file 'Burbank Small Bold'\n"
 			"The error returned by SDL is:\n"
-			"%s\n", TTF_GetError ());
+			"%s\n"), TTF_GetError ());
 		SDL_Quit ();
 		exit (1);
 	}
@@ -1721,9 +1730,9 @@ void setup (void) {
 	
 	if (!ttf20_burbank_small) {
 		fprintf (stderr,
-			"Failed to load font file 'Burbank Small Bold'\n"
+			_("Failed to load font file 'Burbank Small Bold'\n"
 			"The error returned by SDL is:\n"
-			"%s\n", TTF_GetError ());
+			"%s\n"), TTF_GetError ());
 		SDL_Quit ();
 		exit (1);
 	}
