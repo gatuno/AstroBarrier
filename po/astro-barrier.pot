@@ -6,9 +6,9 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: astro-barrier 0.7.4\n"
+"Project-Id-Version: astro-barrier 0.9.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-05-09 14:11-0500\n"
+"POT-Creation-Date: 2017-05-14 18:52-0500\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,59 +17,78 @@ msgstr ""
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: src/astro.c:315
+#: src/astro.c:316
 #, c-format
 msgid "Failed to init the substamp system\n"
 msgstr ""
 
-#: src/astro.c:383 src/astro.c:536 src/astro.c:1564
+#: src/astro.c:382 src/astro.c:536 src/astro.c:1606 src/astro.c:1735
 msgid "Astro Barrier"
 msgstr ""
 
-#: src/astro.c:404
+#: src/astro.c:403
 msgid "START"
 msgstr ""
 
-#: src/astro.c:715
+#: src/astro.c:556
+msgid "Shoot targets for great justice!"
+msgstr ""
+
+#: src/astro.c:557
+msgid ""
+"Press the LEFT and RIGHT arrow\n"
+"keys to move your ship.\n"
+"Press the SPACEBAR to shoot. (Be\n"
+"careful! You have limited bullets!)"
+msgstr ""
+
+#: src/astro.c:559 data/levels/official/astro_nivel_e-11.astro:11
+#: data/levels/official/astro_nivel_e-16.astro:10
+#: data/levels/official/astro_nivel_e-7.astro:10
+#: data/levels/official/astro_nivel_e-30.astro:14
+msgid "Press ENTER to continue."
+msgstr ""
+
+#: src/astro.c:748
 msgid "0 Shots"
 msgstr ""
 
-#: src/astro.c:716
+#: src/astro.c:749
 msgid "Current Score"
 msgstr ""
 
-#: src/astro.c:717
+#: src/astro.c:750
 msgid "Loading Next Level"
 msgstr ""
 
-#: src/astro.c:1159
+#: src/astro.c:1196
 msgid ""
 "Ship destroyed.\n"
 "\n"
 "Restarting level..."
 msgstr ""
 
-#: src/astro.c:1231
+#: src/astro.c:1275
 msgid ""
 "No shots left.\n"
 "\n"
 "Restarting level..."
 msgstr ""
 
-#: src/astro.c:1413
+#: src/astro.c:1457 src/astro.c:1631
 #, c-format
 msgid "Lives: %d"
 msgstr ""
 
-#: src/astro.c:1567 src/astro.c:1570 src/astro.c:1573
+#: src/astro.c:1738 src/astro.c:1741 src/astro.c:1744
 msgid "Secret Levels"
 msgstr ""
 
-#: src/astro.c:1584
+#: src/astro.c:1755
 msgid "Level"
 msgstr ""
 
-#: src/astro.c:1634
+#: src/astro.c:1805
 #, c-format
 msgid ""
 "Error: Can't initialize the video subsystem\n"
@@ -77,7 +96,7 @@ msgid ""
 "%s\n"
 msgstr ""
 
-#: src/astro.c:1652
+#: src/astro.c:1823
 #, c-format
 msgid ""
 "Error: Can't setup 760x480 video mode.\n"
@@ -85,19 +104,19 @@ msgid ""
 "%s\n"
 msgstr ""
 
-#: src/astro.c:1661
+#: src/astro.c:1832
 #, c-format
 msgid ""
 "Warning: Can't initialize the audio subsystem\n"
 "Continuing...\n"
 msgstr ""
 
-#: src/astro.c:1670
+#: src/astro.c:1841
 #, c-format
 msgid "Warning: Can't initialize the SDL Mixer library\n"
 msgstr ""
 
-#: src/astro.c:1682 src/astro.c:1700
+#: src/astro.c:1853 src/astro.c:1871
 #, c-format
 msgid ""
 "Failed to load data file:\n"
@@ -106,14 +125,14 @@ msgid ""
 "%s\n"
 msgstr ""
 
-#: src/astro.c:1712
+#: src/astro.c:1883
 #, c-format
 msgid ""
 "Error: Can't initialize the SDL TTF library\n"
 "%s\n"
 msgstr ""
 
-#: src/astro.c:1722 src/astro.c:1734
+#: src/astro.c:1893 src/astro.c:1905
 #, c-format
 msgid ""
 "Failed to load font file 'Burbank Small Bold'\n"
@@ -139,13 +158,6 @@ msgid ""
 "... and any orange\n"
 "wall block will\n"
 "disappear."
-msgstr ""
-
-#: data/levels/official/astro_nivel_e-11.astro:11
-#: data/levels/official/astro_nivel_e-16.astro:10
-#: data/levels/official/astro_nivel_e-7.astro:10
-#: data/levels/official/astro_nivel_e-30.astro:14
-msgid "Press ENTER to continue."
 msgstr ""
 
 #: data/levels/official/astro_nivel_s-2_1.astro:12

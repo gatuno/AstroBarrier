@@ -260,7 +260,8 @@ enum {
 /* Prototipos de función */
 int game_intro (void);
 int game_explain (void);
-int game_loop (void);
+int game_loop (int *, int *);
+int game_finish (int, int);
 void redibujar_nivel (int);
 void setup (void);
 SDL_Surface * set_video_mode (unsigned);
@@ -289,6 +290,7 @@ int nivel_actual;
 CPStampCategory *c;
 CPStampHandle *stamp_handle;
 
+/* X: -12, Y: -56 */
 int main (int argc, char *argv[]) {
 	/* Inicializar l18n */
 	setlocale (LC_ALL, "");
@@ -351,15 +353,13 @@ int main (int argc, char *argv[]) {
 	if (!CPStamp_IsRegistered (c, 62)) {
 		CPStamp_Register (c, 62, "Astro Master", "Complete 25 levels + Secret and Expert", GAMEDATA_DIR "images/stamps/62.png", STAMP_TYPE_GAME, STAMP_EXTREME);
 	}
-	SDL_Event event;
+	
+	int vidas, score;
 	do {
 		if (game_intro () == GAME_QUIT) break;
 		if (nivel_actual == 0 && game_explain () == GAME_QUIT) break;
-		if (game_loop () == GAME_QUIT) break;
-		
-		do {
-			SDL_WaitEvent(&event);
-		} while (event.type != SDL_QUIT);
+		if (game_loop (&vidas, &score) == GAME_QUIT) break;
+		game_finish (vidas, score);
 	} while (1 == 0);
 	
 	CPStamp_Close (c);
@@ -509,6 +509,7 @@ int game_explain (void) {
 	SDLKey key;
 	Linea l;
 	Target t;
+	SDL_Surface *inst1, *inst2, *continue_text;
 	
 	nivel_actual = 1;
 	
@@ -550,6 +551,12 @@ int game_explain (void) {
 	rect.w = images[IMG_BUTTON_CLOSE_UP]->w; rect.h = images[IMG_BUTTON_CLOSE_UP]->h;
 	
 	SDL_BlitSurface (images[cp_button_frames[BUTTON_CLOSE]], NULL, screen, &rect);
+	
+	/* Preparar los textos de la pantalla de introduccion */
+	inst1 = TTF_RenderUTF8_Blended (ttf20_burbank_small, _("Shoot targets for great justice!"), blanco);
+	inst2 = draw_text (ttf20_burbank_small, _("Press the LEFT and RIGHT arrow\nkeys to move your ship.\nPress the SPACEBAR to shoot. (Be\ncareful! You have limited bullets!)"), blanco, ALIGN_LEFT, 0);
+	
+	continue_text = TTF_RenderUTF8_Blended (ttf20_burbank_small, _("Press ENTER to continue."), blanco);
 	
 	SDL_Flip (screen);
 	
@@ -600,6 +607,28 @@ int game_explain (void) {
 		t.rect.x = t.puntos[t.pos].x;
 		t.rect.y = t.puntos[t.pos].y;
 		
+		/* Dibujar las instrucciones */
+		rect.x = 22;
+		rect.y = 26;
+		rect.w = inst1->w;
+		rect.h = inst1->h;
+		
+		SDL_BlitSurface (inst1, NULL, game_buffer, &rect);
+		
+		rect.x = 22;
+		rect.y = 150;
+		rect.w = inst2->w;
+		rect.h = inst2->h;
+		
+		SDL_BlitSurface (inst2, NULL, game_buffer, &rect);
+		
+		rect.x = 38;
+		rect.y = 332;
+		rect.w = continue_text->w;
+		rect.h = continue_text->h;
+		
+		SDL_BlitSurface (continue_text, NULL, game_buffer, &rect);
+		
 		/* Dibujar el boton de cierre */
 		if (cp_button_refresh[BUTTON_CLOSE]) {
 			rect.x = 707; rect.y = 16;
@@ -633,10 +662,15 @@ int game_explain (void) {
 		if (now_time < last_time + FPS) SDL_Delay(last_time + FPS - now_time);
 	} while (!done);
 	
+	SDL_FreeSurface (inst1);
+	SDL_FreeSurface (inst2);
+	
+	SDL_FreeSurface (continue_text);
+	
 	return done;
 }
 
-int game_loop (void) {
+int game_loop (int *r_vidas, int *r_score) {
 	int done = 0, map;
 	SDL_Event event;
 	SDLKey key;
@@ -758,6 +792,8 @@ int game_loop (void) {
 				if (use_sound) Mix_PlayChannel (-1, sounds[SND_WIN], 0);
 				score = score + vidas * 50;
 				done = GAME_CONTINUE;
+				*r_vidas = vidas;
+				*r_score = score;
 			} else {
 				/* Previo a leer el siguiente nivel, destruir las labels */
 				for (i = 0; i < astro.n_lineas; i++) {
@@ -1151,6 +1187,8 @@ int game_loop (void) {
 				if (vidas == 0) {
 					/* Game Over */
 					done = GAME_CONTINUE;
+					*r_vidas = 0;
+					*r_score = score;
 					pantalla_abierta = SCREEN_NONE;
 					if (use_sound) Mix_PlayChannel (-1, sounds[SND_GAME_OVER], 0);
 				} else {
@@ -1165,7 +1203,9 @@ int game_loop (void) {
 			pantalla_abierta = SCREEN_NEXT_LEVEL;
 			score += (astro.tiros * 10);
 			if (astro.tiros != 0) tiros_timer = 0;
-			astro.tiros = 0;
+			if (astro.tiros > 0) {
+				astro.tiros = 0;
+			}
 			refresh_score = TRUE;
 			refresh_tiros = TRUE;
 			if (astro.next_level == -1) {
@@ -1173,8 +1213,11 @@ int game_loop (void) {
 				if (((nivel_actual >> 17) & 0x07) == 2) {
 					CPStamp_Earn (stamp_handle, c, 59);
 				}
+				if (use_sound) Mix_PlayChannel (-1, sounds[SND_WIN], 0);
 				done = GAME_CONTINUE;
 				pantalla_abierta = SCREEN_NONE;
+				*r_vidas = vidas;
+				*r_score = score;
 			} else {
 				if (nivel_actual == 5 && levels_started == 5) {
 					CPStamp_Earn (stamp_handle, c, 51);
@@ -1226,6 +1269,8 @@ int game_loop (void) {
 				done = GAME_CONTINUE;
 				pantalla_abierta = SCREEN_NONE;
 				if (use_sound) Mix_PlayChannel (-1, sounds[SND_GAME_OVER], 0);
+				*r_vidas = 0;
+				*r_score = score;
 			} else {
 				pantalla_texto = draw_text (ttf24_burbank_small, _("No shots left.\n\nRestarting level..."), blanco, ALIGN_LEFT, 0);
 			}
@@ -1543,6 +1588,133 @@ int game_loop (void) {
 	SDL_FreeSurface (texto_0_shots);
 	SDL_FreeSurface (texto_current_score);
 	SDL_FreeSurface (texto_next_level);
+	return done;
+}
+
+int game_finish (int vidas, int score) {
+	int done = 0;
+	SDL_Event event;
+	Uint32 last_time, now_time;
+	SDL_Rect rect;
+	int map;
+	SDL_Surface *texto;
+	SDLKey key;
+	char buffer[256];
+	
+	SDL_BlitSurface (images[IMG_ARCADE], NULL, screen, NULL);
+	
+	texto = TTF_RenderUTF8_Blended (ttf24_burbank_small, _("Astro Barrier"), blanco);
+	
+	rect.x = GAME_AREA_X + 12;
+	rect.w = texto->w;
+	rect.h = texto->h;
+	rect.y = GAME_AREA_Y - 3 - rect.h;
+	
+	SDL_BlitSurface (texto, NULL, screen, &rect);
+	SDL_FreeSurface (texto);
+	
+	SDL_FillRect (game_buffer, NULL, 0); /* Transparencia total */
+	
+	SDL_BlitSurface (images[IMG_GAMEAREA], NULL, game_buffer, NULL);
+	
+	/* Escalar el area de juego antes de copiarla a la pantalla */
+	SDL_StretchSurfaceBlit (game_buffer, NULL, stretch_buffer, NULL);
+	
+	rect.x = GAME_AREA_X;
+	rect.y = GAME_AREA_Y;
+	rect.w = stretch_buffer->w;
+	rect.h = stretch_buffer->h;
+	
+	SDL_BlitSurface (stretch_buffer, NULL, screen, &rect);
+	
+	/* Renderizar las vidas y los puntos */
+	sprintf (buffer, _("Lives: %d"), vidas);
+	texto = TTF_RenderUTF8_Blended (ttf20_burbank_small, buffer, amarillo);
+	rect.x = GAME_AREA_X + 115;
+	rect.y = GAME_AREA_Y + 320;
+	rect.w = texto->w;
+	rect.h = texto->h;
+	
+	SDL_BlitSurface (texto, NULL, screen, &rect);
+	SDL_FreeSurface (texto);
+	
+	sprintf (buffer, "%d", score);
+	texto = TTF_RenderUTF8_Blended (ttf20_burbank_small, buffer, amarillo);
+	rect.x = GAME_AREA_X + stretch_buffer->w - 5 - texto->w;
+	rect.y = GAME_AREA_Y + 320;
+	rect.w = texto->w;
+	rect.h = texto->h;
+	
+	SDL_BlitSurface (texto, NULL, screen, &rect);
+	SDL_FreeSurface (texto);
+	
+	/* Botón de cierre */
+	rect.x = 707; rect.y = 16;
+	rect.w = images[IMG_BUTTON_CLOSE_UP]->w; rect.h = images[IMG_BUTTON_CLOSE_UP]->h;
+	
+	SDL_BlitSurface (images[cp_button_frames[BUTTON_CLOSE]], NULL, screen, &rect);
+	
+	SDL_Flip (screen);
+	
+	num_rects = 0;
+	
+	do {
+		last_time = SDL_GetTicks ();
+		
+		CPStamp_Restore (stamp_handle, screen);
+		
+		while (SDL_PollEvent(&event) > 0) {
+			switch (event.type) {
+				case SDL_QUIT:
+					/* Vamos a cerrar la aplicación */
+					done = GAME_QUIT;
+					break;
+				case SDL_MOUSEMOTION:
+					map = map_button_in_game (event.motion.x, event.motion.y);
+					cp_button_motion (map);
+					break;
+				case SDL_MOUSEBUTTONDOWN:
+					map = map_button_in_game (event.button.x, event.button.y);
+					cp_button_down (map);
+					break;
+				case SDL_MOUSEBUTTONUP:
+					map = map_button_in_game (event.button.x, event.button.y);
+					map = cp_button_up (map);
+					
+					switch (map) {
+						case BUTTON_CLOSE:
+							done = GAME_QUIT;
+							break;
+					}
+					break;
+			}
+		}
+		
+		if (cp_button_refresh[BUTTON_CLOSE]) {
+			rect.x = 707; rect.y = 16;
+			rect.w = images[IMG_BUTTON_CLOSE_UP]->w; rect.h = images[IMG_BUTTON_CLOSE_UP]->h;
+			
+			SDL_BlitSurface (images[IMG_ARCADE], &rect, screen, &rect);
+			
+			SDL_BlitSurface (images[cp_button_frames[BUTTON_CLOSE]], NULL, screen, &rect);
+			rects[num_rects++] = rect;
+			//SDL_UpdateRects (screen, 1, &rect);
+			
+			cp_button_refresh[BUTTON_CLOSE] = 0;
+		}
+		
+		if (CPStamp_IsActive (stamp_handle)) {
+			CPStamp_Draw (stamp_handle, screen, TRUE);
+			rects[num_rects++] = CPStamp_GetUpdateRect (stamp_handle);
+		}
+		
+		SDL_UpdateRects (screen, num_rects, rects);
+		num_rects = 0;
+		
+		now_time = SDL_GetTicks ();
+		if (now_time < last_time + FPS) SDL_Delay(last_time + FPS - now_time);
+	} while (!done);
+	
 	return done;
 }
 
